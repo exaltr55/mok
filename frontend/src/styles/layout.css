@@ -1,0 +1,218 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 1ms !important;
+    animation-duration: 1ms !important;
+  }
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-serif);
+  font-size: 17px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-on);
+}
+
+a { color: inherit; text-decoration: none; }
+
+/* ── Grain / atmospheric background ──────────────────────────── */
+
+.mok-grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(139, 111, 58, 0.04) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(124, 138, 110, 0.05) 0%, transparent 50%);
+}
+
+/* ── App layout ──────────────────────────────────────────────── */
+
+.mok-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  position: relative;
+}
+
+.mok-shell-main {
+  flex: 1;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 24px 120px;
+  position: relative;
+  z-index: 2;
+}
+
+/* ── Nav ─────────────────────────────────────────────────────── */
+
+.mok-nav {
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  backdrop-filter: blur(8px);
+}
+
+.mok-nav-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.mok-nav-links {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.mok-nav-link {
+  background: transparent;
+  border: none;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  color: var(--text-muted);
+  position: relative;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color var(--motion-quick) var(--easing);
+}
+
+.mok-nav-link:hover,
+.mok-nav-link:focus-visible {
+  color: var(--text);
+}
+
+.mok-nav-link.active {
+  color: var(--text);
+}
+
+.mok-nav-link.active::after {
+  content: '';
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 2px;
+  height: 1px;
+  background: var(--accent);
+}
+
+.mok-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── Footer ──────────────────────────────────────────────────── */
+
+.mok-footer {
+  padding: 28px;
+  text-align: center;
+  color: var(--text-subtle);
+  font-size: 12px;
+  font-family: var(--font-sans);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-top: 1px solid var(--border);
+  background: var(--bg-subtle);
+  position: relative;
+  z-index: 2;
+}
+
+/* ── Auth surface ───────────────────────────────────────────── */
+
+.mok-auth-shell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 64px);
+  padding: 48px 20px;
+  position: relative;
+}
+
+.mok-auth-card {
+  width: 100%;
+  max-width: 440px;
+}
+
+/* ── Misc ────────────────────────────────────────────────────── */
+
+.mok-loading {
+  padding: 56px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 14px;
+  font-family: var(--font-sans);
+  letter-spacing: 0.02em;
+}
+
+.mok-eyebrow {
+  font-size: 11px;
+  color: var(--text-subtle);
+  font-family: var(--font-sans);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 500;
+  margin: 0 0 16px;
+}
+
+.mok-section-title {
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  margin: 0;
+  color: var(--text);
+}
+
+.mok-section-lede {
+  font-size: 16px;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin: 12px 0 0;
+  max-width: 560px;
+}
+
+:focus-visible {
+  outline: 1px solid var(--focus-ring);
+  outline-offset: 3px;
+  border-radius: 2px;
+}

@@ -1,0 +1,26 @@
+/**
+ * Sage — cooler alternative to Bone. Same editorial-calm voice.
+ * Activate via `<html data-theme="sage">`.
+ */
+
+[data-theme='sage'] {
+  --bg:                 #EFF1EC;
+  --bg-subtle:          #E2E6DC;
+  --bg-raised:          #F5F7F1;
+  --surface:            #F5F7F1;
+  --surface-raised:     #FFFCF5;
+  --border:             #D4DCC9;
+  --border-strong:      #94A089;
+
+  --text:               #283027;
+  --text-muted:         #5A665C;
+  --text-subtle:        #94A089;
+
+  --accent:             #4D6A5F;
+  --accent-strong:      #2F4439;
+  --accent-soft:        rgba(77, 106, 95, 0.10);
+  --accent-on:          #FFFCF5;
+
+  --warmth:             #A65A3A;
+  --warmth-soft:        rgba(166, 90, 58, 0.10);
+}

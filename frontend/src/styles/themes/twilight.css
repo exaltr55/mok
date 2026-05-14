@@ -1,0 +1,35 @@
+/**
+ * Twilight — dark mode for the editorial-calm look. Same warmth, inverted.
+ * Activate via `<html data-theme="twilight">`.
+ */
+
+[data-theme='twilight'] {
+  --bg:                 #1F1B16;
+  --bg-subtle:          #28231C;
+  --bg-raised:          #2D2820;
+  --surface:            #2D2820;
+  --surface-raised:     #35302A;
+  --border:             #3D3729;
+  --border-strong:      #5C544A;
+
+  --text:               #EDE6D4;
+  --text-muted:         #B0A695;
+  --text-subtle:        #7E7565;
+  --text-inverse:       #1F1B16;
+
+  --accent:             #C9A961;     /* lifted ochre */
+  --accent-strong:      #E0C68A;
+  --accent-soft:        rgba(201, 169, 97, 0.14);
+  --accent-on:          #1F1B16;
+
+  --warmth:             #D87958;
+  --warmth-soft:        rgba(216, 121, 88, 0.14);
+
+  --success:            #9BAB8C;
+  --warning:            #E0C68A;
+  --danger:             #D87958;
+  --danger-soft:        rgba(216, 121, 88, 0.14);
+  --danger-border:      rgba(216, 121, 88, 0.40);
+
+  --focus-ring:         rgba(201, 169, 97, 0.55);
+}
