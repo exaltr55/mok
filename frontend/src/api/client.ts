@@ -257,3 +257,29 @@ export const submitContact = (payload: ContactPayload) =>
     method: 'POST',
     body: JSON.stringify(payload),
   });
+
+// ── Dashboard ───────────────────────────────────────────────────
+
+export interface PracticeBreakdown {
+  key: string;
+  name: string;
+  short_name: string;
+  count_30d: number;
+  count_90d: number;
+  last_practiced: string | null;
+}
+
+export interface DashboardDay {
+  day: string;
+  count: number;
+}
+
+export interface DashboardData {
+  total_sessions: number;
+  days_practiced_30d: number;
+  days_practiced_90d: number;
+  by_practice: PracticeBreakdown[];
+  last_30_days: DashboardDay[];
+}
+
+export const getDashboard = () => request<DashboardData>('/me/dashboard');
