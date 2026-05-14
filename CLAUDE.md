@@ -89,6 +89,8 @@ auth, a few public pages, and a thin LLM integration via the shared
 | **CSS** | CSS variables (`var(--bg)`, `var(--accent)`) — never hardcode colors |
 | **CSS naming** | kebab-case, component-scoped (e.g., `.login-card`) |
 | **Imports** | React first → libs → local components → styles |
+| **Mobile-first** | Default styles target ≤ 720px. Use `@media (min-width: 720px)` to add desktop. Always lay out for a 360-wide phone first, then expand. Tap targets ≥ 40px; inputs use `font-size: 16px` to prevent iOS zoom-on-focus. Honor safe-area insets (`env(safe-area-inset-*)`) on sticky/fixed surfaces. |
+| **Contrast** | When inverting a surface (e.g. dark overlay, `<card class="mok-card--ink">`), **re-scope semantic tokens at the overlay root** (`--text-muted`, `--text-subtle`, `--border`, etc.) rather than hard-coding inverse colours per element. The light-theme `--text-muted` becomes invisible on dark; the only correct fix is the token re-scope pattern used by `.mok-session` in `components.css`. Visible text against any background must meet WCAG AA contrast (≥ 4.5:1 body, ≥ 3:1 ≥ 18px). |
 
 ### Database (PostgreSQL 16 + SQLAlchemy 2.0)
 

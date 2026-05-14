@@ -123,12 +123,37 @@ export default function PracticeDetail() {
               fontSize: 14,
               color: 'var(--text-subtle)',
               fontFamily: 'var(--font-sans)',
-              margin: '0 0 56px',
+              margin: '0 0 24px',
               letterSpacing: '0.04em',
             }}
           >
             {part === 'A' ? 'Learning the Practice' : 'Daily Practice'}
           </p>
+
+          {/* Always-visible CTA: take the user back to the session.
+              Mirrors the footer CTAs but is reachable without scrolling. */}
+          <div
+            className="mok-row"
+            style={{
+              padding: '14px 16px',
+              marginBottom: 40,
+              background: 'var(--bg-raised)',
+              border: '1px solid var(--border)',
+              borderRadius: 'var(--radius)',
+              gap: 12,
+              flexWrap: 'wrap',
+            }}
+          >
+            <span className="mok-muted" style={{ fontSize: 14, flex: 1, minWidth: 180 }}>
+              Ready when you are. Begin the guided session anytime.
+            </span>
+            <Link
+              to={data.key === 'writing' ? '/journal' : `/practices/${data.key}/session`}
+              className="mok-btn mok-btn--primary"
+            >
+              Begin session →
+            </Link>
+          </div>
 
           {stanzas.length === 0 ? (
             <p className="mok-muted">Content is being prepared. Check back soon.</p>

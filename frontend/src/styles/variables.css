@@ -1,15 +1,15 @@
 /**
- * YouSourceful · Mokshly — editorial-calm design tokens.
+ * YouSourceful · Mokshly — design tokens (calm-blue editorial).
  *
  * Three layers:
- *   1. Brand tokens — palette, typography, motion (never used directly in components).
- *   2. Semantic tokens — what components actually consume (`--bg`, `--text`, `--accent`).
- *   3. Theme overrides — defined in `themes/*.css` and pick a brand palette per theme.
+ *   1. Brand tokens — palette, typography, motion (never used directly).
+ *   2. Semantic tokens — what components actually consume (`--bg`, `--accent`).
+ *   3. Theme overrides — files in `themes/*.css` swap brand palettes per theme.
  *
- * The default "Bone" theme is the editorial-calm look: warm bone background,
- * Spectral serif for body text, Inter sans for UI labels, muted ochre + sage
- * accents. Components never reference brand tokens directly — only the semantic
- * layer — so themes can swap freely.
+ * The default "Stillwater" theme is the calming-blue look: cool paper
+ * background, slate-blue accent, soft teal-sage and dusty lavender for the
+ * secondary tints. Components never reference brand tokens directly — only the
+ * semantic layer — so themes can swap freely.
  */
 
 :root {
@@ -31,70 +31,77 @@
   --radius-lg: 4px;
   --radius-pill: 999px;
 
-  --shadow-soft: 0 1px 2px rgba(31, 27, 22, 0.04),
-                 0 8px 24px rgba(31, 27, 22, 0.06);
-  --shadow-lift: 0 2px 4px rgba(31, 27, 22, 0.06),
-                 0 24px 48px rgba(31, 27, 22, 0.08);
+  --shadow-soft: 0 1px 2px rgba(20, 33, 53, 0.04),
+                 0 8px 24px rgba(20, 33, 53, 0.06);
+  --shadow-lift: 0 2px 4px rgba(20, 33, 53, 0.06),
+                 0 24px 48px rgba(20, 33, 53, 0.10);
 
-  /* ── Brand · palette (Bone theme) ─────────────────────────── */
-  --bone:               #F5F1E8;   /* warm bone bg */
-  --bone-raised:        #FAF6ED;   /* raised paper */
-  --bone-ink:           #1F1B16;   /* deep ink (overlays, dark moments) */
-  --ink:                #2A2520;   /* body text */
-  --ink-soft:           #5C544A;   /* secondary */
-  --ink-faint:          #9A8F80;   /* tertiary */
-  --rule:               #E5DCC8;   /* hairlines */
-  --rule-soft:          #EDE6D4;
-  --ochre:              #8B6F3A;   /* muted ochre — primary accent */
-  --ochre-deep:         #6B5328;
-  --sage:               #7C8A6E;   /* calm sage — secondary accent */
-  --rust:               #A65A3A;   /* warm rust — tertiary accent */
-  --paper:              #FFFCF5;
+  /* ── Brand · palette (Stillwater — calming blue) ──────────── */
+  --paper:              #FFFFFF;
+  --bg-cool:            #EEF3F9;  /* cool paper background */
+  --bg-raised-cool:     #F8FAFD;  /* raised paper */
+  --ink-deep:           #15202E;  /* deep midnight-slate (overlays) */
+  --ink-body:           #1F2D3D;  /* body text */
+  --ink-muted:          #4F6079;  /* secondary text */
+  --ink-faint:          #8896A8;  /* tertiary text */
+  --rule-cool:          #D7DFEA;  /* hairlines */
+  --rule-cool-soft:     #E4EAF1;
+
+  /* Primary blue family */
+  --blue:               #4D6FA5;  /* slate blue — primary accent */
+  --blue-deep:          #2F4A75;
+  --blue-soft:          #B6C7DD;
+
+  /* Secondary calm tints */
+  --teal-sage:          #6F9A95;  /* soft teal-sage — body/movement */
+  --lavender:           #8E7CA5;  /* dusty lavender — voice/warmth */
+  --ochre-soft:         #B58A52;  /* one warm note for contrast */
 }
 
-/* ── Default theme · "Bone" — applied when no theme attribute is set ── */
+/* ── Default theme · "Stillwater" — calming blue ───────────────────── */
 :root,
-[data-theme='bone'] {
-  --bg:                 var(--bone);
-  --bg-subtle:          var(--rule-soft);
-  --bg-raised:          var(--bone-raised);
-  --surface:            var(--bone-raised);
+[data-theme='stillwater'],
+[data-theme='bone'] /* alias the old name so existing settings persist */ {
+  --bg:                 var(--bg-cool);
+  --bg-subtle:          var(--rule-cool-soft);
+  --bg-raised:          var(--bg-raised-cool);
+  --surface:            var(--bg-raised-cool);
   --surface-raised:     var(--paper);
-  --bg-ink:             var(--bone-ink);
-  --border:             var(--rule);
+  --bg-ink:             var(--ink-deep);
+  --border:             var(--rule-cool);
   --border-strong:      var(--ink-faint);
 
-  --text:               var(--ink);
-  --text-muted:         var(--ink-soft);
+  --text:               var(--ink-body);
+  --text-muted:         var(--ink-muted);
   --text-subtle:        var(--ink-faint);
-  --text-inverse:       var(--bone);
+  --text-inverse:       var(--paper);
 
-  --accent:             var(--ochre);
-  --accent-strong:      var(--ochre-deep);
-  --accent-soft:        rgba(139, 111, 58, 0.10);
+  --accent:             var(--blue);
+  --accent-strong:      var(--blue-deep);
+  --accent-soft:        rgba(77, 111, 165, 0.10);
   --accent-on:          var(--paper);
 
-  --sage:               var(--sage);
-  --rust:               var(--rust);
-  --warmth:             var(--rust);
-  --warmth-soft:        rgba(166, 90, 58, 0.10);
+  --sage:               var(--teal-sage);
+  --rust:               var(--lavender);
+  --warmth:             var(--lavender);
+  --warmth-soft:        rgba(142, 124, 165, 0.10);
 
-  --success:            var(--sage);
-  --warning:            var(--ochre);
-  --danger:             var(--rust);
-  --danger-soft:        rgba(166, 90, 58, 0.10);
-  --danger-border:      rgba(166, 90, 58, 0.32);
+  --success:            var(--teal-sage);
+  --warning:            var(--ochre-soft);
+  --danger:             #B85A6E;
+  --danger-soft:        rgba(184, 90, 110, 0.10);
+  --danger-border:      rgba(184, 90, 110, 0.32);
 
-  --focus-ring:         rgba(139, 111, 58, 0.35);
+  --focus-ring:         rgba(77, 111, 165, 0.40);
 }
 
-/* Per-practice accent colours (driven by data-practice attribute on session). */
+/* Per-practice accents — driven by --practice-color on the session shell. */
 :root {
-  --practice-breathing: var(--sage);
-  --practice-thinking:  var(--ochre);
-  --practice-talking:   var(--rust);
-  --practice-writing:   var(--ochre-deep);
-  --practice-moving:    var(--sage);
-  --practice-resetting: var(--rust);
-  --practice-aligning:  var(--ochre);
+  --practice-breathing: var(--teal-sage);
+  --practice-thinking:  var(--blue);
+  --practice-talking:   var(--lavender);
+  --practice-writing:   var(--blue-deep);
+  --practice-moving:    var(--teal-sage);
+  --practice-resetting: var(--lavender);
+  --practice-aligning:  var(--blue);
 }

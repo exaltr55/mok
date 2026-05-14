@@ -1,26 +1,29 @@
 /**
- * Sage — cooler alternative to Bone. Same editorial-calm voice.
+ * Sage — a cooler alternative still in the calm-blue family, with a slight
+ * teal shift. Same editorial-calm voice; just a different mood.
  * Activate via `<html data-theme="sage">`.
  */
 
 [data-theme='sage'] {
-  --bg:                 #EFF1EC;
-  --bg-subtle:          #E2E6DC;
-  --bg-raised:          #F5F7F1;
-  --surface:            #F5F7F1;
-  --surface-raised:     #FFFCF5;
-  --border:             #D4DCC9;
-  --border-strong:      #94A089;
+  --bg:                 #EFF3F1;
+  --bg-subtle:          #E3EBE8;
+  --bg-raised:          #F6F9F7;
+  --surface:            #F6F9F7;
+  --surface-raised:     #FFFFFF;
+  --border:             #D2DCD8;
+  --border-strong:      #94A8A2;
 
-  --text:               #283027;
-  --text-muted:         #5A665C;
-  --text-subtle:        #94A089;
+  --text:               #1F2D2A;
+  --text-muted:         #4F605C;
+  --text-subtle:        #8094A2;
 
-  --accent:             #4D6A5F;
-  --accent-strong:      #2F4439;
-  --accent-soft:        rgba(77, 106, 95, 0.10);
-  --accent-on:          #FFFCF5;
+  --accent:             #4D6F8A;     /* cool teal-slate */
+  --accent-strong:      #2F4E64;
+  --accent-soft:        rgba(77, 111, 138, 0.10);
+  --accent-on:          #FFFFFF;
 
-  --warmth:             #A65A3A;
-  --warmth-soft:        rgba(166, 90, 58, 0.10);
+  --sage:               #6F9A95;
+  --rust:               #8E7CA5;
+  --warmth:             #8E7CA5;
+  --warmth-soft:        rgba(142, 124, 165, 0.10);
 }

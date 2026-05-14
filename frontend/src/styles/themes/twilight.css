@@ -1,35 +1,37 @@
 /**
- * Twilight — dark mode for the editorial-calm look. Same warmth, inverted.
+ * Twilight — dark mode of the calm-blue palette. Deep midnight, lifted blues.
  * Activate via `<html data-theme="twilight">`.
  */
 
 [data-theme='twilight'] {
-  --bg:                 #1F1B16;
-  --bg-subtle:          #28231C;
-  --bg-raised:          #2D2820;
-  --surface:            #2D2820;
-  --surface-raised:     #35302A;
-  --border:             #3D3729;
-  --border-strong:      #5C544A;
+  --bg:                 #0F1620;
+  --bg-subtle:          #161F2C;
+  --bg-raised:          #1A2434;
+  --surface:            #1A2434;
+  --surface-raised:     #22304A;
+  --border:             #2A3651;
+  --border-strong:      #475877;
 
-  --text:               #EDE6D4;
-  --text-muted:         #B0A695;
-  --text-subtle:        #7E7565;
-  --text-inverse:       #1F1B16;
+  --text:               #DAE2EE;
+  --text-muted:         #99A8BD;
+  --text-subtle:        #6F7E94;
+  --text-inverse:       #0F1620;
 
-  --accent:             #C9A961;     /* lifted ochre */
-  --accent-strong:      #E0C68A;
-  --accent-soft:        rgba(201, 169, 97, 0.14);
-  --accent-on:          #1F1B16;
+  --accent:             #88A8D6;     /* lifted slate blue */
+  --accent-strong:      #B0C8E8;
+  --accent-soft:        rgba(136, 168, 214, 0.14);
+  --accent-on:          #0F1620;
 
-  --warmth:             #D87958;
-  --warmth-soft:        rgba(216, 121, 88, 0.14);
+  --sage:               #8EB0AA;
+  --rust:               #A89BC0;
+  --warmth:             #A89BC0;
+  --warmth-soft:        rgba(168, 155, 192, 0.14);
 
-  --success:            #9BAB8C;
-  --warning:            #E0C68A;
-  --danger:             #D87958;
-  --danger-soft:        rgba(216, 121, 88, 0.14);
-  --danger-border:      rgba(216, 121, 88, 0.40);
+  --success:            #8EB0AA;
+  --warning:            #D4B576;
+  --danger:             #D88898;
+  --danger-soft:        rgba(216, 136, 152, 0.14);
+  --danger-border:      rgba(216, 136, 152, 0.40);
 
-  --focus-ring:         rgba(201, 169, 97, 0.55);
+  --focus-ring:         rgba(136, 168, 214, 0.55);
 }

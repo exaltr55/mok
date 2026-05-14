@@ -1,13 +1,19 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import BottomNav from './BottomNav';
 import Wordmark from './Wordmark';
 
 const PUBLIC_PATHS = ['/', '/about', '/contact', '/login', '/signup', '/forgot-password', '/reset-password'];
 
 /**
  * The chrome wrapping every routed page. Two presentations:
- *  - marketing (public pages): top nav with Home/About/Contact + Sign in/Begin
- *  - app (authenticated, non-public): Today/Practices/Journal/Learn/Me
+ *   - marketing (public pages): top nav with Home/About/Contact + Sign in/Begin
+ *   - app (authenticated, non-public): top nav with Settings/Sign-out;
+ *     primary destinations live in the mobile bottom-nav and in the
+ *     desktop-only middle of the top nav.
+ *
+ * The session route (/practices/:key/session) and the reading view
+ * (/practices/:key) are fullscreen overlays — they render outside this shell.
  */
 export default function AppShell() {
   const { isAuthenticated, user, logout } = useAuth();
@@ -26,6 +32,7 @@ export default function AppShell() {
             <Wordmark size="sm" />
           </NavLink>
 
+          {/* Primary nav links — hidden on mobile via CSS */}
           <div className="mok-nav-links">
             {showAppNav ? (
               <>
@@ -33,7 +40,7 @@ export default function AppShell() {
                 <NavLink to="/practices" className={({ isActive }) => `mok-nav-link ${isActive ? 'active' : ''}`}>Practices</NavLink>
                 <NavLink to="/journal" className={({ isActive }) => `mok-nav-link ${isActive ? 'active' : ''}`}>Journal</NavLink>
                 <NavLink to="/learn" className={({ isActive }) => `mok-nav-link ${isActive ? 'active' : ''}`}>Learn</NavLink>
-                <NavLink to="/history" className={({ isActive }) => `mok-nav-link ${isActive ? 'active' : ''}`}>Me</NavLink>
+                <NavLink to="/dashboard" className={({ isActive }) => `mok-nav-link ${isActive ? 'active' : ''}`}>Me</NavLink>
               </>
             ) : (
               <>
@@ -47,15 +54,18 @@ export default function AppShell() {
           <div className="mok-nav-actions">
             {isAuthenticated ? (
               <>
-                <NavLink to="/settings" className="mok-nav-link">Settings</NavLink>
-                <span className="mok-subtle" style={{ fontSize: 13, fontFamily: 'var(--font-sans)' }}>
+                <NavLink to="/settings" className="mok-nav-link mok-nav-link--icon" aria-label="Settings">
+                  <span aria-hidden="true">⚙</span>
+                  <span className="mok-hide-mobile">Settings</span>
+                </NavLink>
+                <span className="mok-subtle mok-hide-mobile" style={{ fontSize: 13, fontFamily: 'var(--font-sans)' }}>
                   {user?.name?.split(' ')[0]}
                 </span>
-                <button type="button" className="mok-btn mok-btn--ghost" onClick={logout}>Sign out</button>
+                <button type="button" className="mok-btn mok-btn--ghost mok-hide-mobile" onClick={logout}>Sign out</button>
               </>
             ) : (
               <>
-                <NavLink to="/login" className="mok-nav-link">Sign in</NavLink>
+                <NavLink to="/login" className="mok-nav-link mok-hide-mobile">Sign in</NavLink>
                 <NavLink to="/signup" className="mok-btn mok-btn--primary">Begin</NavLink>
               </>
             )}
@@ -70,6 +80,8 @@ export default function AppShell() {
       <footer className="mok-footer">
         © {new Date().getFullYear()} · Mokshly · Human Sustainability
       </footer>
+
+      {showAppNav && <BottomNav />}
     </div>
   );
 }

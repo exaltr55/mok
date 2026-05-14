@@ -125,6 +125,108 @@ class HistoryOut(PydanticModel):
     days: list[HistoryDay]
 
 
+# ── Dashboard (aggregated charts) ───────────────────────────────
+
+
+class PracticeBreakdown(PydanticModel):
+    key: str
+    name: str
+    short_name: str
+    count_30d: int
+    count_90d: int
+    last_practiced: date | None
+
+
+class DashboardDay(PydanticModel):
+    day: date
+    count: int
+
+
+class DashboardOut(PydanticModel):
+    total_sessions: int
+    days_practiced_30d: int
+    days_practiced_90d: int
+    by_practice: list[PracticeBreakdown]
+    last_30_days: list[DashboardDay]
+
+
+@router.get("/dashboard", response_model=DashboardOut)
+async def dashboard(
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+) -> DashboardOut:
+    """Aggregate practice data for the dashboard charts.
+
+    Returns total sessions, days practiced over 30/90 days, per-practice
+    breakdown, and a 30-day daily count for the timeline chart. All data is
+    user-scoped — never aggregated across users.
+    """
+    from app.services.practices import PRACTICES
+
+    today = datetime.now(UTC).date()
+    window_90 = today - timedelta(days=89)
+    window_30 = today - timedelta(days=29)
+
+    rows = await db.execute(
+        select(
+            PracticeSession.practice_key,
+            PracticeSession.practice_day,
+        ).where(
+            PracticeSession.user_id == user.id,
+            PracticeSession.practice_day >= window_90,
+            PracticeSession.practice_day <= today,
+        )
+    )
+    sessions = list(rows.all())
+
+    # Aggregations
+    total_sessions = len(sessions)
+
+    days_30 = {s.practice_day for s in sessions if s.practice_day >= window_30}
+    days_90 = {s.practice_day for s in sessions}
+
+    by_practice: dict[str, dict] = {}
+    for p in PRACTICES:
+        by_practice[p.key] = {
+            "key": p.key,
+            "name": p.name,
+            "short_name": p.short_name,
+            "count_30d": 0,
+            "count_90d": 0,
+            "last_practiced": None,
+        }
+    for s in sessions:
+        b = by_practice.get(s.practice_key)
+        if not b:
+            continue
+        b["count_90d"] += 1
+        if s.practice_day >= window_30:
+            b["count_30d"] += 1
+        if b["last_practiced"] is None or s.practice_day > b["last_practiced"]:
+            b["last_practiced"] = s.practice_day
+
+    last_30: dict[date, int] = {}
+    for s in sessions:
+        if s.practice_day >= window_30:
+            last_30[s.practice_day] = last_30.get(s.practice_day, 0) + 1
+
+    timeline = [
+        DashboardDay(
+            day=window_30 + timedelta(days=i),
+            count=last_30.get(window_30 + timedelta(days=i), 0),
+        )
+        for i in range(30)
+    ]
+
+    return DashboardOut(
+        total_sessions=total_sessions,
+        days_practiced_30d=len(days_30),
+        days_practiced_90d=len(days_90),
+        by_practice=[PracticeBreakdown(**v) for v in by_practice.values()],
+        last_30_days=timeline,
+    )
+
+
 @router.get("/history", response_model=HistoryOut)
 async def history(
     days: int = 30,
