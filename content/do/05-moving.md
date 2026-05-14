@@ -1,9 +1,5 @@
 # Practice 5 — I M Moving
 
-> Module 05 — *Yoga postures, mindful walking, and squats*. Surface: [Mokshly Do](../../docs/02-pillars/do.md).
-
----
-
 Practice 5: I M Moving  
 
 PART A — Learning the Practice  
@@ -1115,4 +1111,4 @@ Move gently.
 Move often.  
 Move with Awareness.  
 
-That is I M Moving.  
+That is I M Moving.

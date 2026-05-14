@@ -1,9 +1,5 @@
 # S3 — Soil
 
-> Module 03 — *Patterns Meeting the World.* Surface: [Mokshly Learn](../../docs/02-pillars/learn.md).
-
----
-
 The third S stands for **Soil**.
 
 We learned earlier  

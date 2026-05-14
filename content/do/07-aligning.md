@@ -1,9 +1,5 @@
 # Practice 7 — I M Aligning
 
-> Module 07 — *Daily check-ins for alignment of intention and action*. Surface: [Mokshly Do](../../docs/02-pillars/do.md).
-
----
-
 Practice 7: I M Aligning  
 
 PART A — Learning the Practice  
@@ -2133,4 +2129,4 @@ move together,
 
 in their own way,  
 
-at each phase of life.  
+at each phase of life.

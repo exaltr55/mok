@@ -1,9 +1,5 @@
 # Practice 4 — I M Writing
 
-> Module 04 — *Expressive, reflective, and gratitude journaling*. Surface: [Mokshly Do](../../docs/02-pillars/do.md).
-
----
-
 Practice 4: I M Writing  
 
 PART A — Learning the Practice  
@@ -247,4 +243,4 @@ about yourself or someone in your life.
 For example:  
 “I’m thankful for the effort I showed today.”  
 
-This gently completes the practice.  
+This gently completes the practice.

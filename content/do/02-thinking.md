@@ -1,9 +1,5 @@
 # Practice 2 — I M Thinking
 
-> Module 02 — *Noticing thoughts; the anchor thought So Hum*. Surface: [Mokshly Do](../../docs/02-pillars/do.md).
-
----
-
 Practice 2: I M Thinking  
 
 PART A — Learning the Practice  
@@ -308,4 +304,4 @@ Notice your breath again.
 Slowly deepen the breath.  
 
 And ease back  
-into your day.  
+into your day.

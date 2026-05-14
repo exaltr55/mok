@@ -1,9 +1,5 @@
 # S2 — Seed
 
-> Module 02 — *Thought as Pattern.* Surface: [Mokshly Learn](../../docs/02-pillars/learn.md).
-
----
-
 We began by recognizing the Source —  
 the ever-present awareness  
 in which all experience happens.

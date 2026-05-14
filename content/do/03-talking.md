@@ -1,9 +1,5 @@
 # Practice 3 — I M Talking
 
-> Module 03 — *Consciously shaping self-talk through I am affirmations*. Surface: [Mokshly Do](../../docs/02-pillars/do.md).
-
----
-
 Practice 3: I M Talking  
 
 In the previous practice,  
@@ -239,4 +235,4 @@ Let them fade.
 Rest there for a moment.  
 
 Then gently return  
-to your day.  
+to your day.

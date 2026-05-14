@@ -1,9 +1,5 @@
 # Practice 1 — I M Breathing
 
-> Module 01 — *Returning to Source through the breath*. Surface: [Mokshly Do](../../docs/02-pillars/do.md).
-
----
-
 Practice 1: I M Breathing  
 
 Part A — Learning the Practice  
@@ -340,4 +336,4 @@ return to its natural rhythm.
 Take a moment to notice.  
 
 When you’re ready,  
-gently return to your day.  
+gently return to your day.

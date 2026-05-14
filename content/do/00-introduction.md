@@ -1,10 +1,5 @@
 # Part II — The 7 Practices — Introduction
 
-> Module 00 — Bridge from the 5S Framework (Part 1) into the seven practices. Surface: [Mokshly Do](../../docs/02-pillars/do.md).
-> The line structure below preserves the breath-paced cadence of the original. Two trailing spaces force soft line breaks within a stanza; blank lines separate stanzas.
-
----
-
 PART II - THE 7 PRACTICES — INTRODUCTION  
 
 In Part 1,  
@@ -104,4 +99,4 @@ not something you do,
 but how you are.  
 
 Let’s start. We begin  
-with the first practice.  
+with the first practice.

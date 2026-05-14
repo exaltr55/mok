@@ -1,9 +1,5 @@
 # Practice 6 — I M Resetting
 
-> Module 06 — *Conscious pause and reset during the day*. Surface: [Mokshly Do](../../docs/02-pillars/do.md).
-
----
-
 Yousourceful — Practice 6: I M Resetting  
 
 Full Script — Narrator Voiceover  
@@ -344,4 +340,4 @@ This is the practice of resetting.
 
 Simple. Gentle. And quietly powerful.  
 
-Return to it often.  
+Return to it often.

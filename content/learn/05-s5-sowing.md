@@ -1,9 +1,5 @@
 # S5 — Sowing
 
-> Module 05 — *Conscious Choice and Living Well.* Surface: [Mokshly Learn](../../docs/02-pillars/learn.md).
-
----
-
 The fifth S stands for **Sowing**.
 
 This is where understanding  

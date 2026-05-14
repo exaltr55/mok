@@ -1,9 +1,5 @@
 # S4 — Seasons
 
-> Module 04 — *Time, Unfolding, and Alignment.* Surface: [Mokshly Learn](../../docs/02-pillars/learn.md).
-
----
-
 The fourth S stands for **Seasons**.
 
 An apple seed  

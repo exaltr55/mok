@@ -1,9 +1,5 @@
 # S1 — Source
 
-> Module 01 — *Who You Truly Are.* Surface: [Mokshly Learn](../../docs/02-pillars/learn.md).
-
----
-
 Every experience you have —  
 a thought, an emotion, a reaction,  
 a moment of focus or stress —

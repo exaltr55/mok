@@ -1,9 +1,5 @@
 # From Understanding to Living
 
-> Module 06 — Bridge from Part 1 (5S Framework) to Part 2 (the 7 Practices). Surface: [Mokshly Learn](../../docs/02-pillars/learn.md).
-
----
-
 These five Ss of the 5S Framework  
 help us bring clarity  
 to how experience unfolds.

@@ -1,10 +1,5 @@
 # Welcome to YouSourceful
 
-> Module 00 — Opening framing. Surface: [Mokshly Learn](../../docs/02-pillars/learn.md).
-> The lines below preserve the breath-paced cadence of the original. Two trailing spaces force soft line breaks within a stanza; blank lines separate stanzas.
-
----
-
 ## YouSourceful — The Foundational System for Human Sustainability
 
 We are living through  
