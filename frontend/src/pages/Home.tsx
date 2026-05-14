@@ -5,23 +5,31 @@ import Wordmark from '../components/Wordmark';
 const FEATURES = [
   {
     marker: '5S',
-    title: 'A framework, not a regimen',
-    body: 'Source, Seed, Soil, Seasons, Sowing — five lenses for seeing how experience arises and unfolds.',
+    title: 'A framework for awareness',
+    body:
+      'Source, Seed, Soil, Seasons, Sowing — five lenses for seeing how experience ' +
+      'arises, takes form, and unfolds. The conceptual ground.',
   },
   {
     marker: '7',
     title: 'Seven gentle practices',
-    body: 'Breathing, Thinking, Talking, Writing, Moving, Resetting, Aligning. Doorways, not boxes.',
+    body:
+      'Breathing, Thinking, Talking, Writing, Moving, Resetting, Aligning. ' +
+      'Doorways through which Awareness becomes available.',
   },
   {
     marker: '◯',
     title: 'Honors your nature',
-    body: 'No streaks. No leaderboards. The MCI is yours alone — never shared, ever.',
+    body:
+      'Your practice is yours alone. Your journal, your reflections, and your MCI ' +
+      'stay private to you — always.',
   },
   {
     marker: '·',
-    title: 'Minimum viable engagement',
-    body: 'The app succeeds when you spend less time in it and more in your life.',
+    title: 'Built for sustainable depth',
+    body:
+      'A short return, repeated over time, develops capacities that endure. The app ' +
+      "succeeds when you spend less time in it and more in your life.",
   },
 ];
 
@@ -76,8 +84,8 @@ export default function Home() {
           <Wordmark size="lg" />
         </div>
         <p className="mok-muted" style={{ maxWidth: '56ch', margin: '0 auto', fontSize: 17, fontStyle: 'italic' }}>
-          "The practice is a doorway, not a destination. Some days you walk through one doorway.
-          Some days three. Some days none — and still the awareness is with you."
+          "The practice is a doorway. Some days you walk through one. Some days three.
+          Some days you simply notice the day — and still the Awareness is with you."
         </p>
         {!isAuthenticated && (
           <div>

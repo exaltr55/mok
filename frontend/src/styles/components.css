@@ -650,6 +650,38 @@
   border-bottom-color: var(--accent);
 }
 
+/* ── Learn row — index list item ─────────────────────────────── */
+
+.mok-learn-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 18px;
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  text-decoration: none;
+  color: inherit;
+  transition:
+    border-color var(--motion-quick) var(--easing),
+    background var(--motion-quick) var(--easing);
+}
+
+.mok-learn-row:hover {
+  border-color: var(--border-strong);
+  background: var(--surface-raised);
+}
+
+.mok-learn-num {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-subtle);
+  letter-spacing: 0.04em;
+  min-width: 28px;
+  text-align: center;
+}
+
 /* ── Practice tile (index) ───────────────────────────────────── */
 
 .mok-practice-grid {

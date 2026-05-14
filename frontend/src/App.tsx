@@ -24,6 +24,7 @@ import ResetPassword from './pages/ResetPassword';
 import Settings from './pages/Settings';
 import Signup from './pages/Signup';
 import Today from './pages/Today';
+import Tour from './pages/Tour';
 
 /**
  * Top-level routing for YouSourceful.
@@ -60,6 +61,9 @@ export default function App() {
 
             {/* Authenticated + onboarded */}
             <Route element={<PrivateRoute />}>
+              {/* Tour — the post-onboarding section walkthrough */}
+              <Route path="tour" element={<Tour />} />
+
               {/* Today */}
               <Route path="today" element={<Today />} />
 

@@ -2,15 +2,15 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { updateProfile, type ProfileUpdate } from '../api/client';
 import { useAuth } from '../contexts/AuthContext';
-import Logo from '../components/Logo';
+import Wordmark from '../components/Wordmark';
 
 const STEPS = [
   'welcome',
-  'intention',
+  'about',
   'cadence',
   'cohort',
   'consent',
-  'first-practice',
+  'ready',
 ] as const;
 
 type Step = typeof STEPS[number];
@@ -52,7 +52,8 @@ export default function Onboarding() {
         };
         await updateProfile(patch);
         await refresh();
-        navigate('/me', { replace: true });
+        // First stop after onboarding is the section tour, then Learn.
+        navigate('/tour', { replace: true });
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Could not save your preferences');
       } finally {
@@ -71,7 +72,7 @@ export default function Onboarding() {
   return (
     <div style={{ maxWidth: 640, margin: '0 auto' }}>
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 28 }}>
-        <Logo size="md" />
+        <Wordmark size="md" />
       </div>
 
       <div className="mok-card mok-card--padded">
@@ -87,34 +88,44 @@ export default function Onboarding() {
           <>
             <h1 className="mok-section-title">Welcome, {user?.name?.split(' ')[0]}.</h1>
             <p className="mok-section-lede">
-              We'll set up your practice in a few quiet steps. Nothing here is required —
-              you can change everything later in Settings.
+              YouSourceful is a quiet system for cultivating Awareness — the steady inner
+              space that lets you stay yourself through change. The next few steps shape
+              the app for you.
             </p>
-            <p className="mok-muted" style={{ fontStyle: 'italic', marginTop: 18 }}>
-              Mokshly is not a regime of seven daily practices to check off. It's a
-              system for cultivating Awareness. The practices are doorways — some
-              days you walk through one, some days three, some days none. Each is
-              enough.
+            <p className="mok-muted" style={{ marginTop: 16, fontStyle: 'italic' }}>
+              The practices are doorways through which Awareness becomes available. Some
+              days you walk through one. Some days three. Each is enough. We honor
+              consistency and intention.
+            </p>
+            <p className="mok-muted" style={{ marginTop: 12, fontSize: 14 }}>
+              Your practice is yours alone — your journal, your reflections, and your MCI
+              stay private to you.
             </p>
           </>
         )}
 
-        {step === 'intention' && (
+        {step === 'about' && (
           <>
-            <h1 className="mok-section-title">What brings you here?</h1>
-            <p className="mok-section-lede">One sentence. You can change it any time.</p>
+            <h1 className="mok-section-title">Tell us about you.</h1>
+            <p className="mok-section-lede">
+              A sentence on what's bringing you here, and one quick context question.
+              Everything is optional. You can change it later in Preferences.
+            </p>
             <div className="mok-field">
-              <label htmlFor="intention">Your intention (optional)</label>
+              <label htmlFor="intention">Your objective for this practice</label>
               <textarea
                 id="intention"
                 value={intention}
                 onChange={(e) => setIntention(e.target.value)}
-                placeholder="To stay grounded as my work changes."
+                placeholder="To stay grounded as my work changes. To be more present with my team."
                 maxLength={400}
               />
+              <span className="mok-field-hint">
+                You can revisit this any time — it shapes how the app gently meets you.
+              </span>
             </div>
             <div className="mok-field">
-              <label htmlFor="stage">Career stage (optional)</label>
+              <label htmlFor="stage">Career stage</label>
               <select id="stage" value={careerStage} onChange={(e) => setCareerStage(e.target.value)}>
                 <option value="">Prefer not to say</option>
                 <option value="early">Early career</option>
@@ -122,7 +133,9 @@ export default function Onboarding() {
                 <option value="senior">Senior</option>
                 <option value="post-career">Post-career</option>
               </select>
-              <span className="mok-field-hint">Used only for cohort matching. Never shared.</span>
+              <span className="mok-field-hint">
+                Used for cohort matching only. Stays private to you and the matcher.
+              </span>
             </div>
           </>
         )}
@@ -131,8 +144,7 @@ export default function Onboarding() {
           <>
             <h1 className="mok-section-title">How will you practice?</h1>
             <p className="mok-section-lede">
-              A rough rhythm helps. The target is 5 of 7 days — never all seven. Rest is
-              part of practice.
+              A rough rhythm helps. Aim for five of seven days — rest is part of practice.
             </p>
             <div className="mok-field">
               <label>Preferred time of day</label>
@@ -167,15 +179,16 @@ export default function Onboarding() {
 
         {step === 'cohort' && (
           <>
-            <h1 className="mok-section-title">Your cohort</h1>
+            <h1 className="mok-section-title">Your cohort.</h1>
             <p className="mok-section-lede">
-              When you share what matters, you'd rather be with…
+              Five practitioners walking alongside you. Fifteen minutes a week. When you
+              share what matters, you'd rather be with…
             </p>
             <div className="mok-stack-sm" style={{ marginBottom: 14 }}>
               {([
-                ['outside', 'People outside my affiliation', 'Most members choose this — perspective from outside your day-to-day.'],
-                ['within', 'People from my affiliation', 'Useful when you want shared context.'],
-                ['none', 'No cohort for now', 'Practice solo. You can opt in later.'],
+                ['outside', 'People outside my company', 'Fresh perspective, away from your day-to-day.'],
+                ['within', 'People from my company', 'Shared context, same trenches.'],
+                ['none', 'Practice solo for now', 'Walking alone is its own path. You can opt into a cohort any time.'],
               ] as const).map(([val, label, hint]) => (
                 <label key={val} className="mok-card mok-card--quiet" style={{ padding: 16, cursor: 'pointer', display: 'block' }}>
                   <div className="mok-row">
@@ -192,7 +205,7 @@ export default function Onboarding() {
                 <select id="meeting-day" value={meetingDay} onChange={(e) => setMeetingDay(e.target.value)}>
                   {DAYS.map((d) => <option key={d} value={d}>{d.charAt(0).toUpperCase() + d.slice(1)}</option>)}
                 </select>
-                <span className="mok-field-hint">Your weekly Connect is 15 minutes. Same time each week.</span>
+                <span className="mok-field-hint">Your weekly Connect is fifteen minutes. Same time each week.</span>
               </div>
             )}
           </>
@@ -200,26 +213,26 @@ export default function Onboarding() {
 
         {step === 'consent' && (
           <>
-            <h1 className="mok-section-title">A few quiet promises</h1>
+            <h1 className="mok-section-title">A few quiet promises.</h1>
             <p className="mok-section-lede">
-              Each consent is separate. You can change them any time in Settings.
+              Each consent is separate, and reversible any time in Preferences.
             </p>
             <div className="mok-card mok-card--quiet" style={{ padding: 16, marginBottom: 12 }}>
               <div><strong>Platform data</strong> <span className="mok-chip">required</span></div>
               <div className="mok-muted" style={{ fontSize: 13, marginTop: 4 }}>
-                Necessary for the account to work. Your journal, MCI, and reflections
-                are always Tier 1 — never shared with anyone.
+                What we need to run your account. Your journal, your MCI, and your
+                reflections stay private to you — always.
               </div>
             </div>
             <label className="mok-card mok-card--quiet" style={{ padding: 16, marginBottom: 12, display: 'block', cursor: 'pointer' }}>
               <div className="mok-row">
                 <input type="checkbox" checked={aggregateConsent} onChange={(e) => setAggregateConsent(e.target.checked)} />
-                <strong>Tenant aggregate sharing</strong>
+                <strong>Aggregate signals to your employer</strong>
                 <span className="mok-chip">optional</span>
               </div>
               <div className="mok-muted" style={{ marginLeft: 24, fontSize: 13 }}>
-                Contributes anonymized signals (never individual data) to aggregate
-                reports. Only at groups of ≥10. Revocable any time.
+                Anonymized counts roll up into your employer's program-health view, only
+                at groups of ten or more. Your individual data stays with you.
               </div>
             </label>
             <label className="mok-card mok-card--quiet" style={{ padding: 16, display: 'block', cursor: 'pointer' }}>
@@ -228,27 +241,25 @@ export default function Onboarding() {
                 <strong>AI Guide check-ins</strong>
               </div>
               <div className="mok-muted" style={{ marginLeft: 24, fontSize: 13 }}>
-                A rule-based companion that notices meaningful moments (Day 7, after
-                an absence, anniversaries). Sees practice patterns and your MCI,
-                never your journal or reflections.
+                A rule-based companion that notices meaningful moments — Day 7, after an
+                absence, the turn of a phase. Sees only your practice patterns; your
+                journal and reflections stay yours.
               </div>
             </label>
           </>
         )}
 
-        {step === 'first-practice' && (
+        {step === 'ready' && (
           <>
-            <h1 className="mok-section-title">You're ready.</h1>
+            <h1 className="mok-section-title">You're ready, {user?.name?.split(' ')[0]}.</h1>
             <p className="mok-section-lede">
-              We'll place you in a cohort in the next formation wave. Until then,
-              your practice is waiting.
+              Next, a brief tour — about ninety seconds, showing what's in YouSourceful
+              and how it all fits together. Then we'll begin with the Learn section.
             </p>
-            <div className="mok-card mok-card--quiet" style={{ padding: 20 }}>
-              <div className="mok-muted" style={{ fontSize: 13, letterSpacing: '0.16em', textTransform: 'uppercase' }}>
-                Recommended first practice
-              </div>
-              <h2 style={{ fontFamily: 'var(--font-display)', margin: '6px 0', fontSize: 24 }}>I M Breathing</h2>
-              <div className="mok-muted">Three minutes. A simple 4-4-4 rhythm.</div>
+            <div className="mok-card mok-card--quiet" style={{ padding: 20, marginTop: 12 }}>
+              <p className="mok-muted" style={{ fontSize: 14, margin: 0, fontStyle: 'italic' }}>
+                "The practice is a doorway. What you carry from it lives in your day."
+              </p>
             </div>
           </>
         )}
@@ -257,8 +268,8 @@ export default function Onboarding() {
           {stepIdx > 0 ? (
             <button type="button" className="mok-btn mok-btn--ghost" onClick={back} disabled={saving}>← Back</button>
           ) : <span />}
-          <button type="button" className="mok-btn mok-btn--gradient" onClick={next} disabled={saving}>
-            {saving ? 'Saving…' : onLast ? 'Begin practicing' : 'Continue →'}
+          <button type="button" className="mok-btn mok-btn--primary" onClick={next} disabled={saving}>
+            {saving ? 'Saving…' : onLast ? 'Start the tour →' : 'Continue →'}
           </button>
         </div>
       </div>

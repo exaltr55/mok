@@ -59,7 +59,7 @@ export default function Login() {
         <div style={{ marginTop: 20, textAlign: 'center', fontSize: 14, color: 'var(--text-muted)' }}>
           <Link to="/forgot-password" style={{ color: 'var(--accent)' }}>Forgot your password?</Link>
           <p style={{ marginTop: 10 }}>
-            No account? <Link to="/signup" style={{ color: 'var(--accent)' }}>Begin here</Link>
+            New here? <Link to="/signup" style={{ color: 'var(--accent)' }}>Begin here</Link>
           </p>
         </div>
       </form>

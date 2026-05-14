@@ -121,7 +121,7 @@ export default function Journal() {
       <section>
         <h2 className="mok-section-title" style={{ fontSize: 20 }}>Recent entries</h2>
         {recent.length === 0 ? (
-          <p className="mok-muted">No entries yet. Today's is your first.</p>
+          <p className="mok-muted">Today's is your first.</p>
         ) : (
           <div className="mok-stack-sm">
             {recent.filter((e) => !today || e.id !== today.id).map((e) => (
