@@ -43,6 +43,11 @@ class ProfileOut(PydanticModel):
     cohort_meeting_day: str | None
     cohort_meeting_window: str | None
     theme: str
+    # Personalization captured at onboarding.
+    stretched_area: str | None
+    restore_style: str | None
+    tone_preference: str | None
+    here_because: str | None
 
     model_config = {"from_attributes": True}
 
@@ -69,6 +74,19 @@ class ProfileUpdate(PydanticModel):
     theme: str | None = Field(
         default=None,
         pattern=r"^(stillwater|sunbeam|cobalt|sage|twilight)$",
+    )
+    # Personalization captured at onboarding.
+    stretched_area: str | None = Field(
+        default=None, pattern=r"^(mind|body|heart|time)$",
+    )
+    restore_style: str | None = Field(
+        default=None, pattern=r"^(solitude|movement|conversation|writing)$",
+    )
+    tone_preference: str | None = Field(
+        default=None, pattern=r"^(quiet|encouraging|reflective)$",
+    )
+    here_because: str | None = Field(
+        default=None, pattern=r"^(burnout|transition|growth|curiosity|recommended)$",
     )
     onboarded: bool | None = None
 

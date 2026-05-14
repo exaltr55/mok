@@ -110,6 +110,12 @@ export interface Profile {
   cohort_meeting_day: string | null;
   cohort_meeting_window: string | null;
   theme: string;
+  // Personalization captured at onboarding.
+  stretched_area: 'mind' | 'body' | 'heart' | 'time' | null;
+  restore_style: 'solitude' | 'movement' | 'conversation' | 'writing' | null;
+  tone_preference: 'quiet' | 'encouraging' | 'reflective' | null;
+  here_because: 'burnout' | 'transition' | 'growth' | 'curiosity' | 'recommended' | null;
+  onboarded_at?: string;
 }
 
 export type ProfileUpdate = Partial<Omit<Profile, 'id' | 'email' | 'role'>>;

@@ -62,4 +62,24 @@ class User(BaseModel):
     phase: Mapped[str] = mapped_column(String(20), nullable=False, default=PHASE_ARRIVING)
 
     # Theme preference, persisted across sessions.
-    theme: Mapped[str] = mapped_column(String(20), nullable=False, default="dawn")
+    theme: Mapped[str] = mapped_column(String(20), nullable=False, default="stillwater")
+
+    # ── Personalization captured during onboarding ─────────────────
+    # Where in life the practitioner is feeling stretched right now. Drives
+    # which practice the Today screen leads with for the first 30 days.
+    # Values: mind | body | heart | time
+    stretched_area: Mapped[str | None] = mapped_column(String(20), nullable=True)
+
+    # How they best restore. Used to tune practice recommendations and
+    # cohort presentation.
+    # Values: solitude | movement | conversation | writing
+    restore_style: Mapped[str | None] = mapped_column(String(20), nullable=True)
+
+    # Tone preference for app voice and (later) the AI Guide.
+    # Values: quiet | encouraging | reflective
+    tone_preference: Mapped[str | None] = mapped_column(String(20), nullable=True)
+
+    # Why the practitioner is here right now. Shapes the welcome greeting
+    # and the first practice suggestion.
+    # Values: burnout | transition | growth | curiosity | recommended
+    here_because: Mapped[str | None] = mapped_column(String(20), nullable=True)

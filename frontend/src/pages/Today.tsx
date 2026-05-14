@@ -2,10 +2,12 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   getHistory,
+  getProfile,
   getTodaySummary,
   getTodaysJournal,
   type HistoryDay,
   type JournalEntry,
+  type Profile,
   type TodayScreen,
 } from '../api/client';
 import { PracticeArt, PRACTICE_COLORS, type PracticeKey } from '../components/PracticeArt';
@@ -18,21 +20,43 @@ function greeting() {
   return 'Good evening';
 }
 
+const TONE_LEDE: Record<NonNullable<Profile['tone_preference']>, string> = {
+  quiet: 'A small space, just for you.',
+  encouraging: 'You came back. That already counts.',
+  reflective: 'Notice what is here, just as it is.',
+};
+
+const AREA_NOTE: Record<NonNullable<Profile['stretched_area']>, string> = {
+  mind: 'A few breaths to soften the mental load.',
+  body: 'A moment to ease what your body has been holding.',
+  heart: 'A small opening for warmth and care.',
+  time: 'A pause amid the press of the day.',
+};
+
+function personalizedLede(profile: Profile | null): string | null {
+  if (!profile) return null;
+  if (profile.tone_preference) return TONE_LEDE[profile.tone_preference];
+  if (profile.stretched_area) return AREA_NOTE[profile.stretched_area];
+  return null;
+}
+
 export default function Today() {
   const [data, setData] = useState<TodayScreen | null>(null);
   const [history, setHistory] = useState<HistoryDay[]>([]);
   const [recentJournal, setRecentJournal] = useState<JournalEntry | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
     let cancelled = false;
-    Promise.all([getTodaySummary(), getHistory(7), getTodaysJournal()])
-      .then(([t, h, j]) => {
+    Promise.all([getTodaySummary(), getHistory(7), getTodaysJournal(), getProfile()])
+      .then(([t, h, j, p]) => {
         if (cancelled) return;
         setData(t);
         setHistory(h.days);
         setRecentJournal(j);
+        setProfile(p);
       })
       .catch((e) => { if (!cancelled) setError(e instanceof Error ? e.message : 'Could not load today'); })
       .finally(() => { if (!cancelled) setLoading(false); });
@@ -57,6 +81,7 @@ export default function Today() {
 
   const today = new Date(data.today + 'T00:00:00');
   const firstName = data.user_name.split(' ')[0] || data.user_name;
+  const lede = personalizedLede(profile);
 
   return (
     <div className="mok-today mok-rise">
@@ -67,6 +92,11 @@ export default function Today() {
         <h1 className="mok-today-greeting">
           {greeting()}, {firstName}.
         </h1>
+        {lede && (
+          <p className="mok-today-lede" style={{ marginTop: 8, fontStyle: 'italic', color: 'var(--text-muted)' }}>
+            {lede}
+          </p>
+        )}
       </section>
 
       {recommended && (

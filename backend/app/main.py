@@ -38,9 +38,33 @@ def _validate_security_config() -> None:
 
 
 async def _init_database() -> None:
-    """Create tables on first boot. Replace with Alembic for production schemas."""
+    """Create tables on first boot, and additively reconcile new columns.
+
+    The dev environment uses SQLite without Alembic, so when we add new
+    optional columns to a model we apply them here with ``ALTER TABLE`` so
+    existing dev databases continue to work. This is a no-op for fresh DBs
+    (the column will already be present from ``Base.metadata.create_all``).
+    Replace with Alembic for production schemas.
+    """
+    from sqlalchemy import inspect, text
+
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+
+        def _migrate(sync_conn: object) -> None:
+            inspector = inspect(sync_conn)
+            existing = {c["name"] for c in inspector.get_columns("users")}
+            additions = [
+                ("stretched_area",   "VARCHAR(20)"),
+                ("restore_style",    "VARCHAR(20)"),
+                ("tone_preference",  "VARCHAR(20)"),
+                ("here_because",     "VARCHAR(20)"),
+            ]
+            for col, ddl in additions:
+                if col not in existing:
+                    sync_conn.execute(text(f"ALTER TABLE users ADD COLUMN {col} {ddl}"))
+
+        await conn.run_sync(_migrate)
 
 
 async def _seed_admin_user() -> None:
