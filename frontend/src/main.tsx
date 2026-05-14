@@ -4,8 +4,10 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import './styles/variables.css';
-import './styles/themes/twilight.css';
+import './styles/themes/sunbeam.css';
+import './styles/themes/cobalt.css';
 import './styles/themes/sage.css';
+import './styles/themes/twilight.css';
 import './styles/layout.css';
 import './styles/components.css';
 

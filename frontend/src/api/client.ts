@@ -267,6 +267,7 @@ export interface PracticeBreakdown {
   count_30d: number;
   count_90d: number;
   last_practiced: string | null;
+  daily_30d: number[];
 }
 
 export interface DashboardDay {
@@ -280,6 +281,8 @@ export interface DashboardData {
   days_practiced_90d: number;
   by_practice: PracticeBreakdown[];
   last_30_days: DashboardDay[];
+  last_practice_key: string | null;
+  last_practice_day: string | null;
 }
 
 export const getDashboard = () => request<DashboardData>('/me/dashboard');

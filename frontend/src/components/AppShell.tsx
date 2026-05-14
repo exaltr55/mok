@@ -28,7 +28,7 @@ export default function AppShell() {
 
       <nav className="mok-nav">
         <div className="mok-nav-inner">
-          <NavLink to={isAuthenticated ? '/today' : '/'} style={{ textDecoration: 'none' }}>
+          <NavLink to={isAuthenticated ? '/dashboard' : '/'} style={{ textDecoration: 'none' }}>
             <Wordmark size="sm" />
           </NavLink>
 

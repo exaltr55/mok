@@ -1,0 +1,49 @@
+/**
+ * Sunbeam — warm, happy, yellow-tinted theme.
+ * A light bowl of morning sunlight: soft saffron paper, amber accent,
+ * peach and gold secondaries. The mood is cheerful but still calm.
+ * Activate via `<html data-theme="sunbeam">`.
+ */
+
+[data-theme='sunbeam'] {
+  --bg:                 #FBF6E2;   /* warm cream paper */
+  --bg-subtle:          #F5EFD7;   /* softer cream */
+  --bg-raised:          #FFFCEE;   /* raised paper, almost white */
+  --surface:            #FFFCEE;
+  --surface-raised:     #FFFFFF;
+  --bg-ink:             #2E2615;   /* warm dark for overlays */
+  --border:             #ECE0BC;   /* warm hairline */
+  --border-strong:      #C9B477;
+
+  --text:               #2F2A1A;   /* warm near-black */
+  --text-muted:         #6B5E3F;
+  --text-subtle:        #9F8E66;
+  --text-inverse:       #FFFCEE;
+
+  --accent:             #D4954A;   /* warm amber */
+  --accent-strong:      #A86A1F;
+  --accent-soft:        rgba(212, 149, 74, 0.14);
+  --accent-on:          #FFFCEE;
+
+  --sage:               #98A66B;   /* warm olive */
+  --rust:               #C77A4A;   /* sunset peach */
+  --warmth:             #C77A4A;
+  --warmth-soft:        rgba(199, 122, 74, 0.10);
+
+  --success:            #6E8C46;
+  --warning:            #D49A2F;
+  --danger:             #B8543F;
+  --danger-soft:        rgba(184, 84, 63, 0.10);
+  --danger-border:      rgba(184, 84, 63, 0.32);
+
+  --focus-ring:         rgba(212, 149, 74, 0.40);
+
+  /* Per-practice tints — warmer family for this theme */
+  --practice-breathing: #98A66B;   /* olive */
+  --practice-thinking:  #D4954A;   /* amber */
+  --practice-talking:   #C77A4A;   /* peach */
+  --practice-writing:   #A86A1F;   /* deep amber */
+  --practice-moving:    #98A66B;   /* olive */
+  --practice-resetting: #C77A4A;   /* peach */
+  --practice-aligning:  #D4954A;   /* amber */
+}

@@ -5,7 +5,7 @@ import { useTheme } from '../contexts/ThemeContext';
 
 export default function Settings() {
   const { refresh } = useAuth();
-  const { theme, setTheme, available } = useTheme();
+  const { theme, setTheme, options } = useTheme();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -135,18 +135,29 @@ export default function Settings() {
         <p className="mok-muted" style={{ fontSize: 14 }}>
           A different palette for a different mood. All themes preserve the brand.
         </p>
-        <div className="mok-row" style={{ gap: 8 }}>
-          {available.map((t) => (
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
+            gap: 10,
+            marginTop: 8,
+          }}
+        >
+          {options.map((opt) => (
             <button
-              key={t}
+              key={opt.id}
               type="button"
-              className={`mok-btn ${theme === t ? 'mok-btn--primary' : ''}`}
+              className={`mok-choice ${theme === opt.id ? 'mok-choice--active' : ''}`}
               onClick={() => {
-                setTheme(t);
-                save({ theme: t });
+                setTheme(opt.id);
+                save({ theme: opt.id });
               }}
+              style={{ padding: '12px 14px' }}
             >
-              {t.charAt(0).toUpperCase() + t.slice(1)}
+              <div style={{ fontWeight: 500, fontSize: 14 }}>{opt.label}</div>
+              <div style={{ fontSize: 12, opacity: 0.75, marginTop: 2, fontStyle: 'italic' }}>
+                {opt.hint}
+              </div>
             </button>
           ))}
         </div>

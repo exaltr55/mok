@@ -46,6 +46,7 @@ export default function App() {
             {/* Authenticated + onboarded */}
             <Route element={<PrivateRoute />}>
               <Route path="today" element={<Today />} />
+              <Route path="dashboard" element={<Dashboard />} />
               <Route path="practices" element={<Practices />} />
               <Route path="practices/:key" element={<PracticeDetail />} />
               <Route path="practices/:key/session" element={<PracticeSession />} />

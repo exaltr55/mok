@@ -66,7 +66,10 @@ class ProfileUpdate(PydanticModel):
     )
     cohort_meeting_window: str | None = Field(default=None, max_length=30)
     phase: str | None = Field(default=None, pattern="|".join(PHASES))
-    theme: str | None = Field(default=None, pattern=r"^(dawn|sage|twilight)$")
+    theme: str | None = Field(
+        default=None,
+        pattern=r"^(stillwater|sunbeam|cobalt|sage|twilight)$",
+    )
     onboarded: bool | None = None
 
 
@@ -135,6 +138,9 @@ class PracticeBreakdown(PydanticModel):
     count_30d: int
     count_90d: int
     last_practiced: date | None
+    # Per-practice daily counts for the last 30 days (oldest → newest).
+    # Each entry corresponds to the matching day in `last_30_days`.
+    daily_30d: list[int]
 
 
 class DashboardDay(PydanticModel):
@@ -148,6 +154,10 @@ class DashboardOut(PydanticModel):
     days_practiced_90d: int
     by_practice: list[PracticeBreakdown]
     last_30_days: list[DashboardDay]
+    # Most recently practiced (across all practices). Powers the
+    # "Continue your practice" card on the dashboard.
+    last_practice_key: str | None
+    last_practice_day: date | None
 
 
 @router.get("/dashboard", response_model=DashboardOut)
@@ -186,6 +196,7 @@ async def dashboard(
     days_90 = {s.practice_day for s in sessions}
 
     by_practice: dict[str, dict] = {}
+    per_practice_daily: dict[str, dict[date, int]] = {}
     for p in PRACTICES:
         by_practice[p.key] = {
             "key": p.key,
@@ -195,6 +206,11 @@ async def dashboard(
             "count_90d": 0,
             "last_practiced": None,
         }
+        per_practice_daily[p.key] = {}
+
+    last_practice_day: date | None = None
+    last_practice_key: str | None = None
+
     for s in sessions:
         b = by_practice.get(s.practice_key)
         if not b:
@@ -202,28 +218,40 @@ async def dashboard(
         b["count_90d"] += 1
         if s.practice_day >= window_30:
             b["count_30d"] += 1
+            per_practice_daily[s.practice_key][s.practice_day] = (
+                per_practice_daily[s.practice_key].get(s.practice_day, 0) + 1
+            )
         if b["last_practiced"] is None or s.practice_day > b["last_practiced"]:
             b["last_practiced"] = s.practice_day
+        if last_practice_day is None or s.practice_day > last_practice_day:
+            last_practice_day = s.practice_day
+            last_practice_key = s.practice_key
 
     last_30: dict[date, int] = {}
     for s in sessions:
         if s.practice_day >= window_30:
             last_30[s.practice_day] = last_30.get(s.practice_day, 0) + 1
 
-    timeline = [
-        DashboardDay(
-            day=window_30 + timedelta(days=i),
-            count=last_30.get(window_30 + timedelta(days=i), 0),
+    days = [window_30 + timedelta(days=i) for i in range(30)]
+    timeline = [DashboardDay(day=d, count=last_30.get(d, 0)) for d in days]
+
+    breakdowns: list[PracticeBreakdown] = []
+    for v in by_practice.values():
+        breakdowns.append(
+            PracticeBreakdown(
+                **v,
+                daily_30d=[per_practice_daily[v["key"]].get(d, 0) for d in days],
+            )
         )
-        for i in range(30)
-    ]
 
     return DashboardOut(
         total_sessions=total_sessions,
         days_practiced_30d=len(days_30),
         days_practiced_90d=len(days_90),
-        by_practice=[PracticeBreakdown(**v) for v in by_practice.values()],
+        by_practice=breakdowns,
         last_30_days=timeline,
+        last_practice_key=last_practice_key,
+        last_practice_day=last_practice_day,
     )
 
 
