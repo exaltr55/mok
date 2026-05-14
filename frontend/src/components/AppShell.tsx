@@ -5,12 +5,26 @@ import Wordmark from './Wordmark';
 
 const PUBLIC_PATHS = ['/', '/about', '/contact', '/login', '/signup', '/forgot-password', '/reset-password'];
 
+interface NavTab {
+  to: string;
+  label: string;
+  /** Other paths that should also light the tab up as active. */
+  alsoActive?: string[];
+}
+
+const APP_TABS: NavTab[] = [
+  { to: '/today',     label: 'Today' },
+  { to: '/practices', label: 'Practice', alsoActive: ['/practices'] },
+  { to: '/connect',   label: 'Connect' },
+  { to: '/learn',     label: 'Learn' },
+  { to: '/me',        label: 'Me', alsoActive: ['/me', '/dashboard', '/journal', '/history', '/settings'] },
+];
+
 /**
  * The chrome wrapping every routed page. Two presentations:
  *   - marketing (public pages): top nav with Home/About/Contact + Sign in/Begin
- *   - app (authenticated, non-public): top nav with Settings/Sign-out;
- *     primary destinations live in the mobile bottom-nav and in the
- *     desktop-only middle of the top nav.
+ *   - app (authenticated, non-public): five primary tabs — Today, Practice,
+ *     Connect, Learn, Me — plus a Sign-out action.
  *
  * The session route (/practices/:key/session) and the reading view
  * (/practices/:key) are fullscreen overlays — they render outside this shell.
@@ -22,26 +36,34 @@ export default function AppShell() {
   const isPublic = PUBLIC_PATHS.some((p) => (p === '/' ? pathname === '/' : pathname.startsWith(p)));
   const showAppNav = isAuthenticated && !isPublic;
 
+  function isTabActive(tab: NavTab): boolean {
+    if (pathname === tab.to) return true;
+    if (tab.alsoActive?.some((p) => pathname === p || pathname.startsWith(p + '/'))) return true;
+    return false;
+  }
+
   return (
     <div className="mok-shell">
       <div className="mok-grain" aria-hidden />
 
       <nav className="mok-nav">
         <div className="mok-nav-inner">
-          <NavLink to={isAuthenticated ? '/dashboard' : '/'} style={{ textDecoration: 'none' }}>
+          <NavLink to={isAuthenticated ? '/today' : '/'} style={{ textDecoration: 'none' }}>
             <Wordmark size="sm" />
           </NavLink>
 
           {/* Primary nav links — hidden on mobile via CSS */}
           <div className="mok-nav-links">
             {showAppNav ? (
-              <>
-                <NavLink to="/today" className={({ isActive }) => `mok-nav-link ${isActive ? 'active' : ''}`}>Today</NavLink>
-                <NavLink to="/practices" className={({ isActive }) => `mok-nav-link ${isActive ? 'active' : ''}`}>Practices</NavLink>
-                <NavLink to="/journal" className={({ isActive }) => `mok-nav-link ${isActive ? 'active' : ''}`}>Journal</NavLink>
-                <NavLink to="/learn" className={({ isActive }) => `mok-nav-link ${isActive ? 'active' : ''}`}>Learn</NavLink>
-                <NavLink to="/dashboard" className={({ isActive }) => `mok-nav-link ${isActive ? 'active' : ''}`}>Me</NavLink>
-              </>
+              APP_TABS.map((tab) => (
+                <NavLink
+                  key={tab.to}
+                  to={tab.to}
+                  className={`mok-nav-link ${isTabActive(tab) ? 'active' : ''}`}
+                >
+                  {tab.label}
+                </NavLink>
+              ))
             ) : (
               <>
                 <NavLink to="/" end className={({ isActive }) => `mok-nav-link ${isActive ? 'active' : ''}`}>Home</NavLink>
@@ -54,14 +76,12 @@ export default function AppShell() {
           <div className="mok-nav-actions">
             {isAuthenticated ? (
               <>
-                <NavLink to="/settings" className="mok-nav-link mok-nav-link--icon" aria-label="Settings">
-                  <span aria-hidden="true">⚙</span>
-                  <span className="mok-hide-mobile">Settings</span>
-                </NavLink>
                 <span className="mok-subtle mok-hide-mobile" style={{ fontSize: 13, fontFamily: 'var(--font-sans)' }}>
                   {user?.name?.split(' ')[0]}
                 </span>
-                <button type="button" className="mok-btn mok-btn--ghost mok-hide-mobile" onClick={logout}>Sign out</button>
+                <button type="button" className="mok-btn mok-btn--ghost mok-hide-mobile" onClick={logout}>
+                  Sign out
+                </button>
               </>
             ) : (
               <>

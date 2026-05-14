@@ -20,15 +20,11 @@ export default function History() {
   const practiced = days.filter((d) => d.practiced).length;
 
   return (
-    <section style={{ display: 'grid', gap: 32 }}>
-      <header>
-        <p className="mok-hero-eyebrow">Your practice arc</p>
-        <h1 className="mok-section-title">A quiet record.</h1>
-        <p className="mok-section-lede">
-          The last 30 days. The dots mark days you returned to your practice — nothing
-          about what you did or for how long.
-        </p>
-      </header>
+    <section style={{ display: 'grid', gap: 24 }}>
+      <p className="mok-muted" style={{ fontSize: 14, margin: 0, fontStyle: 'italic' }}>
+        The last 30 days. The dots mark days you returned — nothing about what you did
+        or for how long.
+      </p>
 
       <div className="mok-row mok-row-gap-lg">
         {mci && (

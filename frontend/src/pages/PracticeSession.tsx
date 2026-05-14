@@ -339,7 +339,7 @@ export default function PracticeSession() {
                 <button
                   type="button"
                   className="mok-session-btn"
-                  onClick={() => navigate('/journal')}
+                  onClick={() => navigate('/me/journal')}
                 >
                   Open journal
                 </button>

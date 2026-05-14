@@ -52,14 +52,10 @@ export default function Journal() {
   if (loading) return <div className="mok-loading">Opening your journal…</div>;
 
   return (
-    <section style={{ display: 'grid', gap: 32 }}>
-      <header>
-        <p className="mok-hero-eyebrow">Journal · I M Writing</p>
-        <h1 className="mok-section-title">Your private page.</h1>
-        <p className="mok-section-lede">
-          One entry per day. Nothing here is ever shared.
-        </p>
-      </header>
+    <section style={{ display: 'grid', gap: 24 }}>
+      <p className="mok-muted" style={{ fontSize: 14, margin: 0, fontStyle: 'italic' }}>
+        One entry per day. Nothing here is ever shared.
+      </p>
 
       {today ? (
         <article className="mok-card mok-card--padded">

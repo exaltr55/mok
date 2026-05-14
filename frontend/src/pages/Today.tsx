@@ -113,7 +113,7 @@ export default function Today() {
       <section className="mok-today-section">
         <p className="mok-section-h3">The week, so far</p>
         <WeekTrail history={history} />
-        <Link to="/history" className="mok-mci-inline" style={{ textDecoration: 'none' }}>
+        <Link to="/me/history" className="mok-mci-inline" style={{ textDecoration: 'none' }}>
           <span className="mok-mci-inline-number">{data.mci.mci}</span>
           <span className="mok-subtle">· {data.mci.milestone.toLowerCase()}</span>
           <span className="mok-subtle">›</span>
@@ -134,7 +134,7 @@ export default function Today() {
             </p>
           </article>
           <Link
-            to="/journal"
+            to="/me/journal"
             className="mok-nav-link"
             style={{ padding: '12px 0 0', display: 'inline-flex', alignItems: 'center', gap: 6 }}
           >

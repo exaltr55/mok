@@ -101,14 +101,7 @@ export default function Dashboard() {
     : null;
 
   return (
-    <div className="mok-rise" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-      <header style={{ padding: '20px 0 16px', borderBottom: '1px solid var(--border)' }}>
-        <p className="mok-eyebrow">Your patterns</p>
-        <h1 className="mok-section-title">A quiet record.</h1>
-        <p className="mok-section-lede">
-          Everything you see here is yours alone — never shared. Look gently.
-        </p>
-      </header>
+    <div className="mok-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
       {/* Continue last practice — surface the doorway you most recently walked */}
       {lastPractice ? (

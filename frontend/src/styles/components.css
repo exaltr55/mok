@@ -616,6 +616,40 @@
   margin-bottom: 6px;
 }
 
+/* ── Section sub-nav (inside Me) ─────────────────────────────── */
+
+.mok-subnav {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  margin: 8px 0 0;
+  padding-bottom: 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mok-subnav-link {
+  padding: 12px 14px;
+  font-size: 13px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+  text-decoration: none;
+  position: relative;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color var(--motion-quick) var(--easing);
+}
+
+.mok-subnav-link:hover { color: var(--text); }
+
+.mok-subnav-link.active {
+  color: var(--text);
+  border-bottom-color: var(--accent);
+}
+
 /* ── Practice tile (index) ───────────────────────────────────── */
 
 .mok-practice-grid {

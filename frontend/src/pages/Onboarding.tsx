@@ -52,7 +52,7 @@ export default function Onboarding() {
         };
         await updateProfile(patch);
         await refresh();
-        navigate('/dashboard', { replace: true });
+        navigate('/me', { replace: true });
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Could not save your preferences');
       } finally {

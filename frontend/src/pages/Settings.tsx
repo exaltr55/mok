@@ -40,12 +40,7 @@ export default function Settings() {
   }
 
   return (
-    <section style={{ display: 'grid', gap: 24, maxWidth: 720 }}>
-      <header>
-        <p className="mok-hero-eyebrow">Settings</p>
-        <h1 className="mok-section-title">Your preferences.</h1>
-      </header>
-
+    <section style={{ display: 'grid', gap: 20, maxWidth: 720 }}>
       {status === 'saved' && <div className="mok-banner mok-banner--success">Saved.</div>}
       {error && <div className="mok-banner mok-banner--error">{error}</div>}
 
