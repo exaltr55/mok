@@ -1,44 +1,51 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { getPractice, logPractice, type PracticeDetail as PracticeDetailT } from '../api/client';
+import {
+  getDashboard,
+  getPractice,
+  logPractice,
+  type PracticeDetail as PracticeDetailT,
+} from '../api/client';
 import { PracticeArt, PRACTICE_COLORS, type PracticeKey } from '../components/PracticeArt';
-import { parsePractice } from '../utils/practiceContent';
-
-type Part = 'A' | 'B';
+// note: route children (Reading) live in App.tsx; this page is the TOC.
 
 /**
- * Reading view for a practice. Two tabs:
- *   Part A — Learning the Practice (educational)
- *   Part B — Daily Practice (the script that the guided session walks through)
+ * Practice overview — a small "table of contents" page.
  *
- * Also offers "Begin a session" → guided player at /practices/:key/session,
- * and "Log a self-practice" for when the user practiced outside the app.
+ *   Part 1 — Learning the practice   →  /practices/:key/learn  (slideshow)
+ *   Part 2 — The daily practice      →  /practices/:key/daily  (slideshow)
+ *   Begin guided session             →  /practices/:key/session
+ *
+ * For first-time readers of a practice, only Part 1 is offered as the
+ * primary action so they read before practicing. For practitioners who
+ * have already logged this practice at least once, Part 2 and the guided
+ * session are surfaced equally — they can revisit either at any time.
  */
 export default function PracticeDetail() {
   const { key } = useParams<{ key: string }>();
   const navigate = useNavigate();
   const [data, setData] = useState<PracticeDetailT | null>(null);
-  const [part, setPart] = useState<Part>('A');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [everPracticed, setEverPracticed] = useState<boolean | null>(null);
   const [logState, setLogState] = useState<'idle' | 'submitting' | 'logged'>('idle');
   const [logError, setLogError] = useState('');
-  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!key) return;
     setLoading(true);
-    getPractice(key)
-      .then(setData)
+    Promise.all([
+      getPractice(key),
+      getDashboard().catch(() => null),
+    ])
+      .then(([d, dash]) => {
+        setData(d);
+        const entry = dash?.by_practice.find((b) => b.key === key);
+        setEverPracticed(!!entry?.last_practiced);
+      })
       .catch((e) => setError(e instanceof Error ? e.message : 'Could not load practice'))
       .finally(() => setLoading(false));
   }, [key]);
-
-  useEffect(() => {
-    if (scrollRef.current) scrollRef.current.scrollTop = 0;
-  }, [part]);
-
-  const parsed = useMemo(() => (data ? parsePractice(data.content) : null), [data]);
 
   async function recordSelfPractice() {
     if (!key) return;
@@ -54,240 +61,132 @@ export default function PracticeDetail() {
     }
   }
 
+  const sessionHref = useMemo(
+    () => (data?.key === 'writing' ? '/journal' : `/practices/${data?.key}/session`),
+    [data?.key],
+  );
+
   if (loading) return <div className="mok-loading">Opening the practice…</div>;
   if (error || !data) return <div className="mok-banner mok-banner--error">{error || 'Not found'}</div>;
 
   const k = data.key as PracticeKey;
   const Art = PracticeArt[k];
   const color = PRACTICE_COLORS[k];
-
-  const stanzas = stanzasForPart(parsed, part);
+  const isNewToPractice = everPracticed === false;
 
   return (
-    <div className="mok-reading mok-rise">
-      <header className="mok-reading-header">
-        <div className="mok-row" style={{ gap: 12 }}>
-          <Art color={color} size={22} />
-          <span className="mok-eyebrow" style={{ margin: 0 }}>{data.name}</span>
+    <section className="mok-practice-toc mok-rise">
+      {/* Header */}
+      <header className="mok-practice-toc-head">
+        <Link to="/practices" className="mok-nav-link">← All practices</Link>
+        <div className="mok-practice-toc-art" style={{ color }}>
+          <Art color={color} size={56} />
         </div>
-        <button type="button" className="mok-btn mok-btn--ghost" onClick={() => navigate('/practices')}>
-          ✕
-        </button>
+        <p className="mok-eyebrow" style={{ marginTop: 6 }}>Practice</p>
+        <h1 className="mok-practice-toc-title">{data.name}</h1>
+        <p className="mok-practice-toc-desc">{data.description}</p>
+        <p className="mok-subtle" style={{ fontSize: 12, marginTop: 8 }}>
+          {data.format} · {data.session_min}–{data.session_max} min
+        </p>
       </header>
 
-      <div className="mok-reading-tabs">
-        <button
-          type="button"
-          className={`mok-reading-tab ${part === 'A' ? 'mok-reading-tab--active' : ''}`}
-          onClick={() => setPart('A')}
-        >
-          Part A — Learning the Practice
-        </button>
-        <button
-          type="button"
-          className={`mok-reading-tab ${part === 'B' ? 'mok-reading-tab--active' : ''}`}
-          onClick={() => setPart('B')}
-        >
-          Part B — Daily Practice
-        </button>
+      {/* Guidance lede for first-time readers */}
+      {isNewToPractice && (
+        <p className="mok-muted" style={{ fontStyle: 'italic', textAlign: 'center', maxWidth: 520, margin: '0 auto' }}>
+          Two short readings before the guided session — first the teaching,
+          then the daily practice. The session opens after.
+        </p>
+      )}
+
+      {/* The two parts as separate cards */}
+      <div className="mok-practice-toc-grid">
+        <PartCard
+          eyebrow="Part 1"
+          title="Learning the practice"
+          lede="The teaching behind it — what it is, and why it works."
+          to={`/practices/${data.key}/learn`}
+          primary={isNewToPractice}
+          accent={color}
+          step={1}
+        />
+        <PartCard
+          eyebrow="Part 2"
+          title="The daily practice"
+          lede="What to do, breath by breath — the rhythm the session walks you through."
+          to={`/practices/${data.key}/daily`}
+          primary={!isNewToPractice}
+          accent={color}
+          step={2}
+        />
       </div>
 
-      <main ref={scrollRef} className="mok-reading-body">
-        <div className="mok-reading-content">
-          <div
-            className="mok-eyebrow"
-            style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 28 }}
-          >
-            <span style={{ width: 24, height: 1, background: 'var(--border)' }} />
-            Part {part}
-          </div>
-
-          <div style={{ marginBottom: 32, opacity: 0.85 }}>
-            <Art color={color} size={72} />
-          </div>
-
-          <h1
-            style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: 38,
-              fontWeight: 400,
-              lineHeight: 1.15,
-              margin: '0 0 8px',
-              letterSpacing: '-0.015em',
-            }}
-          >
-            {data.name}
-          </h1>
-          <p
-            style={{
-              fontSize: 14,
-              color: 'var(--text-subtle)',
-              fontFamily: 'var(--font-sans)',
-              margin: '0 0 24px',
-              letterSpacing: '0.04em',
-            }}
-          >
-            {part === 'A' ? 'Learning the Practice' : 'Daily Practice'}
-          </p>
-
-          {/* Always-visible CTA: take the user back to the session.
-              Mirrors the footer CTAs but is reachable without scrolling. */}
-          <div
-            className="mok-row"
-            style={{
-              padding: '14px 16px',
-              marginBottom: 40,
-              background: 'var(--bg-raised)',
-              border: '1px solid var(--border)',
-              borderRadius: 'var(--radius)',
-              gap: 12,
-              flexWrap: 'wrap',
-            }}
-          >
-            <span className="mok-muted" style={{ fontSize: 14, flex: 1, minWidth: 180 }}>
-              Ready when you are. Begin the guided session anytime.
-            </span>
-            <Link
-              to={data.key === 'writing' ? '/journal' : `/practices/${data.key}/session`}
-              className="mok-btn mok-btn--primary"
-            >
-              Begin session →
-            </Link>
-          </div>
-
-          {stanzas.length === 0 ? (
-            <p className="mok-muted">Content is being prepared. Check back soon.</p>
-          ) : (
-            stanzas.map((stanza, i) => (
-              <div
-                key={i}
-                className="mok-stanza"
-                style={{
-                  animation: 'mok-fade-in 0.5s ease-out forwards',
-                  animationDelay: `${Math.min(i * 0.04, 1.2)}s`,
-                  opacity: 0,
-                  marginBottom: 32,
-                }}
-              >
-                {stanza.map((line, li) => (
-                  <p
-                    key={li}
-                    style={{
-                      fontSize: 19,
-                      lineHeight: 1.55,
-                      color: 'var(--text)',
-                      margin: 0,
-                      fontWeight: 400,
-                    }}
-                  >
-                    {line}
-                  </p>
-                ))}
-              </div>
-            ))
-          )}
-
-          <div
-            style={{
-              marginTop: 48,
-              paddingTop: 32,
-              borderTop: '1px solid var(--border)',
-              textAlign: 'center',
-            }}
-          >
-            <span
-              style={{
-                fontSize: 11,
-                color: 'var(--text-subtle)',
-                letterSpacing: '0.24em',
-                textTransform: 'uppercase',
-                fontFamily: 'var(--font-sans)',
-              }}
-            >
-              ·
-            </span>
-          </div>
-
-          {logState !== 'idle' && (
-            <div style={{ marginTop: 24 }}>
-              {logState === 'logged' ? (
-                <p className="mok-banner mok-banner--success">Practice recorded. See you tomorrow if you would like.</p>
-              ) : logError ? (
-                <p className="mok-banner mok-banner--error">{logError}</p>
-              ) : null}
-            </div>
-          )}
-        </div>
-      </main>
-
-      <footer className="mok-reading-footer">
-        {part === 'A' ? (
-          <>
-            <button type="button" className="mok-btn mok-btn--ghost" onClick={() => navigate('/practices')}>
-              Close
-            </button>
-            <div className="mok-row" style={{ gap: 8 }}>
-              <button type="button" className="mok-btn" onClick={() => setPart('B')}>
-                Read Part B ›
-              </button>
-              <Link
-                to={data.key === 'writing' ? '/journal' : `/practices/${data.key}/session`}
-                className="mok-btn mok-btn--primary"
-              >
-                Begin a session
-              </Link>
-            </div>
-          </>
+      {/* Guided session — always present, emphasis varies */}
+      <div className="mok-practice-toc-session">
+        <p className="mok-eyebrow">Guided session</p>
+        <p className="mok-muted" style={{ fontSize: 14, fontStyle: 'italic', margin: '6px 0 14px' }}>
+          {isNewToPractice
+            ? 'Read both parts above first — the session opens when you have.'
+            : `${data.session_min}–${data.session_max} minutes. Begin whenever you're ready.`}
+        </p>
+        {isNewToPractice ? (
+          <button type="button" className="mok-btn" disabled aria-disabled="true">
+            Begin guided session
+          </button>
         ) : (
-          <>
-            <button type="button" className="mok-btn mok-btn--ghost" onClick={() => setPart('A')}>
-              ← Part A
-            </button>
-            <div className="mok-row" style={{ gap: 8 }}>
-              <button
-                type="button"
-                className="mok-btn"
-                onClick={recordSelfPractice}
-                disabled={logState === 'submitting' || logState === 'logged'}
-              >
-                {logState === 'submitting' ? 'Recording…' : 'I practiced outside the app'}
-              </button>
-              <Link
-                to={data.key === 'writing' ? '/journal' : `/practices/${data.key}/session`}
-                className="mok-btn mok-btn--primary"
-              >
-                Begin a session
-              </Link>
-            </div>
-          </>
+          <Link to={sessionHref} className="mok-btn mok-btn--primary mok-btn--lg">
+            Begin guided session →
+          </Link>
         )}
-      </footer>
-    </div>
+      </div>
+
+      {/* Quiet "I practiced outside the app" */}
+      <div style={{ textAlign: 'center' }}>
+        <button
+          type="button"
+          className="mok-btn mok-btn--ghost"
+          onClick={recordSelfPractice}
+          disabled={logState !== 'idle'}
+        >
+          {logState === 'submitting'
+            ? 'Recording…'
+            : logState === 'logged'
+              ? 'Recorded ✓'
+              : 'I practiced outside the app'}
+        </button>
+        {logError && (
+          <p className="mok-banner mok-banner--error" style={{ marginTop: 10 }}>{logError}</p>
+        )}
+      </div>
+    </section>
   );
 }
 
-function stanzasForPart(
-  parsed: ReturnType<typeof parsePractice> | null,
-  part: Part,
-): string[][] {
-  if (!parsed) return [];
-  const src = part === 'A' ? parsed.learn || parsed.intro : parsed.session;
-  if (!src) return [];
-
-  const body = src
-    .replace(/^# .*\n+/m, '')
-    .replace(/^.*Part\s*[AB][^\n]*\n+/im, '')
-    .replace(/^>[^\n]*\n+/gm, '')
-    .replace(/^-{3,}$/gm, '')
-    .trim();
-
-  return body
-    .split(/\n\s*\n/)
-    .map((stanza) =>
-      stanza
-        .split('\n')
-        .map((l) => l.replace(/  $/, '').trim())
-        .filter(Boolean),
-    )
-    .filter((s) => s.length > 0 && !/^#{1,6}\s/.test(s[0]));
+function PartCard({
+  eyebrow,
+  title,
+  lede,
+  to,
+  primary,
+  accent,
+  step,
+}: {
+  eyebrow: string;
+  title: string;
+  lede: string;
+  to: string;
+  primary: boolean;
+  accent: string;
+  step: number;
+}) {
+  return (
+    <article className={`mok-toc-card ${primary ? 'mok-toc-card--primary' : ''}`}>
+      <span className="mok-toc-card-step" style={{ color: accent }}>{step}</span>
+      <p className="mok-eyebrow" style={{ margin: 0 }}>{eyebrow}</p>
+      <h3 className="mok-toc-card-title">{title}</h3>
+      <p className="mok-toc-card-lede">{lede}</p>
+      <Link to={to} className={`mok-btn ${primary ? 'mok-btn--primary' : ''}`}>
+        Read →
+      </Link>
+    </article>
+  );
 }

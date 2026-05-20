@@ -5,18 +5,40 @@ import { useAuth } from '../contexts/AuthContext';
 import { useTheme, type Theme } from '../contexts/ThemeContext';
 import Wordmark from '../components/Wordmark';
 
-const STEPS = [
+/**
+ * First-login onboarding — nine focused preference questions, each on its
+ * own screen for focus, plus welcome / palette / consents / ready bookends.
+ *
+ *   Welcome →
+ *   Q1 Your intention (free text)
+ *   Q2 What brings you here?              (here_because)
+ *   Q3 What feels most stretched?         (stretched_area)
+ *   Q4 How do you best restore?           (restore_style)
+ *   Q5 A voice that meets you well…       (tone_preference)
+ *   Q6 Career stage                       (career_stage)
+ *   Q7 Preferred time of day              (preferred_time_of_day)
+ *   Q8 Days per week                      (preferred_days_per_week)
+ *   Q9 Your cohort                        (cohort_preference + meeting_day)
+ *   Palette → Consent → Ready → /orientation
+ */
+
+const ALL_STEPS = [
   'welcome',
-  'about',
-  'personalize',
-  'palette',
-  'cadence',
+  'intention',
+  'here',
+  'stretched',
+  'restore',
+  'tone',
+  'career',
+  'time',
+  'days',
   'cohort',
+  'palette',
   'consent',
   'ready',
 ] as const;
 
-type Step = typeof STEPS[number];
+type Step = typeof ALL_STEPS[number];
 
 const DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
@@ -24,6 +46,7 @@ type Stretched = 'mind' | 'body' | 'heart' | 'time';
 type Restore = 'solitude' | 'movement' | 'conversation' | 'writing';
 type Tone = 'quiet' | 'encouraging' | 'reflective';
 type HereBecause = 'burnout' | 'transition' | 'growth' | 'curiosity' | 'recommended';
+type CareerStage = 'early' | 'mid' | 'senior' | 'post-career' | '';
 
 const STRETCHED: Array<{ id: Stretched; label: string; hint: string }> = [
   { id: 'mind',   label: 'Mind',   hint: 'Racing thoughts, hard to focus, hard to land.' },
@@ -53,6 +76,29 @@ const HERE_BECAUSE: Array<{ id: HereBecause; label: string; hint: string }> = [
   { id: 'recommended', label: 'Recommended by my employer', hint: 'My company introduced me to YouSourceful.' },
 ];
 
+const CAREER: Array<{ id: CareerStage; label: string; hint: string }> = [
+  { id: 'early',       label: 'Early career',       hint: 'Finding your footing in the work.' },
+  { id: 'mid',         label: 'Mid career',         hint: 'Carrying real weight, steering outcomes.' },
+  { id: 'senior',      label: 'Senior',             hint: 'Leading at scale; many things to hold.' },
+  { id: 'post-career', label: 'Post-career',        hint: 'A different season — open, exploring.' },
+  { id: '',            label: 'Prefer not to say',  hint: 'Skip — used only for cohort matching.' },
+];
+
+type TimeOfDay = 'morning' | 'midday' | 'evening' | 'flexible';
+const TIME_OF_DAY: Array<{ id: TimeOfDay; label: string; hint: string }> = [
+  { id: 'morning',  label: 'Morning',  hint: 'First thing — set the tone for the day.' },
+  { id: 'midday',   label: 'Midday',   hint: 'A pause in the middle. Reset.' },
+  { id: 'evening',  label: 'Evening',  hint: 'A close to the day. Soften.' },
+  { id: 'flexible', label: 'Flexible', hint: 'Whenever the moment opens.' },
+];
+
+type CohortPref = 'outside' | 'within' | 'none';
+const COHORT: Array<{ id: CohortPref; label: string; hint: string }> = [
+  { id: 'outside', label: 'People outside my company', hint: 'Fresh perspective, away from your day-to-day.' },
+  { id: 'within',  label: 'People from my company',    hint: 'Shared context, same trenches.' },
+  { id: 'none',    label: 'Practice solo for now',     hint: 'Walking alone is its own path. You can join a cohort whenever you’re ready.' },
+];
+
 const PALETTE: Array<{ id: Theme; label: string; hint: string; swatch: string }> = [
   { id: 'stillwater', label: 'Stillwater', hint: 'Calm slate blue — the default.',      swatch: 'linear-gradient(135deg, #EEF3F9, #4D6FA5)' },
   { id: 'sunbeam',    label: 'Sunbeam',    hint: 'Warm amber morning, a touch of joy.', swatch: 'linear-gradient(135deg, #FBF6E2, #D4954A)' },
@@ -69,25 +115,30 @@ export default function Onboarding() {
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
 
-  // Form state
+  // Skip the cohort step when the employer has not turned the feature on.
+  const STEPS = (user?.cohort_enabled
+    ? ALL_STEPS
+    : ALL_STEPS.filter((s) => s !== 'cohort')) as readonly Step[];
+  const totalQuestions = user?.cohort_enabled ? 9 : 8;
+
+  // Form state — one slot per preference field.
   const [intention, setIntention] = useState('');
-  const [careerStage, setCareerStage] = useState('');
+  const [hereBecause, setHereBecause] = useState<HereBecause | ''>('');
   const [stretched, setStretched] = useState<Stretched | ''>('');
   const [restore, setRestore] = useState<Restore | ''>('');
   const [tone, setTone] = useState<Tone | ''>('');
-  const [hereBecause, setHereBecause] = useState<HereBecause | ''>('');
-  const [theme, setLocalTheme] = useState<Theme>('stillwater');
-  const [timeOfDay, setTimeOfDay] = useState<'morning' | 'midday' | 'evening' | 'flexible'>('morning');
+  const [careerStage, setCareerStage] = useState<CareerStage>('');
+  const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>('morning');
   const [daysPerWeek, setDaysPerWeek] = useState(5);
-  const [cohortPref, setCohortPref] = useState<'outside' | 'within' | 'none'>('outside');
+  const [cohortPref, setCohortPref] = useState<CohortPref>('outside');
   const [meetingDay, setMeetingDay] = useState('tuesday');
+  const [theme, setLocalTheme] = useState<Theme>('stillwater');
   const [aggregateConsent, setAggregateConsent] = useState(false);
   const [aiGuideConsent, setAiGuideConsent] = useState(true);
 
   const step: Step = STEPS[stepIdx];
   const onLast = stepIdx === STEPS.length - 1;
 
-  // Apply the chosen palette live as the user picks it.
   function pickTheme(t: Theme) {
     setLocalTheme(t);
     setTheme(t);
@@ -112,13 +163,11 @@ export default function Onboarding() {
           cohort_meeting_day: cohortPref === 'none' ? null : meetingDay,
           onboarded: true,
         };
-        // Silence the unused-vars warning for consents until Tier 2/4 are wired
-        // to the consent table.
         void aggregateConsent;
         void aiGuideConsent;
         await updateProfile(patch);
         await refresh();
-        navigate('/tour', { replace: true });
+        navigate('/orientation', { replace: true });
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Could not save your preferences');
       } finally {
@@ -135,6 +184,7 @@ export default function Onboarding() {
   }
 
   const firstName = user?.name?.split(' ')[0];
+  const questionStepIdx = stepIdx > 0 && stepIdx <= totalQuestions ? stepIdx : null;
 
   return (
     <div style={{ maxWidth: 640, margin: '0 auto' }}>
@@ -144,9 +194,13 @@ export default function Onboarding() {
 
       <div className="mok-card mok-card--padded">
         <div className="mok-row" style={{ marginBottom: 20, fontSize: 12, color: 'var(--text-subtle)' }}>
-          <span className="mok-chip">{stepIdx + 1} of {STEPS.length}</span>
+          {questionStepIdx ? (
+            <span className="mok-chip">Question {questionStepIdx} of {totalQuestions}</span>
+          ) : (
+            <span className="mok-chip">Step {stepIdx + 1} of {STEPS.length}</span>
+          )}
           <span className="mok-spacer" />
-          <span>Takes about 4 minutes</span>
+          <span>About 4 minutes</span>
         </div>
 
         {error && <div className="mok-banner mok-banner--error" role="alert">{error}</div>}
@@ -155,90 +209,150 @@ export default function Onboarding() {
           <>
             <h1 className="mok-section-title">Welcome, {firstName}.</h1>
             <p className="mok-section-lede">
-              YouSourceful is a quiet system for cultivating Awareness — the steady inner
-              space that lets you stay yourself through change. The next few minutes shape
-              the app for you, personally.
+              YouSourceful is a quiet system for cultivating Awareness — the steady
+              inner space that lets you stay yourself through change. The next few
+              minutes shape the app for you, personally.
             </p>
             <p className="mok-muted" style={{ marginTop: 16, fontStyle: 'italic' }}>
-              The practices are doorways through which Awareness becomes available. Some
-              days you walk through one. Some days three. Each is enough. We honor
-              consistency and intention.
-            </p>
-            <p className="mok-muted" style={{ marginTop: 12, fontSize: 14 }}>
-              Your practice is yours alone — your journal, your reflections, and your MCI
-              stay private to you.
+              {totalQuestions === 9 ? 'Nine' : 'Eight'} short questions to help
+              us know you a little, then a brief orientation to the program.
+              Your practice is yours alone — your journal, your reflections,
+              and your private numbers stay with you.
             </p>
           </>
         )}
 
-        {step === 'about' && (
+        {step === 'intention' && (
           <>
-            <h1 className="mok-section-title">Tell us about you.</h1>
+            <p className="mok-eyebrow" style={{ margin: 0 }}>Question 1</p>
+            <h1 className="mok-section-title">Your objective for this practice.</h1>
             <p className="mok-section-lede">
-              A sentence on what's bringing you here, and one context question. Both
-              optional. You can change them later in Preferences.
+              In a sentence or two — what do you hope to cultivate? You can change
+              this at any time in Preferences.
             </p>
             <div className="mok-field">
-              <label htmlFor="intention">Your objective for this practice</label>
               <textarea
-                id="intention"
                 value={intention}
                 onChange={(e) => setIntention(e.target.value)}
                 placeholder="To stay grounded as my work changes. To be more present with my team."
                 maxLength={400}
+                rows={3}
+                autoFocus
               />
               <span className="mok-field-hint">
-                You can revisit this any time — it shapes how the app gently meets you.
-              </span>
-            </div>
-            <div className="mok-field">
-              <label htmlFor="stage">Career stage</label>
-              <select id="stage" value={careerStage} onChange={(e) => setCareerStage(e.target.value)}>
-                <option value="">Prefer not to say</option>
-                <option value="early">Early career</option>
-                <option value="mid">Mid career</option>
-                <option value="senior">Senior</option>
-                <option value="post-career">Post-career</option>
-              </select>
-              <span className="mok-field-hint">
-                Used for cohort matching only. Stays private to you and the matcher.
+                Optional. We'll surface it gently on days when it helps to remember.
               </span>
             </div>
           </>
         )}
 
-        {step === 'personalize' && (
+        {step === 'here' && (
           <>
-            <h1 className="mok-section-title">A few quick choices.</h1>
-            <p className="mok-section-lede">
-              These shape what the app surfaces for you each day — the practice it leads
-              with, the voice it speaks in, the cohort it suggests.
-            </p>
+            <p className="mok-eyebrow" style={{ margin: 0 }}>Question 2</p>
+            <h1 className="mok-section-title">What brings you here right now?</h1>
+            <QuestionGroup options={HERE_BECAUSE} value={hereBecause} onChange={setHereBecause} />
+          </>
+        )}
 
-            <QuestionGroup
-              label="What feels most stretched right now?"
-              options={STRETCHED}
-              value={stretched}
-              onChange={setStretched}
-            />
-            <QuestionGroup
-              label="How do you best restore?"
-              options={RESTORE}
-              value={restore}
-              onChange={setRestore}
-            />
-            <QuestionGroup
-              label="A voice that meets you well is…"
-              options={TONE}
-              value={tone}
-              onChange={setTone}
-            />
-            <QuestionGroup
-              label="What brings you here right now?"
-              options={HERE_BECAUSE}
-              value={hereBecause}
-              onChange={setHereBecause}
-            />
+        {step === 'stretched' && (
+          <>
+            <p className="mok-eyebrow" style={{ margin: 0 }}>Question 3</p>
+            <h1 className="mok-section-title">What feels most stretched right now?</h1>
+            <p className="mok-section-lede">
+              Where the most attention is asked of you these days.
+            </p>
+            <QuestionGroup options={STRETCHED} value={stretched} onChange={setStretched} />
+          </>
+        )}
+
+        {step === 'restore' && (
+          <>
+            <p className="mok-eyebrow" style={{ margin: 0 }}>Question 4</p>
+            <h1 className="mok-section-title">How do you best restore?</h1>
+            <p className="mok-section-lede">
+              The kind of recovery that actually refills you.
+            </p>
+            <QuestionGroup options={RESTORE} value={restore} onChange={setRestore} />
+          </>
+        )}
+
+        {step === 'tone' && (
+          <>
+            <p className="mok-eyebrow" style={{ margin: 0 }}>Question 5</p>
+            <h1 className="mok-section-title">A voice that meets you well is…</h1>
+            <p className="mok-section-lede">
+              The tone the app should speak in.
+            </p>
+            <QuestionGroup options={TONE} value={tone} onChange={setTone} />
+          </>
+        )}
+
+        {step === 'career' && (
+          <>
+            <p className="mok-eyebrow" style={{ margin: 0 }}>Question 6</p>
+            <h1 className="mok-section-title">Your career stage.</h1>
+            <p className="mok-section-lede">
+              Used only to match you with a cohort. Stays private to you and the matcher.
+            </p>
+            <QuestionGroup options={CAREER} value={careerStage} onChange={(v) => setCareerStage(v)} />
+          </>
+        )}
+
+        {step === 'time' && (
+          <>
+            <p className="mok-eyebrow" style={{ margin: 0 }}>Question 7</p>
+            <h1 className="mok-section-title">When do you prefer to practice?</h1>
+            <p className="mok-section-lede">
+              We'll shape the daily rhythm around this. You can shift it any time.
+            </p>
+            <QuestionGroup options={TIME_OF_DAY} value={timeOfDay} onChange={setTimeOfDay} />
+          </>
+        )}
+
+        {step === 'days' && (
+          <>
+            <p className="mok-eyebrow" style={{ margin: 0 }}>Question 8</p>
+            <h1 className="mok-section-title">How often, in a week?</h1>
+            <p className="mok-section-lede">
+              Rest is part of practice. Aim for five of seven — adjustable any time.
+            </p>
+            <div className="mok-field">
+              <input
+                type="range"
+                min={1}
+                max={7}
+                value={daysPerWeek}
+                onChange={(e) => setDaysPerWeek(Number(e.target.value))}
+                style={{ accentColor: 'var(--accent)' }}
+              />
+              <p
+                className="mok-muted"
+                style={{ fontSize: 16, fontFamily: 'var(--font-display)', marginTop: 8 }}
+              >
+                {daysPerWeek} day{daysPerWeek === 1 ? '' : 's'} a week.
+              </p>
+            </div>
+          </>
+        )}
+
+        {step === 'cohort' && (
+          <>
+            <p className="mok-eyebrow" style={{ margin: 0 }}>Question 9</p>
+            <h1 className="mok-section-title">Your cohort.</h1>
+            <p className="mok-section-lede">
+              Five practitioners walking alongside you. Fifteen minutes a week. When
+              you share what matters, you'd rather be with…
+            </p>
+            <QuestionGroup options={COHORT} value={cohortPref} onChange={setCohortPref} />
+            {cohortPref !== 'none' && (
+              <div className="mok-field" style={{ marginTop: 16 }}>
+                <label htmlFor="meeting-day">Preferred meeting day</label>
+                <select id="meeting-day" value={meetingDay} onChange={(e) => setMeetingDay(e.target.value)}>
+                  {DAYS.map((d) => <option key={d} value={d}>{d.charAt(0).toUpperCase() + d.slice(1)}</option>)}
+                </select>
+                <span className="mok-field-hint">Same time each week. Fifteen minutes.</span>
+              </div>
+            )}
           </>
         )}
 
@@ -249,7 +363,6 @@ export default function Onboarding() {
               The colour you'll see each time you sign in. Pick a mood — the change is
               live as you choose, and you can switch any time.
             </p>
-
             <div
               style={{
                 display: 'grid',
@@ -266,13 +379,7 @@ export default function Onboarding() {
                   onClick={() => pickTheme(p.id)}
                   style={{ padding: 0, overflow: 'hidden' }}
                 >
-                  <div
-                    aria-hidden="true"
-                    style={{
-                      height: 56,
-                      background: p.swatch,
-                    }}
-                  />
+                  <div aria-hidden="true" style={{ height: 56, background: p.swatch }} />
                   <div style={{ padding: '12px 14px' }}>
                     <div style={{ fontWeight: 500, fontSize: 14 }}>{p.label}</div>
                     <div style={{ fontSize: 12, opacity: 0.75, marginTop: 2, fontStyle: 'italic' }}>
@@ -285,110 +392,44 @@ export default function Onboarding() {
           </>
         )}
 
-        {step === 'cadence' && (
-          <>
-            <h1 className="mok-section-title">How will you practice?</h1>
-            <p className="mok-section-lede">
-              A rough rhythm helps. Aim for five of seven days — rest is part of practice.
-            </p>
-            <div className="mok-field">
-              <label>Preferred time of day</label>
-              <div className="mok-row" style={{ gap: 8 }}>
-                {(['morning', 'midday', 'evening', 'flexible'] as const).map((t) => (
-                  <button
-                    key={t}
-                    type="button"
-                    className={`mok-btn ${timeOfDay === t ? 'mok-btn--primary' : ''}`}
-                    onClick={() => setTimeOfDay(t)}
-                  >
-                    {t.charAt(0).toUpperCase() + t.slice(1)}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="mok-field">
-              <label htmlFor="days">Days per week</label>
-              <input
-                id="days"
-                type="range"
-                min={1}
-                max={7}
-                value={daysPerWeek}
-                onChange={(e) => setDaysPerWeek(Number(e.target.value))}
-                style={{ accentColor: 'var(--accent)' }}
-              />
-              <span className="mok-field-hint">Aiming for {daysPerWeek} day{daysPerWeek === 1 ? '' : 's'} a week.</span>
-            </div>
-          </>
-        )}
-
-        {step === 'cohort' && (
-          <>
-            <h1 className="mok-section-title">Your cohort.</h1>
-            <p className="mok-section-lede">
-              Five practitioners walking alongside you. Fifteen minutes a week. When you
-              share what matters, you'd rather be with…
-            </p>
-            <div className="mok-stack-sm" style={{ marginBottom: 14 }}>
-              {([
-                ['outside', 'People outside my company', 'Fresh perspective, away from your day-to-day.'],
-                ['within', 'People from my company', 'Shared context, same trenches.'],
-                ['none', 'Practice solo for now', 'Walking alone is its own path. You can opt into a cohort any time.'],
-              ] as const).map(([val, label, hint]) => (
-                <label key={val} className="mok-card mok-card--quiet" style={{ padding: 16, cursor: 'pointer', display: 'block' }}>
-                  <div className="mok-row">
-                    <input type="radio" name="cohortpref" value={val} checked={cohortPref === val} onChange={() => setCohortPref(val)} />
-                    <strong>{label}</strong>
-                  </div>
-                  <div className="mok-muted" style={{ marginLeft: 24, fontSize: 13 }}>{hint}</div>
-                </label>
-              ))}
-            </div>
-            {cohortPref !== 'none' && (
-              <div className="mok-field">
-                <label htmlFor="meeting-day">Preferred meeting day</label>
-                <select id="meeting-day" value={meetingDay} onChange={(e) => setMeetingDay(e.target.value)}>
-                  {DAYS.map((d) => <option key={d} value={d}>{d.charAt(0).toUpperCase() + d.slice(1)}</option>)}
-                </select>
-                <span className="mok-field-hint">Your weekly Connect is fifteen minutes. Same time each week.</span>
-              </div>
-            )}
-          </>
-        )}
-
         {step === 'consent' && (
           <>
             <h1 className="mok-section-title">A few quiet promises.</h1>
             <p className="mok-section-lede">
-              Each consent is separate, and reversible any time in Preferences.
+              Each choice below is separate. You can change any of them, any
+              time, in Preferences.
             </p>
             <div className="mok-card mok-card--quiet" style={{ padding: 16, marginBottom: 12 }}>
-              <div><strong>Platform data</strong> <span className="mok-chip">required</span></div>
+              <div><strong>Running your account</strong> <span className="mok-chip">always on</span></div>
               <div className="mok-muted" style={{ fontSize: 13, marginTop: 4 }}>
-                What we need to run your account. Your journal, your MCI, and your
-                reflections stay private to you — always.
+                The basics we need to keep your account safe and working. Your
+                journal, your private numbers, and your reflections stay with
+                you — always.
               </div>
             </div>
             <label className="mok-card mok-card--quiet" style={{ padding: 16, marginBottom: 12, display: 'block', cursor: 'pointer' }}>
               <div className="mok-row">
                 <input type="checkbox" checked={aggregateConsent} onChange={(e) => setAggregateConsent(e.target.checked)} />
-                <strong>Aggregate signals to your employer</strong>
+                <strong>Helping your employer see patterns</strong>
                 <span className="mok-chip">optional</span>
               </div>
               <div className="mok-muted" style={{ marginLeft: 24, fontSize: 13 }}>
-                Anonymized counts roll up into your employer's program-health view, only
-                at groups of ten or more. Your individual data stays with you.
+                Only anonymous group patterns are shared — and only when ten or
+                more colleagues have shared the same way, keeping each person
+                fully unrecognisable. Your name, your journal, and your
+                reflections stay with you, always.
               </div>
             </label>
             <label className="mok-card mok-card--quiet" style={{ padding: 16, display: 'block', cursor: 'pointer' }}>
               <div className="mok-row">
                 <input type="checkbox" checked={aiGuideConsent} onChange={(e) => setAiGuideConsent(e.target.checked)} />
-                <strong>AI Guide check-ins</strong>
+                <strong>Gentle check-ins from us</strong>
               </div>
               <div className="mok-muted" style={{ marginLeft: 24, fontSize: 13 }}>
-                A rule-based companion that notices meaningful moments — Day 7, after an
-                absence, the turn of a phase. Sees only your practice patterns; your
-                journal and reflections stay yours.
+                A quiet companion that notices meaningful moments — your
+                seventh day, or a return after a break — and sends a kind word.
+                It sees only that you practiced; your words remain private to
+                you.
               </div>
             </label>
           </>
@@ -398,8 +439,9 @@ export default function Onboarding() {
           <>
             <h1 className="mok-section-title">You're ready, {firstName}.</h1>
             <p className="mok-section-lede">
-              Next, a brief tour — about ninety seconds, showing what's in YouSourceful
-              and how it all fits together. Then we'll begin with the Learn section.
+              Next, a brief orientation — a peek at the two parts of the
+              program, how a daily practice settles in, your private space, and
+              your cohort. Then we'll begin together in Learn.
             </p>
             <div className="mok-card mok-card--quiet" style={{ padding: 20, marginTop: 12 }}>
               <p className="mok-muted" style={{ fontSize: 14, margin: 0, fontStyle: 'italic' }}>
@@ -414,7 +456,7 @@ export default function Onboarding() {
             <button type="button" className="mok-btn mok-btn--ghost" onClick={back} disabled={saving}>← Back</button>
           ) : <span />}
           <button type="button" className="mok-btn mok-btn--primary" onClick={next} disabled={saving}>
-            {saving ? 'Saving…' : onLast ? 'Start the tour →' : 'Continue →'}
+            {saving ? 'Saving…' : onLast ? 'Start orientation →' : 'Continue →'}
           </button>
         </div>
       </div>
@@ -431,41 +473,37 @@ interface OptionShape<T extends string> {
 }
 
 function QuestionGroup<T extends string>({
-  label,
   options,
   value,
   onChange,
 }: {
-  label: string;
   options: OptionShape<T>[];
-  value: T | '';
+  value: T;
   onChange: (v: T) => void;
 }) {
   return (
-    <div className="mok-field" style={{ marginBottom: 22 }}>
-      <label style={{ marginBottom: 10 }}>{label}</label>
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
-          gap: 8,
-        }}
-      >
-        {options.map((opt) => (
-          <button
-            key={opt.id}
-            type="button"
-            className={`mok-choice ${value === opt.id ? 'mok-choice--active' : ''}`}
-            onClick={() => onChange(opt.id)}
-            style={{ padding: '12px 14px' }}
-          >
-            <div style={{ fontWeight: 500, fontSize: 14 }}>{opt.label}</div>
-            <div style={{ fontSize: 12, opacity: 0.75, marginTop: 2, fontStyle: 'italic' }}>
-              {opt.hint}
-            </div>
-          </button>
-        ))}
-      </div>
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+        gap: 10,
+        marginTop: 14,
+      }}
+    >
+      {options.map((opt) => (
+        <button
+          key={opt.id}
+          type="button"
+          className={`mok-choice ${value === opt.id ? 'mok-choice--active' : ''}`}
+          onClick={() => onChange(opt.id)}
+          style={{ padding: '14px 16px', textAlign: 'left' }}
+        >
+          <div style={{ fontWeight: 500, fontSize: 15 }}>{opt.label}</div>
+          <div style={{ fontSize: 12, opacity: 0.75, marginTop: 4, fontStyle: 'italic' }}>
+            {opt.hint}
+          </div>
+        </button>
+      ))}
     </div>
   );
 }

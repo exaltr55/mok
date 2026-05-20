@@ -16,15 +16,23 @@ import Learn from './pages/Learn';
 import LearnModule from './pages/LearnModule';
 import Login from './pages/Login';
 import NotFound from './pages/NotFound';
+import AcceptInvite from './pages/AcceptInvite';
+import AdminEmployers from './pages/AdminEmployers';
+import EmployerDashboard from './pages/EmployerDashboard';
+import EmployerLogin from './pages/EmployerLogin';
+import EmployerOnboarding from './pages/EmployerOnboarding';
+import EmployerOrientation from './pages/EmployerOrientation';
+import EmployerSignup from './pages/EmployerSignup';
 import Onboarding from './pages/Onboarding';
+import Orientation from './pages/Orientation';
 import PracticeDetail from './pages/PracticeDetail';
+import PracticeReading from './pages/PracticeReading';
 import PracticeSession from './pages/PracticeSession';
 import Practices from './pages/Practices';
 import ResetPassword from './pages/ResetPassword';
 import Settings from './pages/Settings';
 import Signup from './pages/Signup';
 import Today from './pages/Today';
-import Tour from './pages/Tour';
 
 /**
  * Top-level routing for YouSourceful.
@@ -54,6 +62,51 @@ export default function App() {
             <Route path="forgot-password" element={<ForgotPassword />} />
             <Route path="reset-password" element={<ResetPassword />} />
 
+            {/* ── Employer portal ────────────────────────────────────
+                A separate URL space (/employer/*) for HR / employer admins.
+                Each gate checks that user_type === 'employer_admin' and
+                otherwise redirects them to the practitioner side. */}
+            <Route path="employer/login" element={<EmployerLogin />} />
+            <Route path="employer/signup" element={<EmployerSignup />} />
+            <Route path="employer/accept-invite" element={<AcceptInvite />} />
+
+            {/* Platform admin (Mokshly team) */}
+            <Route
+              element={
+                <PrivateRoute
+                  requireOnboarded={false}
+                  audience="platform_admin"
+                  loginPath="/login"
+                />
+              }
+            >
+              <Route path="admin/employers" element={<AdminEmployers />} />
+            </Route>
+            <Route
+              element={
+                <PrivateRoute
+                  requireOnboarded={false}
+                  audience="employer_admin"
+                  loginPath="/employer/login"
+                  onboardingPath="/employer/onboarding"
+                />
+              }
+            >
+              <Route path="employer/onboarding" element={<EmployerOnboarding />} />
+            </Route>
+            <Route
+              element={
+                <PrivateRoute
+                  audience="employer_admin"
+                  loginPath="/employer/login"
+                  onboardingPath="/employer/onboarding"
+                />
+              }
+            >
+              <Route path="employer" element={<EmployerDashboard />} />
+              <Route path="employer/orientation" element={<EmployerOrientation />} />
+            </Route>
+
             {/* Authenticated; onboarding pre-required */}
             <Route element={<PrivateRoute requireOnboarded={false} />}>
               <Route path="onboarding" element={<Onboarding />} />
@@ -61,8 +114,10 @@ export default function App() {
 
             {/* Authenticated + onboarded */}
             <Route element={<PrivateRoute />}>
-              {/* Tour — the post-onboarding section walkthrough */}
-              <Route path="tour" element={<Tour />} />
+              {/* Orientation — the post-onboarding program walkthrough.
+                  `/tour` is kept as an alias so older deep-links still work. */}
+              <Route path="orientation" element={<Orientation />} />
+              <Route path="tour" element={<Navigate to="/orientation" replace />} />
 
               {/* Today */}
               <Route path="today" element={<Today />} />
@@ -70,6 +125,8 @@ export default function App() {
               {/* Practice */}
               <Route path="practices" element={<Practices />} />
               <Route path="practices/:key" element={<PracticeDetail />} />
+              <Route path="practices/:key/learn" element={<PracticeReading part="learn" />} />
+              <Route path="practices/:key/daily" element={<PracticeReading part="daily" />} />
               <Route path="practices/:key/session" element={<PracticeSession />} />
 
               {/* Connect */}

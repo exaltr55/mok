@@ -1,14 +1,17 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import Logo from '../components/Logo';
 
-export default function Login() {
+/**
+ * Employer login. Uses the same auth endpoint as practitioners — what differs
+ * is the post-login redirect: an employer_admin user lands in
+ * /employer/dashboard, an employee in /today.
+ */
+export default function EmployerLogin() {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
-  const from = (location.state as { from?: string } | null)?.from ?? '/dashboard';
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,9 +24,11 @@ export default function Login() {
     setLoading(true);
     try {
       await login(email, password);
-      navigate(from, { replace: true });
+      // The default authed redirect logic picks the right destination based
+      // on user_type — pushing to /employer here lets the gate route them.
+      navigate('/employer', { replace: true });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed');
+      setError(err instanceof Error ? err.message : 'Sign-in failed');
     } finally {
       setLoading(false);
     }
@@ -35,15 +40,16 @@ export default function Login() {
         <div style={{ marginBottom: 24, textAlign: 'center' }}>
           <Logo size="md" />
         </div>
-        <h1 className="mok-section-title" style={{ textAlign: 'center', fontSize: 24 }}>Welcome back</h1>
-        <p className="mok-section-lede" style={{ textAlign: 'center', marginBottom: 28 }}>
-          Your practice is waiting.
+        <p className="mok-eyebrow" style={{ textAlign: 'center', margin: 0 }}>For employers</p>
+        <h1 className="mok-section-title" style={{ textAlign: 'center', fontSize: 24, margin: '6px 0 6px' }}>Welcome back.</h1>
+        <p className="mok-section-lede" style={{ textAlign: 'center', marginBottom: 24 }}>
+          Sign in to your employer portal.
         </p>
 
         {error && <div className="mok-banner mok-banner--error" role="alert">{error}</div>}
 
         <div className="mok-field">
-          <label htmlFor="email">Email</label>
+          <label htmlFor="email">Work email</label>
           <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoFocus autoComplete="email" />
         </div>
 
@@ -59,11 +65,11 @@ export default function Login() {
         <div style={{ marginTop: 20, textAlign: 'center', fontSize: 14, color: 'var(--text-muted)' }}>
           <Link to="/forgot-password" style={{ color: 'var(--accent)' }}>Forgot your password?</Link>
           <p style={{ marginTop: 10 }}>
-            New here? <Link to="/signup" style={{ color: 'var(--accent)' }}>Begin here</Link>
+            New to YouSourceful?{' '}
+            <Link to="/employer/signup" style={{ color: 'var(--accent)' }}>Create an employer account</Link>
           </p>
           <p style={{ marginTop: 8, fontSize: 13, color: 'var(--text-subtle)' }}>
-            Bringing YouSourceful to your team?{' '}
-            <Link to="/employer/signup" style={{ color: 'var(--accent)' }}>For employers</Link>
+            Looking for the practitioner sign-in? <Link to="/login" style={{ color: 'var(--accent)' }}>Go here</Link>
           </p>
         </div>
       </form>

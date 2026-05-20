@@ -73,6 +73,13 @@ class UserInfo(PydanticModel):
     role: str
     phase: str
     onboarded: bool
+    # Whether the cohort/Connect feature is turned on for this user by their
+    # employer. Used by the client to skip the cohort onboarding step and to
+    # decide what the Connect page renders.
+    cohort_enabled: bool
+    # Which portal this user belongs in. "employee" → /today, etc.
+    # "employer_admin" → /employer/dashboard.
+    user_type: str = "employee"
 
     model_config = {"from_attributes": True}
 

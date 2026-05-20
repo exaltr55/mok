@@ -26,6 +26,32 @@ function authHeaders(): Record<string, string> {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
+interface PydanticErrorItem {
+  loc?: unknown[];
+  msg?: string;
+  type?: string;
+}
+
+function formatDetail(detail: unknown, status: number): string {
+  if (typeof detail === 'string') return detail;
+  if (Array.isArray(detail)) {
+    // FastAPI / Pydantic 422 — list of { loc, msg, type } objects.
+    return detail
+      .map((item) => {
+        const it = item as PydanticErrorItem;
+        const field = Array.isArray(it.loc) && it.loc.length > 1 ? String(it.loc.slice(1).join('.')) : '';
+        const msg = it.msg ?? 'Invalid value';
+        return field ? `${field}: ${msg}` : msg;
+      })
+      .join('. ');
+  }
+  if (detail && typeof detail === 'object') {
+    const d = detail as { msg?: string };
+    if (d.msg) return d.msg;
+  }
+  return `Request failed (${status})`;
+}
+
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   const res = await fetch(`${BASE}${path}`, {
     ...init,
@@ -37,7 +63,7 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   });
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
-    throw new Error((body as { detail?: string }).detail || `Request failed (${res.status})`);
+    throw new Error(formatDetail((body as { detail?: unknown }).detail, res.status));
   }
   if (res.status === 204) return undefined as T;
   return (await res.json()) as T;
@@ -52,6 +78,13 @@ export interface AuthUser {
   role: string;
   phase: string;
   onboarded: boolean;
+  /** Set by the employer. When false, the cohort step is skipped during
+   *  onboarding and the Connect page shows a "coming when your team enables
+   *  it" empty state. */
+  cohort_enabled: boolean;
+  /** "employee" (default) | "employer_admin" | "platform_admin". Determines
+   *  which portal URL space the user belongs in. */
+  user_type: string;
 }
 
 export interface AuthResponse {
@@ -109,6 +142,7 @@ export interface Profile {
   cohort_preference: string;
   cohort_meeting_day: string | null;
   cohort_meeting_window: string | null;
+  cohort_enabled: boolean;
   theme: string;
   // Personalization captured at onboarding.
   stretched_area: 'mind' | 'body' | 'heart' | 'time' | null;
@@ -292,3 +326,200 @@ export interface DashboardData {
 }
 
 export const getDashboard = () => request<DashboardData>('/me/dashboard');
+
+// ── Welcome notes from the employer (HR + CEO) ──────────────────
+
+export interface TenantWelcome {
+  organisation_name: string | null;
+  hr_head_name: string | null;
+  hr_head_title: string | null;
+  hr_head_message: string | null;
+  ceo_name: string | null;
+  ceo_title: string | null;
+  ceo_message: string | null;
+}
+
+export const getMyTenantWelcome = () => request<TenantWelcome>('/me/tenant/welcome');
+
+// ── Employer portal ─────────────────────────────────────────────
+
+export interface EmployerSignupPayload {
+  organisation_name: string;
+  contact_name: string;
+  contact_email: string;
+  password: string;
+  employee_count_band?: '1-50' | '51-200' | '201-1000' | '1000+';
+}
+
+export interface Tenant {
+  id: string;
+  slug: string;
+  display_name: string;
+  description: string | null;
+  status: 'pending' | 'invited' | 'active';
+  cohort_enabled: boolean;
+
+  website: string | null;
+  company_data: string | null;
+  // HQ structured address
+  hq_street1: string | null;
+  hq_street2: string | null;
+  hq_city: string | null;
+  hq_state: string | null;
+  hq_postal_code: string | null;
+  hq_country: string | null;
+  hq_address: string | null; // legacy single-line
+
+  contact_name: string | null;
+  contact_email: string | null;
+  contact_phone: string | null;
+
+  billing_contact_name: string | null;
+  billing_email: string | null;
+  billing_phone: string | null;
+  // Billing structured address
+  billing_street1: string | null;
+  billing_street2: string | null;
+  billing_city: string | null;
+  billing_state: string | null;
+  billing_postal_code: string | null;
+  billing_country: string | null;
+  billing_address: string | null; // legacy single-line
+
+  hr_head_name: string | null;
+  hr_head_title: string | null;
+  hr_head_message: string | null;
+  ceo_name: string | null;
+  ceo_title: string | null;
+  ceo_message: string | null;
+
+  employee_count_band: string | null;
+}
+
+export interface EmployerMe {
+  user: AuthUser;
+  tenant: Tenant;
+}
+
+export interface TenantUpdate {
+  display_name?: string;
+  description?: string;
+  cohort_enabled?: boolean;
+  status?: 'pending' | 'invited' | 'active';
+
+  website?: string;
+  company_data?: string;
+  hq_street1?: string;
+  hq_street2?: string;
+  hq_city?: string;
+  hq_state?: string;
+  hq_postal_code?: string;
+  hq_country?: string;
+  hq_address?: string; // legacy
+
+  contact_name?: string;
+  contact_email?: string;
+  contact_phone?: string;
+
+  billing_contact_name?: string;
+  billing_email?: string;
+  billing_phone?: string;
+  billing_street1?: string;
+  billing_street2?: string;
+  billing_city?: string;
+  billing_state?: string;
+  billing_postal_code?: string;
+  billing_country?: string;
+  billing_address?: string; // legacy
+
+  hr_head_name?: string;
+  hr_head_title?: string;
+  hr_head_message?: string;
+  ceo_name?: string;
+  ceo_title?: string;
+  ceo_message?: string;
+
+  employee_count_band?: '1-50' | '51-200' | '201-1000' | '1000+';
+}
+
+// ── Platform admin (Mokshly team) ───────────────────────────────
+
+export interface ProvisionEmployerPayload {
+  organisation_name: string;
+  website?: string;
+  company_data?: string;
+  hq_street1?: string;
+  hq_street2?: string;
+  hq_city?: string;
+  hq_state?: string;
+  hq_postal_code?: string;
+  hq_country?: string;
+  contact_name: string;
+  contact_email: string;
+  contact_phone?: string;
+  billing_contact_name?: string;
+  billing_email?: string;
+  billing_phone?: string;
+  billing_street1?: string;
+  billing_street2?: string;
+  billing_city?: string;
+  billing_state?: string;
+  billing_postal_code?: string;
+  billing_country?: string;
+  employee_count_band?: '1-50' | '51-200' | '201-1000' | '1000+';
+  notes?: string;
+}
+
+export interface ProvisionedEmployer {
+  tenant: Tenant;
+  invite_url: string;
+  invite_sent: boolean;
+}
+
+export const provisionEmployer = (payload: ProvisionEmployerPayload) =>
+  request<ProvisionedEmployer>('/admin/employers', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+
+export const listEmployers = () => request<Tenant[]>('/admin/employers');
+
+export const updateEmployerAsAdmin = (tenantId: string, patch: TenantUpdate) =>
+  request<Tenant>(`/admin/employers/${tenantId}`, {
+    method: 'PATCH',
+    body: JSON.stringify(patch),
+  });
+
+// ── Employer invite acceptance ──────────────────────────────────
+
+export interface InvitePreview {
+  contact_name: string | null;
+  contact_email: string | null;
+  organisation_name: string | null;
+}
+
+export const previewInvite = (token: string) =>
+  request<InvitePreview>(`/employer/invite/preview?token=${encodeURIComponent(token)}`);
+
+export const acceptInvite = (token: string, password: string) =>
+  request<AuthResponse>('/employer/accept-invite', {
+    method: 'POST',
+    body: JSON.stringify({ token, password }),
+  });
+
+export const employerSignup = (payload: EmployerSignupPayload) =>
+  request<AuthResponse>('/employer/signup', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+
+export const getEmployerMe = () => request<EmployerMe>('/employer/me');
+
+export const updateTenant = (patch: TenantUpdate) =>
+  request<Tenant>('/employer/tenant', {
+    method: 'PATCH',
+    body: JSON.stringify(patch),
+  });
+
+export const completeEmployerOnboarding = () =>
+  request<EmployerMe>('/employer/complete-onboarding', { method: 'POST' });

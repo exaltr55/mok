@@ -38,6 +38,10 @@ class User(BaseModel):
     # Platform role — admin status is independent of practitioner phase.
     role: Mapped[str] = mapped_column(String(32), nullable=False, default="user")
 
+    # Top-level user type. Determines which portal/URL space they live in.
+    # Values: "employee" (default) | "employer_admin" | "platform_admin".
+    user_type: Mapped[str] = mapped_column(String(32), nullable=False, default="employee")
+
     # Onboarding state
     onboarded: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
 
@@ -57,6 +61,13 @@ class User(BaseModel):
     cohort_preference: Mapped[str] = mapped_column(String(30), nullable=False, default="outside")
     cohort_meeting_day: Mapped[str | None] = mapped_column(String(10), nullable=True)
     cohort_meeting_window: Mapped[str | None] = mapped_column(String(30), nullable=True)
+
+    # Whether the Connect / cohort feature is available for this practitioner.
+    # Controlled by the employer (set by an admin per tenant). When False, the
+    # cohort step is skipped during onboarding and the Connect section shows a
+    # "coming when your team enables it" empty state. Eventually this will be
+    # derived from a Tenant.cohort_enabled setting; per-user works for v1.
+    cohort_enabled: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
 
     # The current phase. Mutable; users (or future automation) can advance it.
     phase: Mapped[str] = mapped_column(String(20), nullable=False, default=PHASE_ARRIVING)

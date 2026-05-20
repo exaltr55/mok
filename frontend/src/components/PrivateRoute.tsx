@@ -3,23 +3,54 @@ import { useAuth } from '../contexts/AuthContext';
 
 interface Props {
   requireOnboarded?: boolean;
+  /** Which user_type this route is for. Defaults to "employee" — employer
+   *  admins are redirected to /employer, and vice versa, so each portal stays
+   *  in its own URL space. */
+  audience?: 'employee' | 'employer_admin' | 'platform_admin';
+  /** Where unauthenticated users land. Defaults to /login. Employer routes
+   *  pass "/employer/login". */
+  loginPath?: string;
+  /** Where un-onboarded users go. Defaults to /onboarding. */
+  onboardingPath?: string;
 }
 
 /**
- * Gates child routes on authentication.
+ * Gates child routes on authentication and user type.
  *
- * If ``requireOnboarded`` is true (the default for most app pages), users who
- * haven't completed onboarding are redirected to /onboarding. The onboarding
- * route itself uses ``requireOnboarded={false}`` so it doesn't loop.
+ * If the signed-in user does not match ``audience``, they are redirected to
+ * the right portal's landing — keeping employee and employer URL spaces
+ * cleanly separated.
  */
-export default function PrivateRoute({ requireOnboarded = true }: Props) {
+export default function PrivateRoute({
+  requireOnboarded = true,
+  audience = 'employee',
+  loginPath = '/login',
+  onboardingPath = '/onboarding',
+}: Props) {
   const { isAuthenticated, isLoading, user } = useAuth();
   const location = useLocation();
 
   if (isLoading) return <div className="mok-loading">Drawing a breath…</div>;
-  if (!isAuthenticated) return <Navigate to="/login" replace state={{ from: location.pathname }} />;
-  if (requireOnboarded && user && !user.onboarded) {
-    return <Navigate to="/onboarding" replace />;
+  if (!isAuthenticated || !user) {
+    return <Navigate to={loginPath} replace state={{ from: location.pathname }} />;
+  }
+
+  // Wrong portal? Send them to the right one's landing.
+  if (audience === 'employee' && user.user_type === 'employer_admin') {
+    return <Navigate to="/employer" replace />;
+  }
+  if (audience === 'employee' && user.user_type === 'platform_admin') {
+    return <Navigate to="/admin/employers" replace />;
+  }
+  if (audience === 'employer_admin' && user.user_type !== 'employer_admin') {
+    return <Navigate to={user.user_type === 'platform_admin' ? '/admin/employers' : '/today'} replace />;
+  }
+  if (audience === 'platform_admin' && user.user_type !== 'platform_admin') {
+    return <Navigate to={user.user_type === 'employer_admin' ? '/employer' : '/today'} replace />;
+  }
+
+  if (requireOnboarded && !user.onboarded) {
+    return <Navigate to={onboardingPath} replace />;
   }
   return <Outlet />;
 }

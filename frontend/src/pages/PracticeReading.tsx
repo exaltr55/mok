@@ -1,15 +1,30 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import {
-  getLearnModule,
-  listLearnModules,
-  type LearnModule,
-  type LearnModuleSummary,
-} from '../api/client';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { getPractice, type PracticeDetail as PracticeDetailT } from '../api/client';
+import { PracticeArt, PRACTICE_COLORS, type PracticeKey } from '../components/PracticeArt';
+import { parsePractice } from '../utils/practiceContent';
 import { useSlideNarration } from '../hooks/useSlideNarration';
 import NarratedLines from '../components/NarratedLines';
 
-/** Engineer-facing meta we strip even if it slips back into canonical content. */
+/**
+ * Reads ONE part of a practice as its own slideshow:
+ *   - /practices/:key/learn  → Part 1 — Learning the practice
+ *   - /practices/:key/daily  → Part 2 — The daily practice
+ *
+ * The final slide leads to the next step in the natural sequence:
+ *   - learn  →  Read Part 2 (the daily practice)
+ *   - daily  →  Begin the guided session
+ */
+
+type Part = 'learn' | 'daily';
+type SlideKind = 'h2' | 'h3' | 'quote' | 'prose' | 'cta';
+
+interface Slide {
+  kind: SlideKind;
+  body: string;
+  eyebrow?: string;
+}
+
 function isMetaLine(line: string): boolean {
   const s = line.trim();
   if (!s) return false;
@@ -22,23 +37,8 @@ function isMetaLine(line: string): boolean {
   return false;
 }
 
-interface Slide {
-  kind: 'h2' | 'h3' | 'quote' | 'prose';
-  body: string;
-}
-
-/** Flatten a slide to a single line of speech (drops markdown soft breaks). */
-function slideToText(slide: Slide): string {
-  return slide.body
-    .replace(/\n+/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
-/** Group breath-paced stanzas into slide-sized beats so each card holds one
- *  thought without becoming a wall of text. Headings and blockquotes always
- *  begin a fresh slide. */
-function buildSlides(content: string, TARGET = 200): Slide[] {
+function stanzasToSlides(content: string, TARGET = 200): Slide[] {
+  if (!content) return [];
   const stanzas = content
     .split(/\n\s*\n/)
     .map((s) => s.trim())
@@ -46,6 +46,7 @@ function buildSlides(content: string, TARGET = 200): Slide[] {
       if (!s) return false;
       if (/^-{3,}$/.test(s)) return false;
       if (s.startsWith('# ')) return false;
+      if (/^Part\s*[AB]\b/i.test(s)) return false;
       if (s.split('\n').every(isMetaLine)) return false;
       return true;
     });
@@ -89,35 +90,68 @@ function buildSlides(content: string, TARGET = 200): Slide[] {
   return slides;
 }
 
-export default function LearnModulePage() {
-  const { slug } = useParams<{ slug: string }>();
-  const [module, setModule] = useState<LearnModule | null>(null);
-  const [siblings, setSiblings] = useState<LearnModuleSummary[]>([]);
+function slideToText(slide: Slide): string {
+  if (slide.kind === 'cta') return slide.body;
+  return slide.body.replace(/\n+/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+interface Props {
+  part: Part;
+}
+
+export default function PracticeReading({ part }: Props) {
+  const { key } = useParams<{ key: string }>();
+  const navigate = useNavigate();
+  const [data, setData] = useState<PracticeDetailT | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [idx, setIdx] = useState(0);
 
   useEffect(() => {
-    if (!slug) return;
+    if (!key) return;
     setLoading(true);
     setIdx(0);
-    Promise.all([getLearnModule(slug), listLearnModules()])
-      .then(([m, list]) => {
-        setModule(m);
-        setSiblings([...list].sort((a, b) => a.order - b.order));
-      })
-      .catch((e) => setError(e instanceof Error ? e.message : 'Could not load module'))
+    getPractice(key)
+      .then(setData)
+      .catch((e) => setError(e instanceof Error ? e.message : 'Could not load practice'))
       .finally(() => setLoading(false));
-  }, [slug]);
+  }, [key, part]);
 
-  const slides = useMemo(() => (module ? buildSlides(module.content) : []), [module]);
+  const parsed = useMemo(() => (data ? parsePractice(data.content) : null), [data]);
+
+  const slides = useMemo<Slide[]>(() => {
+    if (!parsed || !data) return [];
+
+    const sectionSource =
+      part === 'learn'
+        ? [parsed.intro, parsed.learn].filter(Boolean).join('\n\n')
+        : parsed.session;
+
+    const bodySlides = stanzasToSlides(sectionSource);
+    const deck: Slide[] = [...bodySlides];
+
+    // Final CTA slide tailored to which part this is.
+    if (part === 'learn') {
+      deck.push({
+        kind: 'cta',
+        body:
+          "Now, the daily practice — what to do, breath by breath.",
+        eyebrow: 'Read next',
+      });
+    } else {
+      deck.push({
+        kind: 'cta',
+        body:
+          "You've read the daily practice. The guided session walks you through.",
+        eyebrow: 'Ready',
+      });
+    }
+    return deck;
+  }, [parsed, data, part]);
+
   const total = slides.length;
-
   const slideTexts = useMemo(() => slides.map(slideToText), [slides]);
   const audio = useSlideNarration(slideTexts, idx, setIdx);
-
-  const next = siblings.findIndex((s) => s.slug === slug);
-  const nextModule = next >= 0 && next < siblings.length - 1 ? siblings[next + 1] : null;
 
   // Keyboard navigation.
   useEffect(() => {
@@ -143,51 +177,68 @@ export default function LearnModulePage() {
     else if (dx >= THRESHOLD) setIdx((i) => Math.max(i - 1, 0));
   }
 
-  if (loading) return <div className="mok-loading">Opening…</div>;
-  if (error) return <div className="mok-banner mok-banner--error">{error}</div>;
-  if (!module) return null;
-  if (total === 0) {
+  if (loading) return <div className="mok-loading">Opening the practice…</div>;
+  if (error || !data) return <div className="mok-banner mok-banner--error">{error || 'Not found'}</div>;
+  if (total <= 1) {
+    // Only the CTA slide — no body content found.
     return (
       <article className="mok-prose">
-        <Link to="/learn" className="mok-nav-link">← All modules</Link>
-        <p className="mok-muted">Module content is being prepared.</p>
+        <Link to={`/practices/${data.key}`} className="mok-nav-link">← Practice overview</Link>
+        <p className="mok-muted">This section is being prepared. Try the other part for now.</p>
       </article>
     );
   }
 
+  const k = data.key as PracticeKey;
+  const Art = PracticeArt[k];
+  const color = PRACTICE_COLORS[k];
+
   const slide = slides[idx];
   const onFirst = idx === 0;
   const onLast = idx === total - 1;
+  const sessionHref = data.key === 'writing' ? '/journal' : `/practices/${data.key}/session`;
+  const nextPartHref = `/practices/${data.key}/daily`;
+
+  const partLabel = part === 'learn' ? 'Part 1 — Learning the practice' : 'Part 2 — The daily practice';
+
+  // What does the final CTA button do?
+  const finalCta =
+    part === 'learn'
+      ? { label: 'Read the daily practice →', to: nextPartHref }
+      : { label: 'Begin guided session →', to: sessionHref };
 
   return (
     <section className="mok-learn-deck" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
       {/* Header */}
       <header className="mok-learn-deck-head">
         <div className="mok-learn-deck-toprow">
-          <Link to="/learn" className="mok-nav-link">← All modules</Link>
+          <Link to={`/practices/${data.key}`} className="mok-nav-link">← Practice overview</Link>
           {audio.supported && (
             <button
               type="button"
               className={`mok-listen-toggle ${audio.enabled ? 'mok-listen-toggle--on' : ''}`}
               onClick={audio.toggle}
               aria-pressed={audio.enabled}
-              aria-label={audio.enabled ? 'Mute narration' : 'Listen to this module'}
+              aria-label={audio.enabled ? 'Mute narration' : 'Listen to this section'}
             >
               <span aria-hidden="true">{audio.enabled ? '🔊' : '🔈'}</span>
               {audio.enabled ? 'Mute' : 'Listen'}
             </button>
           )}
         </div>
-        <p className="mok-eyebrow" style={{ marginTop: 10 }}>{module.subtitle}</p>
-        <h1 className="mok-learn-deck-title">{module.title}</h1>
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 12 }}>
+          <Art color={color} size={40} />
+        </div>
+        <p className="mok-eyebrow" style={{ marginTop: 8 }}>{partLabel}</p>
+        <h1 className="mok-learn-deck-title">{data.name}</h1>
       </header>
 
-      {/* Progress bar */}
+      {/* Progress */}
       <div className="mok-learn-progress" role="progressbar" aria-valuemin={1} aria-valuemax={total} aria-valuenow={idx + 1}>
         <div className="mok-learn-progress-fill" style={{ width: `${((idx + 1) / total) * 100}%` }} />
       </div>
 
-      {/* Slide stage — clickable left/right halves */}
+      {/* Stage */}
       <div className="mok-learn-stage">
         <button
           type="button"
@@ -209,11 +260,12 @@ export default function LearnModulePage() {
             slide={slide}
             narrating={audio.narratingIdx === idx}
             progress={audio.progress}
+            finalCta={finalCta}
           />
         </article>
       </div>
 
-      {/* Footer controls */}
+      {/* Footer */}
       <footer className="mok-learn-deck-foot">
         <div className="mok-learn-counter">
           {idx + 1} <span className="mok-subtle">of {total}</span>
@@ -230,17 +282,8 @@ export default function LearnModulePage() {
             ← Back
           </button>
 
-          {onLast ? (
-            nextModule ? (
-              <Link to={`/learn/${nextModule.slug}`} className="mok-btn mok-btn--primary">
-                Next: {nextModule.title} →
-              </Link>
-            ) : (
-              <Link to="/learn" className="mok-btn mok-btn--primary">
-                Finish — back to all modules
-              </Link>
-            )
-          ) : (
+          {/* On the CTA slide, the slide itself carries the action button. */}
+          {!onLast && (
             <button
               type="button"
               className="mok-btn mok-btn--primary"
@@ -254,8 +297,19 @@ export default function LearnModulePage() {
       </footer>
 
       <p className="mok-subtle mok-learn-hint">
-        Swipe, click the slide, or use ← → keys to move through.
+        Swipe, click the page, or use ← → keys to move through.
       </p>
+
+      {/* Quiet bottom escape: back to overview. */}
+      <div style={{ textAlign: 'center', marginTop: 8 }}>
+        <button
+          type="button"
+          className="mok-btn mok-btn--ghost"
+          onClick={() => navigate(`/practices/${data.key}`)}
+        >
+          Practice overview
+        </button>
+      </div>
     </section>
   );
 }
@@ -264,10 +318,12 @@ function SlideBody({
   slide,
   narrating,
   progress,
+  finalCta,
 }: {
   slide: Slide;
   narrating: boolean;
   progress: number;
+  finalCta: { label: string; to: string };
 }) {
   if (slide.kind === 'h2') {
     return <h2 className={`mok-learn-slide-h2 ${narrating ? 'mok-narrated--pulse' : ''}`}>{slide.body}</h2>;
@@ -282,8 +338,23 @@ function SlideBody({
       </blockquote>
     );
   }
-  // prose — multiple stanzas joined with blank lines so NarratedLines
-  // can render breath-paced breaks faithfully.
+  if (slide.kind === 'cta') {
+    return (
+      <div style={{ textAlign: 'center' }}>
+        {slide.eyebrow && (
+          <p className="mok-eyebrow" style={{ marginBottom: 14, letterSpacing: '0.22em' }}>
+            {slide.eyebrow}
+          </p>
+        )}
+        <h2 className={`mok-learn-slide-h2 ${narrating ? 'mok-narrated--pulse' : ''}`} style={{ marginBottom: 18 }}>
+          {slide.body}
+        </h2>
+        <Link to={finalCta.to} className="mok-btn mok-btn--primary mok-btn--lg">
+          {finalCta.label}
+        </Link>
+      </div>
+    );
+  }
   return (
     <div className="mok-learn-slide-prose">
       <NarratedLines body={slide.body} narrating={narrating} progress={progress} />

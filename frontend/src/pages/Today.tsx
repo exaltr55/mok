@@ -121,6 +121,24 @@ export default function Today() {
                   <span className="mok-muted" style={{ fontSize: 13, fontFamily: 'var(--font-sans)' }}>
                     ✓ Practiced today.
                   </span>
+                ) : data.mci.practice_days === 0 ? (
+                  /* First-time practitioner — guide them to read first.
+                     The "Begin guided session" CTA lives inside the slideshow's
+                     final card, so the read-then-practice order is preserved. */
+                  <>
+                    <Link
+                      to={`/practices/${recommended.key}`}
+                      className="mok-btn mok-btn--primary mok-btn--lg"
+                    >
+                      Read the practice →
+                    </Link>
+                    <span
+                      className="mok-muted"
+                      style={{ fontSize: 13, fontFamily: 'var(--font-sans)', fontStyle: 'italic' }}
+                    >
+                      Read it through — the guided session opens at the end.
+                    </span>
+                  </>
                 ) : (
                   <>
                     <Link

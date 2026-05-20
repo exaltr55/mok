@@ -42,6 +42,9 @@ class ProfileOut(PydanticModel):
     cohort_preference: str
     cohort_meeting_day: str | None
     cohort_meeting_window: str | None
+    # Whether the employer has enabled the cohort feature for this user.
+    # Users cannot change this themselves — it is set by their employer.
+    cohort_enabled: bool
     theme: str
     # Personalization captured at onboarding.
     stretched_area: str | None
@@ -94,6 +97,57 @@ class ProfileUpdate(PydanticModel):
 @router.get("/profile", response_model=ProfileOut)
 async def get_profile(user: User = Depends(get_current_user)) -> ProfileOut:
     return ProfileOut.model_validate(user)
+
+
+# ── Tenant welcome (HR + CEO messages) ─────────────────────────
+
+
+class TenantWelcomeOut(PydanticModel):
+    organisation_name: str | None
+    hr_head_name: str | None
+    hr_head_title: str | None
+    hr_head_message: str | None
+    ceo_name: str | None
+    ceo_title: str | None
+    ceo_message: str | None
+
+
+@router.get("/tenant/welcome", response_model=TenantWelcomeOut)
+async def my_tenant_welcome(
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> TenantWelcomeOut:
+    """Welcome notes from this employee's primary tenant — surfaced during
+    their orientation. Returns empty fields if the employee is unaffiliated."""
+    from app.models.membership import Membership
+    from app.models.tenant import Tenant
+
+    m_q = await db.execute(
+        select(Membership)
+        .where(Membership.user_id == user.id, Membership.is_active.is_(True))
+        .order_by(Membership.is_primary.desc()),
+    )
+    m = m_q.scalars().first()
+    if not m:
+        return TenantWelcomeOut(
+            organisation_name=None,
+            hr_head_name=None,
+            hr_head_title=None,
+            hr_head_message=None,
+            ceo_name=None,
+            ceo_title=None,
+            ceo_message=None,
+        )
+    tenant = await db.get(Tenant, m.tenant_id)
+    return TenantWelcomeOut(
+        organisation_name=tenant.display_name if tenant else None,
+        hr_head_name=tenant.hr_head_name if tenant else None,
+        hr_head_title=tenant.hr_head_title if tenant else None,
+        hr_head_message=tenant.hr_head_message if tenant else None,
+        ceo_name=tenant.ceo_name if tenant else None,
+        ceo_title=tenant.ceo_title if tenant else None,
+        ceo_message=tenant.ceo_message if tenant else None,
+    )
 
 
 @router.patch("/profile", response_model=ProfileOut)

@@ -44,11 +44,11 @@ const Thinking: FC<ArtProps> = ({ color = 'currentColor', size = 80 }) => (
 
 const Talking: FC<ArtProps> = ({ color = 'currentColor', size = 80 }) => (
   <svg width={size} height={size} viewBox="0 0 80 80" {...stroke(color)}>
-    <line x1="40" y1="30" x2="40" y2="50" />
-    <path d="M 28 30 Q 22 40, 28 50" opacity={0.7} />
-    <path d="M 52 30 Q 58 40, 52 50" opacity={0.7} />
-    <path d="M 18 24 Q 8 40, 18 56" opacity={0.4} />
-    <path d="M 62 24 Q 72 40, 62 56" opacity={0.4} />
+    <ellipse cx="40" cy="40" rx="10" ry="6" />
+    <path d="M 26 30 Q 18 40, 26 50" opacity={0.75} />
+    <path d="M 54 30 Q 62 40, 54 50" opacity={0.75} />
+    <path d="M 18 22 Q 6 40, 18 58" opacity={0.45} />
+    <path d="M 62 22 Q 74 40, 62 58" opacity={0.45} />
   </svg>
 );
 
@@ -64,12 +64,13 @@ const Writing: FC<ArtProps> = ({ color = 'currentColor', size = 80 }) => (
 
 const Moving: FC<ArtProps> = ({ color = 'currentColor', size = 80 }) => (
   <svg width={size} height={size} viewBox="0 0 80 80" {...stroke(color)}>
-    <circle cx="40" cy="18" r="5" />
-    <line x1="40" y1="23" x2="40" y2="48" />
-    <path d="M 40 32 L 28 40" />
-    <path d="M 40 32 L 52 40" />
-    <path d="M 40 48 L 32 66" />
-    <path d="M 40 48 L 48 66" />
+    <circle cx="40" cy="16" r="6" />
+    <line x1="40" y1="22" x2="40" y2="50" />
+    <path d="M 40 30 L 22 40" />
+    <path d="M 40 30 L 58 40" />
+    <path d="M 40 50 L 26 68" />
+    <path d="M 40 50 L 54 68" />
+    <line x1="14" y1="70" x2="66" y2="70" opacity={0.35} />
   </svg>
 );
 
@@ -105,12 +106,14 @@ export const PracticeArt = {
 
 export type PracticeKey = keyof typeof PracticeArt;
 
+/** Each practice's accent. These map to the `--practice-<key>` tokens
+ *  declared in `styles/variables.css`, so they resolve in every theme. */
 export const PRACTICE_COLORS: Record<PracticeKey, string> = {
-  breathing: 'var(--sage)',
-  thinking: 'var(--ochre)',
-  talking: 'var(--rust)',
-  writing: 'var(--ochre-deep)',
-  moving: 'var(--sage)',
-  resetting: 'var(--rust)',
-  aligning: 'var(--ochre)',
+  breathing: 'var(--practice-breathing)',
+  thinking:  'var(--practice-thinking)',
+  talking:   'var(--practice-talking)',
+  writing:   'var(--practice-writing)',
+  moving:    'var(--practice-moving)',
+  resetting: 'var(--practice-resetting)',
+  aligning:  'var(--practice-aligning)',
 };

@@ -176,36 +176,47 @@ export default function Learn() {
           </span>
         </div>
 
+        <p className="mok-muted" style={{ fontSize: 13, fontStyle: 'italic', margin: '0 0 12px' }}>
+          Each practice has two readings — the teaching, then the daily practice.
+          Read both, in order. The guided session opens when you're ready.
+        </p>
+
         <div className="mok-stack-sm">
           {practices.map((p, i) => {
             const key = p.key as PracticeKey;
             const Art = PracticeArt[key];
             const color = PRACTICE_COLORS[key];
             return (
-              <Link key={p.key} to={`/practices/${p.key}`} className="mok-learn-row">
-                <span className="mok-learn-num">{String(i + 1).padStart(2, '0')}</span>
-                <span style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 14 }}>
+              <article key={p.key} className="mok-learn-practice">
+                <header className="mok-learn-practice-head">
+                  <span className="mok-learn-num">{String(i + 1).padStart(2, '0')}</span>
                   <Art color={color} size={28} />
                   <span>
-                    <span
-                      style={{
-                        display: 'block',
-                        fontFamily: 'var(--font-display)',
-                        fontSize: 17,
-                        fontWeight: 500,
-                        letterSpacing: '-0.005em',
-                        color: 'var(--text)',
-                      }}
-                    >
-                      {p.name}
-                    </span>
+                    <span className="mok-learn-practice-name">{p.name}</span>
                     <span className="mok-muted" style={{ fontSize: 13, fontStyle: 'italic' }}>
                       {p.description}
                     </span>
                   </span>
-                </span>
-                <span className="mok-subtle" style={{ fontSize: 14 }}>›</span>
-              </Link>
+                </header>
+                <div className="mok-learn-practice-parts">
+                  <Link
+                    to={`/practices/${p.key}/learn`}
+                    className="mok-learn-practice-part"
+                  >
+                    <span className="mok-eyebrow">Part 1</span>
+                    <span className="mok-learn-practice-part-title">Learning the practice</span>
+                    <span className="mok-subtle">Read ›</span>
+                  </Link>
+                  <Link
+                    to={`/practices/${p.key}/daily`}
+                    className="mok-learn-practice-part"
+                  >
+                    <span className="mok-eyebrow">Part 2</span>
+                    <span className="mok-learn-practice-part-title">The daily practice</span>
+                    <span className="mok-subtle">Read ›</span>
+                  </Link>
+                </div>
+              </article>
             );
           })}
         </div>

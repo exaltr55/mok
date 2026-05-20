@@ -185,6 +185,47 @@ async def send_password_changed_email(*, to: str, name: str) -> bool:
     return await send_email(to=to, subject=subject, body_html=html, body_text=text)
 
 
+async def send_employer_invite(
+    *,
+    to: str,
+    contact_name: str,
+    organisation_name: str,
+    invite_token: str,
+) -> bool:
+    """Send the HR contact a link to accept their employer invitation."""
+    base_url = _frontend_base()
+    accept_url = f"{base_url}/employer/accept-invite?token={invite_token}"
+    subject = f"Welcome to {settings.app_name} — set up {organisation_name}"
+    html = _wrap(f"""
+        <h2 style="margin: 0 0 8px; font-size: 20px;">Welcome aboard.</h2>
+        <p>Hi {contact_name},</p>
+        <p>Our team has set up {organisation_name} on {settings.app_name}. To
+        accept your invitation and choose a password for your employer portal,
+        click below:</p>
+        <p>
+          <a href="{accept_url}"
+             style="display: inline-block; padding: 12px 26px; background: #2F4A75;
+                    color: white; text-decoration: none; border-radius: 6px;
+                    font-weight: 600;">Accept invitation</a>
+        </p>
+        <p style="color: #475569; margin-top: 18px;">
+          After you set your password, you'll walk through a short orientation
+          tailored to HR and land in your dashboard, where you can invite
+          practitioners, write a welcome note for them, and turn the cohort
+          feature on whenever your team is ready.
+        </p>
+        <p style="color: #94a3b8; font-size: 13px; margin-top: 22px;">
+          This invitation link expires in 14 days. If you weren't expecting
+          this, you can safely ignore the email.
+        </p>
+    """)
+    text = (
+        f"Hi {contact_name}, please accept your YouSourceful invitation at: "
+        f"{accept_url} (expires in 14 days)"
+    )
+    return await send_email(to=to, subject=subject, body_html=html, body_text=text)
+
+
 async def send_contact_message(
     *,
     to: str,

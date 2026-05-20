@@ -103,7 +103,7 @@ export default function Dashboard() {
   return (
     <div className="mok-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
-      {/* Continue last practice — surface the doorway you most recently walked */}
+      {/* Continue last practice — surface the one most recently practiced */}
       {lastPractice ? (
         <ContinueCard
           practice={lastPractice}
@@ -129,7 +129,7 @@ export default function Dashboard() {
 
       {/* Per-practice — bar chart */}
       <section className="mok-card">
-        <p className="mok-section-h3">By doorway · sessions over 30 / 90 days</p>
+        <p className="mok-section-h3">By practice · sessions over 30 / 90 days</p>
         <div style={{ width: '100%', height: 240, marginTop: 12 }}>
           <ResponsiveContainer>
             <BarChart data={barData} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
@@ -167,7 +167,7 @@ export default function Dashboard() {
         {/* Distribution donut */}
         {pieData.length > 0 && (
           <section className="mok-card">
-            <p className="mok-section-h3">Distribution · the doorways you walk</p>
+            <p className="mok-section-h3">Distribution · where your practice goes</p>
             <div style={{ width: '100%', height: 240, marginTop: 12 }}>
               <ResponsiveContainer>
                 <PieChart>
@@ -235,7 +235,7 @@ export default function Dashboard() {
 
       {/* Per-practice cards with sparklines */}
       <section>
-        <p className="mok-section-h3">Each doorway, in detail</p>
+        <p className="mok-section-h3">Each practice, in detail</p>
         <div
           style={{
             display: 'grid',
@@ -346,7 +346,7 @@ function FirstTimeCard() {
             margin: '4px 0 4px',
           }}
         >
-          The simplest doorway is Breathing.
+          Begin with Breathing.
         </h2>
         <p className="mok-muted" style={{ fontSize: 13, fontStyle: 'italic', margin: 0 }}>
           Three minutes. A 4-4-4 rhythm. You can do this anywhere.

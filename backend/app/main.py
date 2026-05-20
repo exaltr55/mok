@@ -14,7 +14,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from llm_client import configure_keys
 
-from app.api import auth, chat, contact, health, learn, me, practices
+from app.api import admin, auth, chat, contact, employer, health, learn, me, practices
 from app.config import settings
 from app.database import async_session, engine
 from app.logging import setup_logging
@@ -53,16 +53,65 @@ async def _init_database() -> None:
 
         def _migrate(sync_conn: object) -> None:
             inspector = inspect(sync_conn)
-            existing = {c["name"] for c in inspector.get_columns("users")}
-            additions = [
+            existing_users = {c["name"] for c in inspector.get_columns("users")}
+            user_additions = [
                 ("stretched_area",   "VARCHAR(20)"),
                 ("restore_style",    "VARCHAR(20)"),
                 ("tone_preference",  "VARCHAR(20)"),
                 ("here_because",     "VARCHAR(20)"),
+                ("cohort_enabled",   "BOOLEAN NOT NULL DEFAULT 0"),
+                ("user_type",        "VARCHAR(32) NOT NULL DEFAULT 'employee'"),
             ]
-            for col, ddl in additions:
-                if col not in existing:
+            for col, ddl in user_additions:
+                if col not in existing_users:
                     sync_conn.execute(text(f"ALTER TABLE users ADD COLUMN {col} {ddl}"))
+
+            existing_tenants = {c["name"] for c in inspector.get_columns("tenants")}
+            tenant_additions = [
+                ("contact_email",         "VARCHAR(255)"),
+                ("employee_count_band",   "VARCHAR(20)"),
+                ("status",                "VARCHAR(20) NOT NULL DEFAULT 'pending'"),
+                ("cohort_enabled",        "BOOLEAN NOT NULL DEFAULT 0"),
+                ("website",               "VARCHAR(255)"),
+                ("company_data",          "TEXT"),
+                ("hq_address",            "TEXT"),
+                ("hq_street1",            "VARCHAR(200)"),
+                ("hq_street2",            "VARCHAR(200)"),
+                ("hq_city",               "VARCHAR(100)"),
+                ("hq_state",              "VARCHAR(100)"),
+                ("hq_postal_code",        "VARCHAR(20)"),
+                ("hq_country",            "VARCHAR(100)"),
+                ("billing_street1",       "VARCHAR(200)"),
+                ("billing_street2",       "VARCHAR(200)"),
+                ("billing_city",          "VARCHAR(100)"),
+                ("billing_state",         "VARCHAR(100)"),
+                ("billing_postal_code",   "VARCHAR(20)"),
+                ("billing_country",       "VARCHAR(100)"),
+                ("contact_name",          "VARCHAR(200)"),
+                ("contact_phone",         "VARCHAR(50)"),
+                ("billing_contact_name",  "VARCHAR(200)"),
+                ("billing_email",         "VARCHAR(255)"),
+                ("billing_phone",         "VARCHAR(50)"),
+                ("billing_address",       "TEXT"),
+                ("hr_head_name",          "VARCHAR(200)"),
+                ("hr_head_title",         "VARCHAR(200)"),
+                ("hr_head_message",       "TEXT"),
+                ("ceo_name",              "VARCHAR(200)"),
+                ("ceo_title",             "VARCHAR(200)"),
+                ("ceo_message",           "TEXT"),
+            ]
+            for col, ddl in tenant_additions:
+                if col not in existing_tenants:
+                    sync_conn.execute(text(f"ALTER TABLE tenants ADD COLUMN {col} {ddl}"))
+
+            # Back-fill: any pre-existing admin user should be marked as a
+            # platform_admin so they can access the Mokshly admin tools.
+            sync_conn.execute(
+                text(
+                    "UPDATE users SET user_type='platform_admin' "
+                    "WHERE role='admin' AND user_type='employee'",
+                ),
+            )
 
         await conn.run_sync(_migrate)
 
@@ -101,6 +150,7 @@ async def _seed_admin_user() -> None:
             name="Admin",
             password_hash=_hash_password(password),
             role="admin",
+            user_type="platform_admin",
         )
         session.add(admin)
         await session.commit()
@@ -176,4 +226,6 @@ app.include_router(practices.router, prefix="/api/v1")
 app.include_router(learn.router, prefix="/api/v1")
 app.include_router(contact.router, prefix="/api/v1")
 app.include_router(chat.router, prefix="/api/v1")
+app.include_router(employer.router, prefix="/api/v1")
+app.include_router(admin.router, prefix="/api/v1")
 app.include_router(health.router)

@@ -1,19 +1,35 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getTodaySummary, listPractices, type PracticeSummary } from '../api/client';
+import {
+  getDashboard,
+  getTodaySummary,
+  listPractices,
+  type DashboardData,
+  type PracticeSummary,
+} from '../api/client';
 import { PracticeArt, PRACTICE_COLORS, type PracticeKey } from '../components/PracticeArt';
 
 export default function Practices() {
   const [practices, setPractices] = useState<PracticeSummary[]>([]);
   const [practicedToday, setPracticedToday] = useState<string[]>([]);
+  const [history, setHistory] = useState<Record<string, string | null>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    Promise.all([listPractices(), getTodaySummary().catch(() => null)])
-      .then(([p, t]) => {
+    Promise.all([
+      listPractices(),
+      getTodaySummary().catch(() => null),
+      getDashboard().catch(() => null as DashboardData | null),
+    ])
+      .then(([p, t, d]) => {
         setPractices(p);
         setPracticedToday(t?.practiced_today ?? []);
+        if (d) {
+          const map: Record<string, string | null> = {};
+          for (const b of d.by_practice) map[b.key] = b.last_practiced;
+          setHistory(map);
+        }
       })
       .catch((e) => setError(e instanceof Error ? e.message : 'Could not load practices'))
       .finally(() => setLoading(false));
@@ -39,6 +55,11 @@ export default function Practices() {
           const Art = PracticeArt[key];
           const color = PRACTICE_COLORS[key];
           const done = practicedToday.includes(p.key);
+          // "Never practiced" → emphasize Read; the Begin button lives at
+          // the end of the slideshow. Once they've practiced this one,
+          // Begin gets the primary slot.
+          const everPracticed = !!history[p.key];
+          const sessionHref = p.key === 'writing' ? '/journal' : `/practices/${p.key}/session`;
           return (
             <article key={p.key} className="mok-practice-tile">
               {done && <span className="mok-practice-tile-badge">✓ today</span>}
@@ -51,13 +72,16 @@ export default function Practices() {
                 {p.session_min === p.session_max ? `${p.session_min} min` : `${p.session_min}–${p.session_max} min`}
               </p>
               <div className="mok-practice-tile-actions">
-                <Link to={`/practices/${p.key}`} className="mok-btn">Read</Link>
-                <Link
-                  to={p.key === 'writing' ? '/journal' : `/practices/${p.key}/session`}
-                  className="mok-btn mok-btn--primary"
-                >
-                  Begin
-                </Link>
+                {everPracticed ? (
+                  <>
+                    <Link to={`/practices/${p.key}`} className="mok-btn">Read</Link>
+                    <Link to={sessionHref} className="mok-btn mok-btn--primary">Begin</Link>
+                  </>
+                ) : (
+                  <Link to={`/practices/${p.key}`} className="mok-btn mok-btn--primary">
+                    Read the practice
+                  </Link>
+                )}
               </div>
             </article>
           );
