@@ -171,12 +171,8 @@ export default function PracticeSession() {
         {stage === 'arriving' && (
           <div className="mok-session-stage-inner mok-fade-in">
             <p className="mok-session-eyebrow">{practice.short_name}</p>
-            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 36, fontWeight: 400, color: 'var(--text-inverse)', margin: '0 0 18px', letterSpacing: '-0.015em' }}>
-              {practice.name}
-            </h1>
-            <p style={{ fontSize: 18, color: 'var(--text-inverse)', opacity: 0.85, margin: '0 0 28px', lineHeight: 1.5, fontWeight: 300 }}>
-              {practice.description}
-            </p>
+            <h1 className="mok-session-title">{practice.name}</h1>
+            <p className="mok-session-lede">{practice.description}</p>
 
             {isTimerPractice && practiceKey !== 'talking' && (
               <div style={{ marginBottom: 32 }}>
@@ -266,12 +262,12 @@ export default function PracticeSession() {
         {stage === 'reflection' && (
           <div className="mok-session-stage-inner mok-fade-in">
             <p className="mok-session-eyebrow">A brief reflection</p>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 400, color: 'var(--text-inverse)', margin: '0 0 28px' }}>
+            <h2 className="mok-session-h2">
               You practiced {practice.short_name.toLowerCase()} today.
             </h2>
 
             <div className="mok-field" style={{ textAlign: 'left' }}>
-              <label style={{ color: 'var(--text-subtle)' }}>How did it feel?</label>
+              <label>How did it feel?</label>
               <div className="mok-row" style={{ gap: 8 }}>
                 {(['lighter', 'same', 'heavier'] as const).map((f) => (
                   <button
@@ -279,7 +275,7 @@ export default function PracticeSession() {
                     type="button"
                     className={`mok-session-btn ${feeling === f ? 'mok-session-btn--accent' : ''}`}
                     onClick={() => setFeeling(f)}
-                    style={{ flex: 1 }}
+                    style={{ flex: 1, justifyContent: 'center' }}
                   >
                     {f}
                   </button>
@@ -289,20 +285,12 @@ export default function PracticeSession() {
 
             {!isWriting && (
               <div className="mok-field" style={{ textAlign: 'left' }}>
-                <label style={{ color: 'var(--text-subtle)' }}>A line, if you'd like</label>
+                <label htmlFor="reflection-line">A line, if you'd like</label>
                 <input
+                  id="reflection-line"
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                   placeholder="Optional"
-                  style={{
-                    background: 'transparent',
-                    border: 'none',
-                    borderBottom: '1px solid var(--text-subtle)',
-                    color: 'var(--text-inverse)',
-                    padding: '10px 0',
-                    fontSize: 16,
-                    fontFamily: 'var(--font-serif)',
-                  }}
                 />
               </div>
             )}
@@ -321,13 +309,11 @@ export default function PracticeSession() {
         {stage === 'logged' && (
           <div className="mok-session-stage-inner mok-fade-in">
             <p className="mok-session-eyebrow">Recorded</p>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 400, color: 'var(--text-inverse)', margin: '0 0 16px' }}>
-              Your practice is noted.
-            </h2>
-            <p className="mok-muted" style={{ fontSize: 15, fontStyle: 'italic', marginBottom: 24 }}>
+            <h2 className="mok-session-h2">Your practice is noted.</h2>
+            <p className="mok-session-lede" style={{ fontStyle: 'italic' }}>
               {logError ?? 'One log per practice per day — see you tomorrow if you would like.'}
             </p>
-            <div className="mok-row" style={{ justifyContent: 'center' }}>
+            <div className="mok-row" style={{ justifyContent: 'center', gap: 10, flexWrap: 'wrap' }}>
               <button
                 type="button"
                 className="mok-session-btn mok-session-btn--accent"

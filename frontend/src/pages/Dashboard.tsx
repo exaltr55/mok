@@ -101,7 +101,18 @@ export default function Dashboard() {
     : null;
 
   return (
-    <div className="mok-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+    <div className="mok-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+
+      {/* ── Page header ─────────────────────────────────── */}
+      <header>
+        <p className="mok-eyebrow">Overview</p>
+        <h1 className="mok-section-title">Your practice, at a glance.</h1>
+        <p className="mok-section-lede">
+          A quiet view of how your practice is shaping up — the practice you
+          most recently returned to, your rhythm over the last month, and
+          the trail of each practice. Visible only to you.
+        </p>
+      </header>
 
       {/* Continue last practice — surface the one most recently practiced */}
       {lastPractice ? (
@@ -124,7 +135,7 @@ export default function Dashboard() {
         <StatCard label="Days practiced" value={data.days_practiced_30d} sub="of last 30" />
         <StatCard label="Days practiced" value={data.days_practiced_90d} sub="of last 90" />
         <StatCard label="Total sessions" value={data.total_sessions} sub="in 90 days" />
-        {mci && <StatCard label="MCI" value={mci.mci} sub={mci.milestone.toLowerCase()} accent />}
+        {mci && <StatCard label="Steady rhythm" value={mci.mci} sub={mci.milestone.toLowerCase()} accent />}
       </section>
 
       {/* Per-practice — bar chart */}
@@ -253,7 +264,7 @@ export default function Dashboard() {
         className="mok-subtle"
         style={{ fontSize: 12, fontFamily: 'var(--font-sans)', textAlign: 'center', padding: '12px 4px 0' }}
       >
-        These observations are yours alone. None of them are visible to anyone else.
+        Everything you see here stays with you alone.
       </p>
     </div>
   );

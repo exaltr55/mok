@@ -5,41 +5,65 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 11px 16px;
-  font-size: 13px;
+  padding: 12px 22px;
+  font-size: 14px;
   font-weight: 500;
   font-family: var(--font-sans);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-pill);
   background: var(--surface);
   color: var(--text);
   cursor: pointer;
   transition:
     background var(--motion-quick) var(--easing),
     border-color var(--motion-quick) var(--easing),
-    color var(--motion-quick) var(--easing);
+    color var(--motion-quick) var(--easing),
+    transform var(--motion-quick) var(--easing),
+    box-shadow var(--motion-quick) var(--easing);
   text-decoration: none;
   white-space: nowrap;
-  min-height: 40px;
+  min-height: 42px;
 }
 
+/* Secondary hover — accent-tinted wash + deeper accent text + accent
+   border. Distinct from the resting state, and high-contrast against
+   both light backgrounds and the pale fill. */
 .mok-btn:hover:not(:disabled) {
-  background: var(--bg-subtle);
-  border-color: var(--border-strong);
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+  border-color: var(--accent);
+  color: var(--accent-strong);
 }
 
 .mok-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
+/* Primary button now defaults to the brand gradient — vibrant and
+   confident, matching modern wellness apps while staying distinct. */
 .mok-btn--primary {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--accent-on);
+  background: var(--gradient-brand);
+  background-size: 200% 200%;
+  background-position: 0% 50%;
+  border: 0;
+  color: #FFFFFF;
+  box-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.03),
+    0 6px 18px color-mix(in srgb, var(--indigo) 28%, transparent);
+  transition:
+    background-position var(--motion-base) var(--easing),
+    box-shadow var(--motion-quick) var(--easing),
+    transform var(--motion-quick) var(--easing);
 }
 
 .mok-btn--primary:hover:not(:disabled) {
-  background: var(--accent-strong);
-  border-color: var(--accent-strong);
+  background-position: 100% 50%;
+  transform: translateY(-1px);
+  box-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.05),
+    0 12px 26px color-mix(in srgb, var(--magenta) 32%, transparent);
+}
+
+.mok-btn--primary:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .mok-btn--accent {
@@ -53,6 +77,56 @@
   border-color: var(--accent-strong);
 }
 
+/* `--gradient` is now an alias for primary — same brand gradient with
+   the same hover behaviour. Kept as a separate class so existing
+   markup continues to render. */
+.mok-btn--gradient {
+  background: var(--gradient-brand);
+  background-size: 200% 200%;
+  background-position: 0% 50%;
+  border: 0;
+  color: #FFFFFF;
+  box-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.03),
+    0 6px 18px color-mix(in srgb, var(--indigo) 28%, transparent);
+  transition:
+    background-position var(--motion-base) var(--easing),
+    box-shadow var(--motion-quick) var(--easing),
+    transform var(--motion-quick) var(--easing);
+}
+
+.mok-btn--gradient:hover:not(:disabled) {
+  background-position: 100% 50%;
+  box-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.05),
+    0 12px 26px color-mix(in srgb, var(--magenta) 32%, transparent);
+  transform: translateY(-1px);
+}
+
+.mok-btn--gradient:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Warm gradient variant — for talking/journal/CTA accents. */
+.mok-btn--warm {
+  background: var(--gradient-warm);
+  background-size: 200% 200%;
+  border: 0;
+  color: #FFFFFF;
+  box-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.03),
+    0 6px 18px color-mix(in srgb, var(--coral) 30%, transparent);
+  transition:
+    background-position var(--motion-base) var(--easing),
+    box-shadow var(--motion-quick) var(--easing),
+    transform var(--motion-quick) var(--easing);
+}
+
+.mok-btn--warm:hover:not(:disabled) {
+  background-position: 100% 50%;
+  transform: translateY(-1px);
+}
+
 .mok-btn--ghost {
   background: transparent;
   border-color: transparent;
@@ -60,30 +134,38 @@
 }
 
 .mok-btn--ghost:hover:not(:disabled) {
-  background: var(--bg-subtle);
-  color: var(--text);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  color: var(--accent-strong);
 }
 
 .mok-btn--block { width: 100%; }
 
 .mok-btn--lg {
-  padding: 13px 22px;
-  font-size: 14px;
-  min-height: 44px;
+  padding: 15px 28px;
+  font-size: 15px;
+  min-height: 50px;
 }
 
-/* ── Cards ───────────────────────────────────────────────────── */
+/* ── Cards ─────────────────────────────────────────────────────
+   Rounder, friendlier shapes inspired by what makes top wellness
+   apps feel approachable. Default card is the workhorse; the
+   pastel variants below let us colour-code sections without losing
+   visual coherence (each picks up the ocean × sky × warm palette). */
 
 .mok-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 20px;
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  box-shadow: var(--shadow-soft);
 }
 
 @media (min-width: 720px) { .mok-card { padding: 28px; } }
 
-.mok-card--quiet { background: var(--bg-subtle); }
+.mok-card--quiet {
+  background: var(--bg-subtle);
+  box-shadow: none;
+}
 
 .mok-card--ink {
   background: var(--bg-ink);
@@ -98,6 +180,31 @@
 
 .mok-card--padded { padding: 28px; }
 @media (min-width: 720px) { .mok-card--padded { padding: 36px; } }
+
+/* ── Pastel surface variants — drop-in section colour ────────── */
+
+.mok-card--warm    { background: var(--surface-warm);    border-color: transparent; }
+.mok-card--fresh   { background: var(--surface-fresh);   border-color: transparent; }
+.mok-card--sky     { background: var(--surface-sky);     border-color: transparent; }
+.mok-card--butter  { background: var(--surface-butter);  border-color: transparent; }
+.mok-card--ocean   { background: var(--surface-ocean);   border-color: transparent; }
+
+/* Brand-gradient card — for hero pods and "begin here" surfaces. */
+.mok-card--brand {
+  background: var(--gradient-brand);
+  color: #FFFFFF;
+  border-color: transparent;
+  box-shadow: var(--shadow-brand);
+}
+
+.mok-card--brand .mok-eyebrow,
+.mok-card--brand .mok-section-h3,
+.mok-card--brand .mok-muted,
+.mok-card--brand .mok-subtle { color: rgba(255, 255, 255, 0.85); }
+
+.mok-card--brand h1,
+.mok-card--brand h2,
+.mok-card--brand h3 { color: #FFFFFF; }
 
 /* ── Forms ───────────────────────────────────────────────────── */
 
@@ -121,16 +228,23 @@
 .mok-field textarea,
 .mok-field select {
   width: 100%;
-  padding: 12px 14px;
+  padding: 13px 16px;
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-input);
   background: var(--surface);
   color: var(--text);
   font-family: var(--font-serif);
   font-size: 16px;
   transition:
     border-color var(--motion-quick) var(--easing),
-    box-shadow var(--motion-quick) var(--easing);
+    box-shadow var(--motion-quick) var(--easing),
+    background var(--motion-quick) var(--easing);
+}
+
+.mok-field input:hover,
+.mok-field textarea:hover,
+.mok-field select:hover {
+  border-color: var(--border-strong);
 }
 
 .mok-field textarea { min-height: 140px; resize: vertical; line-height: 1.6; }
@@ -168,7 +282,7 @@
 /* ── Banners ─────────────────────────────────────────────────── */
 
 .mok-banner {
-  padding: 12px 14px;
+  padding: 14px 16px;
   border-radius: var(--radius);
   font-size: 14px;
   margin-bottom: 16px;
@@ -220,7 +334,7 @@
   background: var(--bg-raised);
   color: var(--text);
   border: 1px solid var(--border);
-  padding: 14px 18px;
+  padding: 16px 20px;
   font-size: 15px;
   font-family: var(--font-serif);
   text-align: left;
@@ -231,12 +345,18 @@
   width: 100%;
 }
 
-.mok-choice:hover { border-color: var(--border-strong); }
+.mok-choice:hover {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 4%, var(--bg-raised));
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-soft);
+}
 
 .mok-choice--active {
-  background: var(--bg-ink);
-  color: var(--text-inverse);
-  border-color: var(--bg-ink);
+  background: color-mix(in srgb, var(--accent) 10%, var(--bg-raised));
+  color: var(--text);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
 /* ── Utilities ───────────────────────────────────────────────── */
@@ -348,78 +468,202 @@
 
 /* ── Hero ────────────────────────────────────────────────────── */
 
-.mok-hero { padding: 32px 0 16px; }
+.mok-hero { padding: 44px 0 20px; }
 
 @media (min-width: 720px) {
-  .mok-hero { padding: 64px 0 24px; }
+  .mok-hero { padding: 88px 0 32px; }
 }
 
 .mok-hero-title {
   font-family: var(--font-display);
-  font-size: clamp(32px, 9vw, 58px);
+  font-size: clamp(38px, 10vw, 72px);
   font-weight: 400;
-  letter-spacing: -0.015em;
-  line-height: 1.08;
-  margin: 14px 0 16px;
-  max-width: 20ch;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  margin: 16px 0 18px;
+  max-width: 18ch;
 }
 
 .mok-hero-lede {
-  font-size: 16px;
+  font-size: 17px;
   line-height: 1.6;
   color: var(--text-muted);
-  margin: 0 0 24px;
+  margin: 0 0 28px;
   max-width: 56ch;
 }
 
 @media (min-width: 720px) {
-  .mok-hero-lede { font-size: 19px; margin-bottom: 32px; }
+  .mok-hero-lede { font-size: 21px; margin-bottom: 36px; }
 }
 
 .mok-hero-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 
-/* ── Feature grid ────────────────────────────────────────────── */
+/* Gradient text — for a single word/phrase inside a hero heading. Uses
+   the cyan → indigo → magenta brand gradient with a slow background
+   shift for life. */
+.mok-gradient-text {
+  background: var(--gradient-brand);
+  background-size: 200% 200%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: mok-gradient-shimmer 8s ease-in-out infinite;
+}
+
+@keyframes mok-gradient-shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+
+/* ── Feature grid ──────────────────────────────────────────────
+   Four cards across the home below the hero. Each card carries its
+   own pastel surface and a glowing icon badge in the matching theme
+   colour. Hover lifts the card and softly intensifies the glow. */
 
 .mok-feature-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1px;
-  background: var(--border);
-  margin-top: 40px;
+  gap: 16px;
+  margin-top: 48px;
 }
 
 @media (min-width: 720px) {
   .mok-feature-grid {
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    margin-top: 56px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-top: 64px;
   }
 }
 
-.mok-feature { padding: 24px; background: var(--surface); }
-@media (min-width: 720px) { .mok-feature { padding: 28px; } }
-
-.mok-feature-marker {
-  font-family: var(--font-display);
-  font-size: 28px;
-  color: var(--accent);
-  margin-bottom: 8px;
-  display: block;
-  line-height: 1;
+@media (min-width: 1000px) {
+  .mok-feature-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
+
+.mok-feature {
+  position: relative;
+  padding: 28px 26px 26px;
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  border: 1px solid transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: var(--shadow-soft);
+  transition:
+    transform var(--motion-base) var(--easing),
+    box-shadow var(--motion-base) var(--easing);
+  overflow: hidden;
+}
+
+.mok-feature::before {
+  content: '';
+  position: absolute;
+  inset: -40% 50% 50% -40%;
+  background: radial-gradient(ellipse at center, var(--mok-feature-glow, transparent) 0%, transparent 70%);
+  opacity: 0.55;
+  pointer-events: none;
+  transition: opacity var(--motion-base) var(--easing);
+}
+
+.mok-feature:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lift);
+}
+
+.mok-feature:hover::before { opacity: 0.85; }
+
+.mok-feature-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  background: var(--paper);
+  box-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.04),
+    0 8px 22px var(--mok-feature-glow, color-mix(in srgb, var(--accent) 22%, transparent));
+  margin-bottom: 6px;
+}
+
+.mok-feature-badge--cyan      { --mok-feature-glow: color-mix(in srgb, var(--cyan)      28%, transparent); }
+.mok-feature-badge--indigo    { --mok-feature-glow: color-mix(in srgb, var(--indigo)    28%, transparent); }
+.mok-feature-badge--magenta   { --mok-feature-glow: color-mix(in srgb, var(--magenta)   28%, transparent); }
+.mok-feature-badge--violet    { --mok-feature-glow: color-mix(in srgb, var(--violet)    28%, transparent); }
+.mok-feature-badge--mint-deep { --mok-feature-glow: color-mix(in srgb, var(--mint-deep) 28%, transparent); }
+.mok-feature-badge--amber     { --mok-feature-glow: color-mix(in srgb, var(--amber)     28%, transparent); }
+.mok-feature-badge--coral     { --mok-feature-glow: color-mix(in srgb, var(--coral)     28%, transparent); }
 
 .mok-feature-title {
   font-family: var(--font-display);
-  font-size: 18px;
-  font-weight: 500;
-  margin: 0 0 8px;
-  color: var(--text);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  margin: 0 0 4px;
+  line-height: 1.25;
 }
 
 .mok-feature-body {
-  font-size: 14px;
+  font-size: 14.5px;
   color: var(--text-muted);
   line-height: 1.6;
   margin: 0;
+}
+
+/* ── Home closing CTA ─────────────────────────────────────────
+   A premium quote surface — soft prism radial mesh, generous
+   padding, wordmark centred, primary CTA below. */
+
+.mok-home-cta {
+  margin-top: 72px;
+  padding: 56px 28px;
+  text-align: center;
+  border-radius: var(--radius-xl);
+  background:
+    radial-gradient(
+      ellipse at 0% 0%,
+      color-mix(in srgb, var(--cyan) 14%, transparent) 0%,
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse at 100% 0%,
+      color-mix(in srgb, var(--magenta) 14%, transparent) 0%,
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse at 50% 100%,
+      color-mix(in srgb, var(--violet) 12%, transparent) 0%,
+      transparent 60%
+    ),
+    var(--bg-raised);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-soft);
+  display: grid;
+  gap: 24px;
+  justify-items: center;
+}
+
+@media (min-width: 720px) {
+  .mok-home-cta { padding: 80px 48px; margin-top: 88px; }
+}
+
+.mok-home-cta-wordmark { display: flex; justify-content: center; }
+
+.mok-home-cta-quote {
+  max-width: 60ch;
+  margin: 0 auto;
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: 19px;
+  line-height: 1.65;
+  color: var(--text);
+}
+
+@media (min-width: 720px) {
+  .mok-home-cta-quote { font-size: 22px; }
 }
 
 /* ── Today screen ────────────────────────────────────────────── */
@@ -453,19 +697,26 @@
 }
 
 .mok-pod {
-  background: var(--bg-raised);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  border-left: 3px solid var(--practice-color, var(--accent));
-  padding: 18px 20px;
+  position: relative;
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--practice-color, var(--accent)) 14%, var(--bg-raised)) 0%,
+      var(--bg-raised) 60%
+    );
+  border: 1px solid color-mix(in srgb, var(--practice-color, var(--accent)) 22%, var(--border));
+  border-radius: var(--radius-lg);
+  border-left: 4px solid var(--practice-color, var(--accent));
+  padding: 22px;
   display: flex;
   align-items: flex-start;
-  gap: 16px;
+  gap: 18px;
   flex-direction: column;
+  box-shadow: var(--shadow-soft);
 }
 
 @media (min-width: 560px) {
-  .mok-pod { flex-direction: row; align-items: center; padding: 24px 28px; gap: 22px; }
+  .mok-pod { flex-direction: row; align-items: center; padding: 28px 32px; gap: 24px; }
 }
 
 .mok-pod-art { flex-shrink: 0; }
@@ -521,22 +772,60 @@
 .mok-mci-card {
   background: var(--bg-raised);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 24px;
+  border-radius: var(--radius-lg);
+  padding: 22px 24px;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: var(--shadow-soft);
 }
 
-@media (min-width: 720px) { .mok-mci-card { padding: 28px; } }
+@media (min-width: 720px) { .mok-mci-card { padding: 26px 28px; } }
 
+/* Three rows inside an MCI card: label (uppercase), big number, footnote. */
+
+.mok-mci-label {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-subtle);
+}
+
+.mok-mci-number,
 .mok-mci-card-number {
   font-family: var(--font-display);
-  font-size: 56px;
-  font-weight: 300;
+  font-size: 52px;
+  font-weight: 400;
   line-height: 1;
-  color: var(--accent);
-  letter-spacing: -0.02em;
+  color: var(--text);
+  letter-spacing: -0.025em;
+  /* Subtle brand gradient over the number — keeps it warm without
+     shouting. Falls back to solid color in older browsers. */
+  background: var(--gradient-brand);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  margin-top: 2px;
 }
 
-@media (min-width: 720px) { .mok-mci-card-number { font-size: 72px; } }
+@media (min-width: 720px) {
+  .mok-mci-number,
+  .mok-mci-card-number { font-size: 64px; }
+}
+
+.mok-mci-milestone {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-style: italic;
+  color: var(--text-muted);
+  letter-spacing: 0;
+  text-transform: none;
+  margin-top: 2px;
+}
 
 /* Week trail */
 .mok-trail {
@@ -618,12 +907,56 @@
 
 /* ── Section sub-nav (inside Me) ─────────────────────────────── */
 
+/* ── Me layout (section banner + tabs) ───────────────────────
+   Banner reads as a quiet section identifier, distinctly subordinate
+   to the page-level h1 each child tab renders. */
+
+.mok-me { display: flex; flex-direction: column; gap: 0; }
+
+.mok-me-banner {
+  padding: 20px 0 6px;
+}
+
+.mok-me-banner .mok-eyebrow {
+  margin: 0 0 4px;
+  font-size: 11px;
+  color: var(--accent);
+}
+
+.mok-me-banner-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  margin: 0;
+  color: var(--text);
+}
+
+.mok-me-banner-sub {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-muted);
+  margin: 4px 0 0;
+  max-width: 56ch;
+}
+
+/* Body sits below the tabs with a generous gap so the next page's h1
+   reads as a fresh chapter, not a continuation. */
+.mok-me-body {
+  padding-top: 28px;
+  border-top: 0;
+}
+
+@media (min-width: 720px) {
+  .mok-me-body { padding-top: 36px; }
+}
+
 .mok-subnav {
   display: flex;
   gap: 4px;
   border-bottom: 1px solid var(--border);
   overflow-x: auto;
-  margin: 8px 0 0;
+  margin: 14px 0 0;
   padding-bottom: 0;
   -webkit-overflow-scrolling: touch;
 }
@@ -687,10 +1020,11 @@
 .mok-practice-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1px;
-  background: var(--border);
+  gap: 14px;
   margin-top: 0;
 }
+
+@media (min-width: 720px) { .mok-practice-grid { gap: 18px; } }
 
 @media (min-width: 560px) { .mok-practice-grid { grid-template-columns: repeat(2, 1fr); } }
 
@@ -699,7 +1033,13 @@
 }
 
 .mok-practice-tile {
-  background: var(--bg-raised);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--practice-color, var(--accent)) 10%, var(--bg-raised)) 0%,
+      var(--bg-raised) 70%
+    );
+  border-radius: var(--radius-lg);
   padding: 24px;
   text-align: left;
   display: flex;
@@ -709,6 +1049,15 @@
   position: relative;
   text-decoration: none;
   color: inherit;
+  box-shadow: var(--shadow-soft);
+  transition:
+    transform var(--motion-quick) var(--easing),
+    box-shadow var(--motion-quick) var(--easing);
+}
+
+.mok-practice-tile:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lift);
 }
 
 @media (min-width: 720px) { .mok-practice-tile { padding: 28px; gap: 14px; min-height: 280px; } }
@@ -900,11 +1249,26 @@
 .mok-session {
   position: fixed;
   inset: 0;
-  background: var(--bg-ink);
+  /* Atmospheric dark background — deep ink with two radial washes tinted
+     by the current practice colour. Each practice now has a unique mood
+     while sharing the same calm contemplative shell. */
+  background:
+    radial-gradient(
+      ellipse 70% 50% at 20% -5%,
+      color-mix(in srgb, var(--practice-color, var(--accent)) 30%, transparent) 0%,
+      transparent 65%
+    ),
+    radial-gradient(
+      ellipse 60% 45% at 95% 100%,
+      color-mix(in srgb, var(--practice-color, var(--accent)) 24%, transparent) 0%,
+      transparent 65%
+    ),
+    var(--bg-ink);
   color: var(--text-inverse);
   display: flex;
   flex-direction: column;
   z-index: 50;
+  overflow: hidden;
 
   /* Inverse-context semantic tokens. */
   --bg: var(--bg-ink);
@@ -912,12 +1276,18 @@
   --surface: rgba(255, 255, 255, 0.04);
   --bg-raised: rgba(255, 255, 255, 0.04);
   --text: #FFFFFF;
-  --text-muted: rgba(255, 255, 255, 0.78);  /* ≥ 9:1 contrast on #15202E */
-  --text-subtle: rgba(255, 255, 255, 0.55); /* ≥ 6:1 */
+  --text-muted: rgba(255, 255, 255, 0.78);
+  --text-subtle: rgba(255, 255, 255, 0.55);
   --text-inverse: #FFFFFF;
   --border: rgba(255, 255, 255, 0.16);
   --border-strong: rgba(255, 255, 255, 0.32);
-  --accent-soft: rgba(136, 168, 214, 0.18);
+
+  /* The session's accent IS the practice — so any inner element that uses
+     `--accent` automatically picks up the current practice colour. */
+  --accent: var(--practice-color, var(--accent));
+  --accent-strong: color-mix(in srgb, var(--practice-color, var(--accent)) 70%, #000);
+  --accent-soft: color-mix(in srgb, var(--practice-color, var(--accent)) 18%, transparent);
+  --accent-on: #FFFFFF;
 }
 
 .mok-session-header {
@@ -962,23 +1332,66 @@
 
 .mok-session-eyebrow {
   font-size: 11px;
-  color: var(--text-subtle);
+  color: color-mix(in srgb, var(--accent) 60%, #FFFFFF);
   font-family: var(--font-sans);
-  letter-spacing: 0.18em;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  margin: 0 0 16px;
+  font-weight: 500;
+  margin: 0 0 18px;
+}
+
+/* Big session-stage headings, used on Arriving / Reflection / Logged. */
+.mok-session-title {
+  font-family: var(--font-display);
+  font-size: clamp(30px, 6vw, 44px);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin: 0 0 18px;
+  color: var(--text-inverse);
+}
+
+.mok-session-h2 {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 4.4vw, 30px);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  margin: 0 0 24px;
+  color: var(--text-inverse);
+}
+
+.mok-session-lede {
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin: 0 0 28px;
+  font-weight: 400;
+}
+
+@media (min-width: 720px) {
+  .mok-session-lede { font-size: 19px; }
 }
 
 .mok-session-timer {
   font-family: var(--font-display);
-  font-size: 44px;
+  font-size: 56px;
   font-weight: 300;
-  letter-spacing: -0.02em;
-  margin: 0 0 12px;
+  letter-spacing: -0.025em;
+  margin: 0 0 16px;
   color: var(--text-inverse);
+  /* Gentle gradient over the digits, tinted by the practice. */
+  background: linear-gradient(
+    180deg,
+    #FFFFFF 0%,
+    color-mix(in srgb, var(--accent) 60%, #FFFFFF) 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
 }
 
-@media (min-width: 720px) { .mok-session-timer { font-size: 56px; } }
+@media (min-width: 720px) { .mok-session-timer { font-size: 72px; } }
 
 .mok-session-controls {
   display: flex;
@@ -988,53 +1401,76 @@
   flex-wrap: wrap;
 }
 
-/* Session buttons — explicit light styling, independent of the underlying
-   theme variables. */
+/* Session buttons — pill-shaped, friendly geometry, glowing primary tied
+   to the current practice colour. */
 .mok-session-btn {
-  background: transparent;
+  background: rgba(255, 255, 255, 0.04);
   color: var(--text-inverse);
   border: 1px solid var(--border-strong);
-  padding: 11px 18px;
+  padding: 13px 22px;
   font-family: var(--font-sans);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
-  border-radius: var(--radius);
+  letter-spacing: 0.01em;
+  border-radius: var(--radius-pill);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  min-height: 44px;
-  transition: background var(--motion-quick) var(--easing),
-              border-color var(--motion-quick) var(--easing);
+  min-height: 46px;
+  transition:
+    background var(--motion-quick) var(--easing),
+    border-color var(--motion-quick) var(--easing),
+    transform var(--motion-quick) var(--easing),
+    box-shadow var(--motion-quick) var(--easing);
 }
 
+/* On hover the secondary pill fills white — flip the text colour to ink
+   so it stays high-contrast. */
 .mok-session-btn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.50);
+  background: #FFFFFF;
+  color: var(--bg-ink);
+  border-color: #FFFFFF;
 }
 
 .mok-session-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
 .mok-session-btn--ghost {
+  background: transparent;
   border-color: transparent;
   color: var(--text-subtle);
 }
 
+/* Ghost stays subtle — never fills white, so the text stays light. */
 .mok-session-btn--ghost:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.08);
   color: var(--text-inverse);
+  border-color: transparent;
 }
 
+/* Accent (primary) — uses the practice colour with a soft glow. */
 .mok-session-btn--accent {
   background: var(--accent);
   color: var(--accent-on);
   border-color: var(--accent);
+  padding: 14px 28px;
+  font-size: 15px;
+  min-height: 50px;
+  box-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.08),
+    0 10px 26px color-mix(in srgb, var(--accent) 38%, transparent);
 }
 
 .mok-session-btn--accent:hover:not(:disabled) {
   background: var(--accent-strong);
   border-color: var(--accent-strong);
+  transform: translateY(-1px);
+  box-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.10),
+    0 14px 32px color-mix(in srgb, var(--accent) 50%, transparent);
 }
+
+.mok-session-btn--accent:active:not(:disabled) { transform: translateY(0); }
 
 .mok-session-line {
   font-size: 18px;
@@ -1049,9 +1485,23 @@
 /* Inputs inside session (e.g. writing flow) — invert background/border. */
 .mok-session .mok-field input,
 .mok-session .mok-field textarea {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.05);
   color: var(--text-inverse);
   border-color: var(--border);
+  border-radius: var(--radius-input);
+  font-family: var(--font-editorial);
+}
+
+.mok-session .mok-field input:hover,
+.mok-session .mok-field textarea:hover {
+  border-color: var(--border-strong);
+}
+
+.mok-session .mok-field input:focus,
+.mok-session .mok-field textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+  background: rgba(255, 255, 255, 0.07);
 }
 
 .mok-session .mok-field input::placeholder,
@@ -1059,7 +1509,14 @@
   color: var(--text-subtle);
 }
 
-.mok-session .mok-field label { color: var(--text-subtle); }
+.mok-session .mok-field label {
+  color: var(--text-subtle);
+  font-size: 11px;
+  font-family: var(--font-sans);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
 
 /* Choice buttons rendered against the dark overlay. */
 .mok-session .mok-choice {
@@ -1230,6 +1687,407 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* ── Contact page ─────────────────────────────────────────────
+   Hero centred, then a two-column split: reason cards on the left,
+   the message form on the right. Stacks to one column on mobile. */
+
+.mok-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 24px 0 64px;
+}
+
+@media (min-width: 720px) {
+  .mok-contact { gap: 48px; padding: 40px 0 96px; }
+}
+
+.mok-contact-hero { text-align: center; max-width: 720px; margin: 0 auto; padding-top: 12px; }
+
+.mok-contact-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 22px;
+}
+
+@media (min-width: 880px) {
+  .mok-contact-grid {
+    grid-template-columns: minmax(280px, 0.85fr) 1.15fr;
+    gap: 32px;
+    align-items: start;
+  }
+}
+
+.mok-contact-reasons {
+  display: flex;
+  flex-direction: column;
+}
+
+.mok-contact-reason-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mok-contact-reason {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  border-radius: var(--radius-lg);
+  padding: 18px 18px 18px 16px;
+  border: 1px solid transparent;
+  transition:
+    transform var(--motion-quick) var(--easing),
+    box-shadow var(--motion-quick) var(--easing);
+}
+
+.mok-contact-reason:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-soft);
+}
+
+.mok-contact-reason .mok-principle-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  flex-shrink: 0;
+  margin: 0;
+}
+
+.mok-contact-reason-title {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  margin: 0 0 4px;
+  line-height: 1.25;
+}
+
+.mok-contact-reason-body {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.mok-contact-form { display: flex; flex-direction: column; gap: 0; }
+
+/* ── About page (new modern layout) ──────────────────────────── */
+
+.mok-about {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 24px 0 64px;
+}
+
+@media (min-width: 720px) {
+  .mok-about { gap: 56px; padding: 40px 0 96px; }
+}
+
+.mok-about-hero { text-align: center; max-width: 760px; margin: 0 auto; padding-top: 16px; }
+@media (min-width: 720px) { .mok-about-hero { padding-top: 32px; } }
+
+.mok-about-title {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 7.6vw, 64px);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  margin: 14px 0 22px;
+  color: var(--text);
+}
+
+.mok-about-lede {
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--text-muted);
+  margin: 0 auto;
+  max-width: 56ch;
+}
+
+@media (min-width: 720px) {
+  .mok-about-lede { font-size: 19px; }
+}
+
+/* Belief card uses the brand-gradient surface (already defined). */
+.mok-belief-title {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 4.4vw, 32px);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  margin: 8px 0 12px;
+  line-height: 1.2;
+}
+
+.mok-belief-body {
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 0;
+  max-width: 60ch;
+}
+
+/* Two pillars side-by-side, each accented by a theme colour. */
+.mok-pillar-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+}
+
+@media (min-width: 720px) {
+  .mok-pillar-grid { grid-template-columns: 1fr 1fr; gap: 22px; }
+}
+
+.mok-pillar {
+  position: relative;
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px 26px;
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+  transition:
+    transform var(--motion-quick) var(--easing),
+    box-shadow var(--motion-quick) var(--easing);
+}
+
+.mok-pillar:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lift);
+}
+
+.mok-pillar::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 5px;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.mok-pillar--cyan::before {
+  background: linear-gradient(90deg, var(--cyan) 0%, var(--indigo) 100%);
+}
+.mok-pillar--cyan .mok-pillar-eyebrow { color: var(--cyan-deep); }
+.mok-pillar--cyan .mok-pillar-title {
+  background: linear-gradient(135deg, var(--cyan-deep) 0%, var(--indigo) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.mok-pillar--magenta::before {
+  background: linear-gradient(90deg, var(--violet) 0%, var(--magenta) 100%);
+}
+.mok-pillar--magenta .mok-pillar-eyebrow { color: var(--magenta-deep); }
+.mok-pillar--magenta .mok-pillar-title {
+  background: linear-gradient(135deg, var(--violet) 0%, var(--magenta) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.mok-pillar-title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  margin: 10px 0 12px;
+  line-height: 1.15;
+}
+
+.mok-pillar-lede {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+@media (min-width: 720px) {
+  .mok-pillar-lede { font-size: 16px; }
+}
+
+/* Six principles grid */
+.mok-principles-head { text-align: center; max-width: 640px; margin: 0 auto; }
+
+.mok-principles-title {
+  font-family: var(--font-display);
+  font-size: clamp(26px, 4.4vw, 34px);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 1.15;
+  margin: 12px 0 28px;
+  color: var(--text);
+}
+
+.mok-principle-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+@media (min-width: 720px) {
+  .mok-principle-grid { grid-template-columns: 1fr 1fr; gap: 18px; }
+}
+
+@media (min-width: 980px) {
+  .mok-principle-grid { grid-template-columns: 1fr 1fr 1fr; }
+}
+
+.mok-principle {
+  position: relative;
+  border-radius: var(--radius-lg);
+  padding: 22px 22px 24px;
+  border: 1px solid transparent;
+  transition:
+    transform var(--motion-quick) var(--easing),
+    box-shadow var(--motion-quick) var(--easing);
+}
+
+.mok-principle:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-soft);
+}
+
+/* Legacy dot kept for any consumers still using it. */
+.mok-principle-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  margin-bottom: 12px;
+}
+
+/* New icon badge — a small white pill carrying the principle's SVG mark
+   with a glow shadow tinted by its theme colour. */
+.mok-principle-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: var(--paper);
+  margin-bottom: 14px;
+  box-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.04),
+    0 6px 16px var(--mok-principle-glow, color-mix(in srgb, var(--accent) 22%, transparent));
+}
+
+.mok-principle-icon--cyan      { --mok-principle-glow: color-mix(in srgb, var(--cyan)      24%, transparent); }
+.mok-principle-icon--indigo    { --mok-principle-glow: color-mix(in srgb, var(--indigo)    24%, transparent); }
+.mok-principle-icon--magenta   { --mok-principle-glow: color-mix(in srgb, var(--magenta)   24%, transparent); }
+.mok-principle-icon--violet    { --mok-principle-glow: color-mix(in srgb, var(--violet)    24%, transparent); }
+.mok-principle-icon--mint-deep { --mok-principle-glow: color-mix(in srgb, var(--mint-deep) 24%, transparent); }
+.mok-principle-icon--amber     { --mok-principle-glow: color-mix(in srgb, var(--amber)     24%, transparent); }
+.mok-principle-icon--coral     { --mok-principle-glow: color-mix(in srgb, var(--coral)     24%, transparent); }
+
+.mok-principle-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  margin: 0 0 8px;
+  line-height: 1.25;
+}
+
+.mok-principle-body {
+  font-size: 14.5px;
+  line-height: 1.6;
+  margin: 0;
+  color: var(--text-muted);
+}
+
+/* Pastel surface utilities — used by the principle cards. */
+.mok-surface-ocean   { background: var(--surface-ocean); }
+.mok-surface-sky     { background: var(--surface-sky); }
+.mok-surface-magenta { background: var(--surface-magenta); }
+.mok-surface-violet  { background: var(--surface-violet); }
+.mok-surface-fresh   { background: var(--surface-fresh); }
+.mok-surface-butter  { background: var(--surface-butter); }
+.mok-surface-warm    { background: var(--surface-warm); }
+
+/* Theme-colored text utility — drives the card title hue. */
+.mok-text--cyan      { color: var(--cyan-deep); }
+.mok-text--indigo    { color: var(--indigo-deep); }
+.mok-text--magenta   { color: var(--magenta-deep); }
+.mok-text--violet    { color: var(--violet-deep); }
+.mok-text--mint-deep { color: var(--mint-deep); }
+.mok-text--amber     { color: var(--amber-deep); }
+.mok-text--coral     { color: #BE3F58; }   /* coral darkened for AA */
+
+/* Matching dot fills. */
+.mok-dot--cyan      { background: var(--cyan); }
+.mok-dot--indigo    { background: var(--indigo); }
+.mok-dot--magenta   { background: var(--magenta); }
+.mok-dot--violet    { background: var(--violet); }
+.mok-dot--mint-deep { background: var(--mint-deep); }
+.mok-dot--amber     { background: var(--amber); }
+.mok-dot--coral     { background: var(--coral); }
+
+/* Closing CTA card — soft gradient surface. */
+.mok-about-cta {
+  text-align: center;
+  padding: 36px 26px;
+  border-radius: var(--radius-xl);
+  background:
+    radial-gradient(
+      ellipse at 50% 0%,
+      color-mix(in srgb, var(--magenta) 18%, transparent) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse at 0% 100%,
+      color-mix(in srgb, var(--cyan) 20%, transparent) 0%,
+      transparent 60%
+    ),
+    var(--bg-raised);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-soft);
+}
+
+.mok-about-cta-title {
+  font-family: var(--font-display);
+  font-size: clamp(26px, 5vw, 38px);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  margin: 10px 0 14px;
+  color: var(--text);
+}
+
+.mok-about-cta-lede {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin: 0 auto 22px;
+  max-width: 52ch;
+}
+
+/* Staggered card entry — drives all the rises on About. */
+.mok-card-rise {
+  opacity: 0;
+  transform: translateY(18px);
+  animation: mok-card-rise 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+  animation-delay: var(--d, 0ms);
+}
+
+@keyframes mok-card-rise {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mok-card-rise {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* ── Learn module slideshow — book-page feel ─────────────────── */
 
 .mok-learn-deck {
@@ -1282,7 +2140,7 @@
 .mok-listen-toggle--on {
   background: color-mix(in srgb, var(--accent) 14%, var(--bg-raised));
   border-color: var(--accent);
-  color: var(--accent);
+  color: var(--accent-strong);
 }
 
 /* ── Narrated lines — voice moving with the slide ─────────────── */
@@ -1565,7 +2423,7 @@
 .mok-toggle--on {
   background: color-mix(in srgb, var(--accent) 14%, var(--bg-subtle));
   border-color: var(--accent);
-  color: var(--accent);
+  color: var(--accent-strong);
 }
 
 .mok-toggle--on .mok-toggle-knob {
@@ -1597,7 +2455,7 @@
 .mok-status-chip--on {
   background: color-mix(in srgb, var(--accent) 14%, var(--bg-subtle));
   border-color: var(--accent);
-  color: var(--accent);
+  color: var(--accent-strong);
 }
 
 /* ── Next steps list (dashboard "what to do next") ───────────── */

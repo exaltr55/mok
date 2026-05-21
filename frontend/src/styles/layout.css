@@ -23,9 +23,21 @@ html {
 }
 
 body {
-  background: var(--bg);
+  background:
+    radial-gradient(
+      ellipse 60% 50% at 10% -5%,
+      color-mix(in srgb, var(--cyan) 12%, transparent) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 50% 40% at 95% 10%,
+      color-mix(in srgb, var(--magenta) 10%, transparent) 0%,
+      transparent 70%
+    ),
+    var(--bg);
+  background-attachment: fixed;
   color: var(--text);
-  font-family: var(--font-serif);
+  font-family: var(--font-sans);
   font-size: 16px;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
@@ -228,6 +240,19 @@ a { color: inherit; text-decoration: none; }
   min-height: calc(100vh - 64px);
   padding: 32px 16px;
   position: relative;
+  /* Subtle ocean × sky ambient gradient behind the auth card. */
+  background:
+    radial-gradient(
+      ellipse at 25% 15%,
+      color-mix(in srgb, var(--ocean) 14%, transparent) 0%,
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse at 80% 90%,
+      color-mix(in srgb, var(--sky) 16%, transparent) 0%,
+      transparent 55%
+    ),
+    var(--bg);
 }
 
 @media (min-width: 720px) {
@@ -259,34 +284,34 @@ a { color: inherit; text-decoration: none; }
 
 .mok-section-title {
   font-family: var(--font-display);
-  font-size: 28px;
+  font-size: 30px;
   font-weight: 400;
-  letter-spacing: -0.01em;
-  line-height: 1.15;
+  letter-spacing: -0.015em;
+  line-height: 1.12;
   margin: 0;
   color: var(--text);
 }
 
 @media (min-width: 720px) {
-  .mok-section-title { font-size: 36px; }
+  .mok-section-title { font-size: 42px; }
 }
 
 .mok-section-lede {
-  font-size: 15px;
+  font-size: 16px;
   color: var(--text-muted);
-  line-height: 1.55;
-  margin: 12px 0 0;
-  max-width: 560px;
+  line-height: 1.6;
+  margin: 14px 0 0;
+  max-width: 580px;
 }
 
 @media (min-width: 720px) {
-  .mok-section-lede { font-size: 16px; }
+  .mok-section-lede { font-size: 18px; }
 }
 
 :focus-visible {
-  outline: 1px solid var(--focus-ring);
+  outline: 2px solid var(--accent);
   outline-offset: 3px;
-  border-radius: 2px;
+  border-radius: 6px;
 }
 
 /* ── Hide/show helpers ───────────────────────────────────────── */

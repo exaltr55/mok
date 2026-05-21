@@ -52,19 +52,25 @@ export default function Journal() {
   if (loading) return <div className="mok-loading">Opening your journal…</div>;
 
   return (
-    <section style={{ display: 'grid', gap: 24 }}>
-      <p className="mok-muted" style={{ fontSize: 14, margin: 0, fontStyle: 'italic' }}>
-        One entry per day. Nothing here is ever shared.
-      </p>
+    <section style={{ display: 'grid', gap: 28 }}>
+      {/* ── Page header ──────────────────────────────────── */}
+      <header>
+        <p className="mok-eyebrow">Journal</p>
+        <h1 className="mok-section-title">Today's page is open.</h1>
+        <p className="mok-section-lede">
+          One entry a day — expressive, reflective, or gratitude. Your words
+          stay with you alone.
+        </p>
+      </header>
 
       {today ? (
         <article className="mok-card mok-card--padded">
-          <div className="mok-row" style={{ marginBottom: 8 }}>
+          <div className="mok-row" style={{ marginBottom: 10 }}>
             <span className="mok-chip mok-chip--accent">{today.style}</span>
             <span className="mok-spacer" />
             <span className="mok-muted" style={{ fontSize: 13 }}>Today</span>
           </div>
-          <p style={{ whiteSpace: 'pre-wrap', fontFamily: 'var(--font-display)', fontSize: 17, lineHeight: 1.7 }}>
+          <p style={{ whiteSpace: 'pre-wrap', fontFamily: 'var(--font-editorial)', fontSize: 17, lineHeight: 1.7 }}>
             {today.body}
           </p>
           <p className="mok-muted" style={{ fontSize: 13, marginTop: 18, fontStyle: 'italic' }}>
@@ -73,7 +79,10 @@ export default function Journal() {
         </article>
       ) : (
         <article className="mok-card mok-card--padded">
-          <h2 className="mok-section-title" style={{ fontSize: 22 }}>Write today's entry</h2>
+          <p className="mok-section-h3">Write today's entry</p>
+          <p className="mok-muted" style={{ fontSize: 13, margin: '6px 0 18px', fontStyle: 'italic' }}>
+            Choose a style and let the page hold what you share.
+          </p>
 
           {error && <div className="mok-banner mok-banner--error">{error}</div>}
 
@@ -100,8 +109,8 @@ export default function Journal() {
               id="body"
               value={body}
               onChange={(e) => setBody(e.target.value)}
-              placeholder="The page doesn't interrupt. It doesn't argue. It simply listens."
-              style={{ minHeight: 240, fontFamily: 'var(--font-display)', fontSize: 16 }}
+              placeholder="The page is here, listening. Write whatever is true for you today."
+              style={{ minHeight: 240, fontFamily: 'var(--font-editorial)', fontSize: 16 }}
               maxLength={20_000}
             />
             <span className="mok-field-hint">{body.length} characters</span>
@@ -119,9 +128,12 @@ export default function Journal() {
       )}
 
       <section>
-        <h2 className="mok-section-title" style={{ fontSize: 20 }}>Recent entries</h2>
+        <p className="mok-section-h3">Recent entries</p>
+        <p className="mok-muted" style={{ fontSize: 13, margin: '6px 0 16px', fontStyle: 'italic' }}>
+          The last 30 days, newest first.
+        </p>
         {recent.length === 0 ? (
-          <p className="mok-muted">Today's is your first.</p>
+          <p className="mok-muted">Today's will be your first — when you're ready.</p>
         ) : (
           <div className="mok-stack-sm">
             {recent.filter((e) => !today || e.id !== today.id).map((e) => (

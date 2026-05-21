@@ -100,7 +100,7 @@ const COHORT: Array<{ id: CohortPref; label: string; hint: string }> = [
 ];
 
 const PALETTE: Array<{ id: Theme; label: string; hint: string; swatch: string }> = [
-  { id: 'stillwater', label: 'Stillwater', hint: 'Calm slate blue — the default.',      swatch: 'linear-gradient(135deg, #EEF3F9, #4D6FA5)' },
+  { id: 'stillwater', label: 'Stillwater', hint: 'Ocean × sky — the default.',          swatch: 'linear-gradient(135deg, #EEF8F8 0%, #0EA5A5 50%, #38BDF8 100%)' },
   { id: 'sunbeam',    label: 'Sunbeam',    hint: 'Warm amber morning, a touch of joy.', swatch: 'linear-gradient(135deg, #FBF6E2, #D4954A)' },
   { id: 'cobalt',     label: 'Cobalt',     hint: 'Vibrant royal blue, energetic.',      swatch: 'linear-gradient(135deg, #F4F7FC, #2563EB)' },
   { id: 'sage',       label: 'Sage',       hint: 'Cool teal-slate, grounded.',          swatch: 'linear-gradient(135deg, #EFF3F1, #4D6F8A)' },

@@ -1,35 +1,69 @@
+import type { FC } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import Wordmark from '../components/Wordmark';
+import {
+  IconFramework,
+  IconLoop,
+  IconPractices,
+  IconPrivacy,
+} from '../components/FeatureIcon';
 
-const FEATURES = [
+interface Feature {
+  Icon: FC<{ size?: number; from: string; to: string; id: string }>;
+  /** Theme accent key — drives the title colour and icon gradient stops. */
+  from: string;
+  to: string;
+  accent: 'cyan' | 'indigo' | 'magenta' | 'violet' | 'mint-deep' | 'amber';
+  surface: 'ocean' | 'sky' | 'magenta' | 'violet' | 'fresh' | 'butter';
+  title: string;
+  body: string;
+}
+
+const FEATURES: Feature[] = [
   {
-    marker: '5S',
-    title: 'A framework for awareness',
+    Icon: IconFramework,
+    from: 'cyan',
+    to: 'indigo',
+    accent: 'cyan',
+    surface: 'ocean',
+    title: 'A framework for Awareness',
     body:
-      'Source, Seed, Soil, Seasons, Sowing — five lenses for seeing how experience ' +
-      'arises, takes form, and unfolds. The conceptual ground.',
+      'Source, Seed, Soil, Seasons, Sowing — five lenses for seeing how ' +
+      'experience arises, takes form, and unfolds.',
   },
   {
-    marker: '7',
+    Icon: IconPractices,
+    from: 'violet',
+    to: 'magenta',
+    accent: 'magenta',
+    surface: 'magenta',
     title: 'Seven gentle practices',
     body:
-      'Breathing, Thinking, Talking, Writing, Moving, Resetting, Aligning. ' +
-      'Doorways through which Awareness becomes available.',
+      'Breathing, Thinking, Talking, Writing, Moving, Resetting, Aligning — ' +
+      'small daily acts that compound over time.',
   },
   {
-    marker: '◯',
-    title: 'Honors your nature',
+    Icon: IconPrivacy,
+    from: 'mint-deep',
+    to: 'cyan',
+    accent: 'mint-deep',
+    surface: 'fresh',
+    title: 'Yours, alone',
     body:
-      'Your practice is yours alone. Your journal, your reflections, and your MCI ' +
-      'stay private to you — always.',
+      'Your journal, your reflections, and your Consistency Index belong to ' +
+      'you. Privacy is the foundation we hold to.',
   },
   {
-    marker: '·',
-    title: 'Built for sustainable depth',
+    Icon: IconLoop,
+    from: 'amber',
+    to: 'coral',
+    accent: 'amber',
+    surface: 'butter',
+    title: 'Sustainable by design',
     body:
-      'A short return, repeated over time, develops capacities that endure. The app ' +
-      "succeeds when you spend less time in it and more in your life.",
+      'A short return, repeated over time, develops capacities that endure. ' +
+      'The app succeeds when you spend less time in it.',
   },
 ];
 
@@ -40,7 +74,9 @@ export default function Home() {
       <section className="mok-hero">
         <p className="mok-eyebrow">Human Sustainability for the AI era</p>
         <h1 className="mok-hero-title">
-          Stay grounded, clear, and fully human <em>through</em> change.
+          Stay grounded, clear, and{' '}
+          <span className="mok-gradient-text">fully human</span>{' '}
+          through change.
         </h1>
         <p className="mok-hero-lede">
           YouSourceful is Mokshly's foundational system for human sustainability. Two pillars —
@@ -59,37 +95,43 @@ export default function Home() {
       </section>
 
       <section className="mok-feature-grid">
-        {FEATURES.map((f) => (
-          <article key={f.title} className="mok-feature">
-            <span className="mok-feature-marker">{f.marker}</span>
-            <h3 className="mok-feature-title">{f.title}</h3>
+        {FEATURES.map((f, i) => (
+          <article
+            key={f.title}
+            className={`mok-feature mok-surface-${f.surface} mok-card-rise`}
+            style={{ ['--d' as string]: `${120 + i * 90}ms` }}
+          >
+            <span className={`mok-feature-badge mok-feature-badge--${f.accent}`}>
+              <f.Icon
+                size={48}
+                from={f.from}
+                to={f.to}
+                id={`feat-${i}`}
+              />
+            </span>
+            <h3 className={`mok-feature-title mok-text--${f.accent}`}>{f.title}</h3>
             <p className="mok-feature-body">{f.body}</p>
           </article>
         ))}
       </section>
 
-      <section
-        style={{
-          marginTop: 88,
-          padding: '56px 36px',
-          borderRadius: 'var(--radius)',
-          background: 'var(--bg-raised)',
-          border: '1px solid var(--border)',
-          display: 'grid',
-          gap: 24,
-          textAlign: 'center',
-        }}
-      >
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
+      <section className="mok-home-cta mok-card-rise" style={{ ['--d' as string]: '600ms' }}>
+        <div className="mok-home-cta-wordmark">
           <Wordmark size="lg" />
         </div>
-        <p className="mok-muted" style={{ maxWidth: '56ch', margin: '0 auto', fontSize: 17, fontStyle: 'italic' }}>
-          "The practice is a doorway. Some days you walk through one. Some days three.
+        <p className="mok-home-cta-quote">
+          "The practice is a <span className="mok-gradient-text">doorway</span>.
+          Some days you walk through one. Some days three.
           Some days you simply notice the day — and still the Awareness is with you."
         </p>
         {!isAuthenticated && (
-          <div>
-            <Link to="/signup" className="mok-btn mok-btn--primary">Start a 30-day trial</Link>
+          <div className="mok-row" style={{ gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <Link to="/signup" className="mok-btn mok-btn--primary mok-btn--lg">
+              Start a 30-day trial
+            </Link>
+            <Link to="/about" className="mok-btn mok-btn--lg">
+              Learn more
+            </Link>
           </div>
         )}
       </section>

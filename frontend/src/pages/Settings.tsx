@@ -40,12 +40,22 @@ export default function Settings() {
   }
 
   return (
-    <section style={{ display: 'grid', gap: 20, maxWidth: 720 }}>
+    <section style={{ display: 'grid', gap: 24, maxWidth: 720 }}>
+      {/* ── Page header ──────────────────────────────────── */}
+      <header>
+        <p className="mok-eyebrow">Preferences</p>
+        <h1 className="mok-section-title">Your settings.</h1>
+        <p className="mok-section-lede">
+          The details that shape how the app meets you each day. Changes save
+          as you make them.
+        </p>
+      </header>
+
       {status === 'saved' && <div className="mok-banner mok-banner--success">Saved.</div>}
       {error && <div className="mok-banner mok-banner--error">{error}</div>}
 
       <article className="mok-card">
-        <h2 className="mok-section-title" style={{ fontSize: 18 }}>Identity</h2>
+        <p className="mok-section-h3">Identity</p>
         <div className="mok-field">
           <label>Name</label>
           <input
@@ -61,7 +71,7 @@ export default function Settings() {
       </article>
 
       <article className="mok-card">
-        <h2 className="mok-section-title" style={{ fontSize: 18 }}>Your intention</h2>
+        <p className="mok-section-h3">Your intention</p>
         <div className="mok-field" style={{ marginBottom: 0 }}>
           <label>What brings you here?</label>
           <textarea
@@ -75,7 +85,7 @@ export default function Settings() {
       </article>
 
       <article className="mok-card">
-        <h2 className="mok-section-title" style={{ fontSize: 18 }}>Practice cadence</h2>
+        <p className="mok-section-h3">Practice cadence</p>
         <div className="mok-field">
           <label>Time of day</label>
           <select
@@ -106,9 +116,9 @@ export default function Settings() {
       </article>
 
       <article className="mok-card">
-        <h2 className="mok-section-title" style={{ fontSize: 18 }}>Phase</h2>
-        <p className="mok-muted" style={{ fontSize: 14 }}>
-          The app adapts gently to your phase. You can request a change here.
+        <p className="mok-section-h3">Phase</p>
+        <p className="mok-muted" style={{ fontSize: 14, margin: '6px 0 14px' }}>
+          The app adapts gently to your phase. You can shift it here at any time.
         </p>
         <div className="mok-row" style={{ gap: 8, flexWrap: 'wrap' }}>
           {(['arriving', 'steadying', 'integrating', 'living'] as const).map((p) => (
@@ -126,9 +136,10 @@ export default function Settings() {
       </article>
 
       <article className="mok-card">
-        <h2 className="mok-section-title" style={{ fontSize: 18 }}>Theme</h2>
-        <p className="mok-muted" style={{ fontSize: 14 }}>
-          A different palette for a different mood. All themes preserve the brand.
+        <p className="mok-section-h3">Theme</p>
+        <p className="mok-muted" style={{ fontSize: 14, margin: '6px 0 14px' }}>
+          A different palette for a different mood. Every theme stays within
+          the brand family.
         </p>
         <div
           style={{

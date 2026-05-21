@@ -15,19 +15,21 @@ const TABS: Tab[] = [
 /**
  * "Me" shell — the practitioner's private sanctuary.
  *
- * Renders a sticky sub-nav of internal tabs and a routed `<Outlet>` body.
- * Each tab is a nested route under `/me`. Legacy URLs (`/dashboard`,
- * `/journal`, `/history`, `/settings`) redirect to the matching tab.
+ * Renders a compact section banner ("Me · your private sanctuary") and a
+ * tab bar above the routed body. The banner is intentionally smaller than
+ * a page hero so the child page's own h1 reads as the dominant title.
  */
 export default function MeLayout() {
   return (
-    <div className="mok-rise" style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-      <header style={{ padding: '24px 0 8px' }}>
+    <div className="mok-me mok-rise">
+      <header className="mok-me-banner">
         <p className="mok-eyebrow">Me</p>
-        <h1 className="mok-section-title">Your private sanctuary.</h1>
-        <p className="mok-section-lede">
-          Everything here is yours alone. Your journal, your reflections, your MCI — never
-          visible to anyone else.
+        <p className="mok-me-banner-title">
+          Your private sanctuary
+        </p>
+        <p className="mok-me-banner-sub">
+          Everything here belongs to you — your dashboard, your journal,
+          your history, your preferences.
         </p>
       </header>
 
@@ -44,7 +46,7 @@ export default function MeLayout() {
         ))}
       </nav>
 
-      <div style={{ paddingTop: 20 }}>
+      <div className="mok-me-body">
         <Outlet />
       </div>
     </div>
