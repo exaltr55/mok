@@ -907,80 +907,119 @@
 
 /* ── Section sub-nav (inside Me) ─────────────────────────────── */
 
-/* ── Me layout (section banner + tabs) ───────────────────────
-   Banner reads as a quiet section identifier, distinctly subordinate
-   to the page-level h1 each child tab renders. */
+/* ── Me layout (mobile-first tabs above each tab's own header) ──
+   No section banner — each child tab carries its own h1 and lede.
+   Tabs scroll horizontally on small screens, expand to flex on tablet+,
+   with large tap targets that meet the 44-px minimum. */
 
 .mok-me { display: flex; flex-direction: column; gap: 0; }
 
-.mok-me-banner {
-  padding: 20px 0 6px;
+/* The Me tabs render as a compact segmented pill control — a piece of
+   content, not a second menu bar. It overrides .mok-subnav so it does
+   not borrow the border-bottom + underline look. */
+
+.mok-me-tabs {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 2px;
+  margin: 14px 0 0;
+  padding: 4px;
+  background: color-mix(in srgb, var(--accent) 6%, var(--bg-subtle));
+  border-radius: var(--radius-pill);
+  border-bottom: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
 }
 
-.mok-me-banner .mok-eyebrow {
-  margin: 0 0 4px;
-  font-size: 11px;
-  color: var(--accent);
-}
+.mok-me-tabs::-webkit-scrollbar { display: none; }
 
-.mok-me-banner-title {
-  font-family: var(--font-display);
-  font-size: 18px;
-  font-weight: 500;
-  letter-spacing: -0.005em;
-  margin: 0;
-  color: var(--text);
-}
-
-.mok-me-banner-sub {
-  font-size: 13px;
-  line-height: 1.55;
-  color: var(--text-muted);
-  margin: 4px 0 0;
-  max-width: 56ch;
-}
-
-/* Body sits below the tabs with a generous gap so the next page's h1
-   reads as a fresh chapter, not a continuation. */
+/* Body sits below the segmented pill with mobile-comfortable padding. */
 .mok-me-body {
-  padding-top: 28px;
-  border-top: 0;
+  padding-top: 22px;
 }
 
 @media (min-width: 720px) {
-  .mok-me-body { padding-top: 36px; }
+  .mok-me-body { padding-top: 32px; }
 }
 
 .mok-subnav {
   display: flex;
-  gap: 4px;
+  gap: 2px;
   border-bottom: 1px solid var(--border);
   overflow-x: auto;
+  scrollbar-width: none;
   margin: 14px 0 0;
   padding-bottom: 0;
   -webkit-overflow-scrolling: touch;
 }
 
+/* Hide scrollbar on webkit/blink. */
+.mok-subnav::-webkit-scrollbar { display: none; }
+
 .mok-subnav-link {
-  padding: 12px 14px;
-  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  padding: 14px 16px;
+  min-height: 48px;
+  font-size: 14px;
   font-family: var(--font-sans);
   font-weight: 500;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
   color: var(--text-muted);
   text-decoration: none;
   position: relative;
   white-space: nowrap;
   border-bottom: 2px solid transparent;
   margin-bottom: -1px;
-  transition: color var(--motion-quick) var(--easing);
+  transition:
+    color var(--motion-quick) var(--easing),
+    border-bottom-color var(--motion-quick) var(--easing);
+}
+
+@media (min-width: 720px) {
+  .mok-subnav-link { padding: 14px 18px; font-size: 14px; }
 }
 
 .mok-subnav-link:hover { color: var(--text); }
 
 .mok-subnav-link.active {
-  color: var(--text);
+  color: var(--accent-strong);
   border-bottom-color: var(--accent);
+}
+
+/* When the subnav is the Me segmented pill, the inner links become
+   pill-shaped chips. The active chip fills white with accent text. */
+.mok-me-tabs .mok-subnav-link {
+  padding: 10px 16px;
+  min-height: 40px;
+  font-size: 13px;
+  border-bottom: 0;
+  border-radius: var(--radius-pill);
+  margin-bottom: 0;
+  color: var(--text-muted);
+  transition:
+    background var(--motion-quick) var(--easing),
+    color var(--motion-quick) var(--easing);
+}
+
+.mok-me-tabs .mok-subnav-link:hover {
+  color: var(--accent-strong);
+}
+
+.mok-me-tabs .mok-subnav-link.active {
+  background: var(--surface);
+  color: var(--accent-strong);
+  border-bottom-color: transparent;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.05),
+    0 1px 0 rgba(0, 0, 0, 0.04);
+}
+
+@media (min-width: 720px) {
+  .mok-me-tabs .mok-subnav-link { padding: 10px 20px; font-size: 14px; }
 }
 
 /* ── Learn row — index list item ─────────────────────────────── */
@@ -1533,11 +1572,18 @@
   border-color: #FFFFFF;
 }
 
-/* ── Breathing 4-4-4 ring ────────────────────────────────────── */
+/* ── Breathing 4-4-4 ring ──────────────────────────────────────
+   The ring is the visual heart of the Breathing session. It sits on
+   the dark overlay and breathes with the practice colour:
+     – a wide blurred glow halo behind it,
+     – a 2-px gradient-stroked ring,
+     – a soft radial fill, transparent at the edges.
+   Inhale → ring scales up 1.1 and intensifies; Hold holds; Exhale
+   eases back to 0.85. The label fades through Inhale · Hold · Exhale. */
 
 .mok-breath-stage {
   position: relative;
-  height: 200px;
+  height: 260px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1545,19 +1591,20 @@
 }
 
 @media (min-width: 720px) {
-  .mok-breath-stage { height: 220px; margin-bottom: 36px; }
+  .mok-breath-stage { height: 320px; margin-bottom: 36px; }
 }
 
 .mok-breath-ring-wrap {
   position: relative;
-  width: 160px;
-  height: 160px;
+  width: 220px;
+  height: 220px;
 }
 
 @media (min-width: 720px) {
-  .mok-breath-ring-wrap { width: 180px; height: 180px; }
+  .mok-breath-ring-wrap { width: 280px; height: 280px; }
 }
 
+.mok-breath-glow,
 .mok-breath-ring,
 .mok-breath-fill {
   position: absolute;
@@ -1565,15 +1612,46 @@
   border-radius: 50%;
 }
 
-.mok-breath-ring {
-  border: 1px solid var(--practice-color, var(--sage));
-  opacity: 0.55;
+/* Blurred halo behind the ring — wider than the ring itself and softly
+   filtered. This is what gives the ring its aura. */
+.mok-breath-glow {
+  inset: -36px;
+  background: radial-gradient(
+    circle at 50% 50%,
+    color-mix(in srgb, var(--practice-color, var(--accent)) 65%, transparent) 0%,
+    color-mix(in srgb, var(--practice-color, var(--accent)) 14%, transparent) 45%,
+    transparent 75%
+  );
+  filter: blur(18px);
+  opacity: 0.85;
 }
 
+/* The 2-px ring uses the border-box gradient trick — solid in
+   colour but rendered as a clean stroke. */
+.mok-breath-ring {
+  background:
+    linear-gradient(transparent, transparent) padding-box,
+    conic-gradient(
+      from 90deg at 50% 50%,
+      var(--practice-color, var(--accent)) 0deg,
+      color-mix(in srgb, var(--practice-color, var(--accent)) 60%, #FFFFFF) 180deg,
+      var(--practice-color, var(--accent)) 360deg
+    ) border-box;
+  border: 2px solid transparent;
+  box-shadow:
+    0 0 28px color-mix(in srgb, var(--practice-color, var(--accent)) 38%, transparent),
+    inset 0 0 24px color-mix(in srgb, var(--practice-color, var(--accent)) 18%, transparent);
+}
+
+/* Soft inner fill — gives the ring volume. */
 .mok-breath-fill {
-  inset: 24px;
-  background: var(--practice-color, var(--sage));
-  opacity: 0.25;
+  inset: 22px;
+  background: radial-gradient(
+    circle at 50% 50%,
+    color-mix(in srgb, var(--practice-color, var(--accent)) 28%, transparent) 0%,
+    color-mix(in srgb, var(--practice-color, var(--accent)) 8%, transparent) 60%,
+    transparent 100%
+  );
 }
 
 .mok-breath-anim {
@@ -1581,26 +1659,41 @@
 }
 
 @keyframes mok-breath-444 {
-  0%   { transform: scale(0.85); opacity: 0.5; }
-  33%  { transform: scale(1.1); opacity: 1; }
-  66%  { transform: scale(1.1); opacity: 1; }
-  100% { transform: scale(0.85); opacity: 0.5; }
+  0%   { transform: scale(0.86); opacity: 0.6; }
+  33%  { transform: scale(1.10); opacity: 1.0; }
+  66%  { transform: scale(1.10); opacity: 1.0; }
+  100% { transform: scale(0.86); opacity: 0.6; }
 }
 
+/* Label at the centre of the ring — Outfit display, larger, with a
+   gentle cross-fade as the phase changes. */
 .mok-breath-label {
   position: absolute;
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
-  color: var(--text-inverse);
-  font-family: var(--font-sans);
-  letter-spacing: 0.18em;
+  font-size: 18px;
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
+  color: var(--text-inverse);
+  text-shadow: 0 0 18px color-mix(in srgb, var(--practice-color, var(--accent)) 50%, transparent);
+  transition: opacity 600ms var(--easing);
 }
 
-@media (min-width: 720px) { .mok-breath-label { font-size: 14px; } }
+@media (min-width: 720px) {
+  .mok-breath-label { font-size: 22px; letter-spacing: 0.26em; }
+}
+
+/* Reduced motion: skip the scale animation but keep the rings visible. */
+@media (prefers-reduced-motion: reduce) {
+  .mok-breath-anim {
+    animation: none;
+    transform: scale(1);
+  }
+}
 
 /* ── Crossfade text ──────────────────────────────────────────── */
 

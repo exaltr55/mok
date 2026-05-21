@@ -30,6 +30,7 @@ export default function BreathingAccompaniment({ running, colorVar }: Props) {
   return (
     <div className="mok-breath-stage" style={cssVar}>
       <div className="mok-breath-ring-wrap">
+        <div className={`mok-breath-glow ${running ? 'mok-breath-anim' : ''}`} aria-hidden="true" />
         <div className={`mok-breath-ring ${running ? 'mok-breath-anim' : ''}`} />
         <div className={`mok-breath-fill ${running ? 'mok-breath-anim' : ''}`} />
         <div className="mok-breath-label">{running ? phase : 'paused'}</div>
