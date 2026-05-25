@@ -132,13 +132,45 @@ def load_practice_content(key: str) -> str:
     return path.read_text(encoding="utf-8")
 
 
-def recommend_for_user(week_index: int) -> Practice:
-    """Stage-appropriate sequencing for Phase 1 (Arriving).
+CURRICULUM_ORDER = (
+    "breathing",  # week 1
+    "thinking",   # week 2
+    "talking",    # week 3
+    "writing",    # week 4
+    "moving",     # week 5
+    "resetting",  # week 6
+    "aligning",   # week 7
+)
 
-    Per docs/02-pillars/do.md:
-      "New users are guided through Breathing → Thinking → Talking → Writing
-       over their first 4 weeks."
+
+def recommend_for_user(week_index: int) -> Practice:
+    """Stage-appropriate sequencing across the seven-week introduction.
+
+    Weeks 1-7: one practice introduced per week, in canonical order
+    (Breathing → Thinking → Talking → Writing → Moving → Resetting →
+    Aligning). After week 7 the practitioner has met all seven; the
+    Today recommendation rotates by day of the week so each practice
+    gets a quiet turn in the spotlight.
     """
-    order = ["breathing", "thinking", "talking", "writing"]
-    key = order[min(max(week_index, 0), len(order) - 1)]
+    if week_index < len(CURRICULUM_ORDER):
+        key = CURRICULUM_ORDER[max(week_index, 0)]
+    else:
+        # Past week 7 — rotate among the seven by day of week so each
+        # practice quietly gets the spotlight in turn.
+        from datetime import UTC, datetime
+
+        key = CURRICULUM_ORDER[datetime.now(UTC).weekday() % len(CURRICULUM_ORDER)]
     return PRACTICE_BY_KEY[key]
+
+
+# Practitioner phase derived from the week index. Mirrors the journey
+# in docs/01-product/practitioner-journey.md: Arriving (weeks 1-4) →
+# Steadying (weeks 5-8) → Integrating (weeks 9-12) → Living (week 13+).
+def derive_phase(week_index: int) -> str:
+    if week_index < 4:
+        return "arriving"
+    if week_index < 8:
+        return "steadying"
+    if week_index < 12:
+        return "integrating"
+    return "living"

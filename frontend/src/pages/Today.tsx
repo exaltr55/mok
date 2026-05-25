@@ -171,6 +171,40 @@ export default function Today() {
         </p>
       </section>
 
+      {/* Weekly review prompt — appears once a practitioner has settled
+          past the seven-week introduction and the phase has rolled to
+          Integrating or beyond. */}
+      {(data.phase === 'integrating' || data.phase === 'living') && (
+        <section className="mok-today-section">
+          <article className="mok-card mok-card--brand" style={{ padding: '22px 24px' }}>
+            <p className="mok-eyebrow">Weekly review</p>
+            <h2
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: 22,
+                fontWeight: 500,
+                letterSpacing: '-0.005em',
+                margin: '6px 0 8px',
+              }}
+            >
+              Take a few minutes to look back.
+            </h2>
+            <p style={{ fontSize: 14, lineHeight: 1.55, margin: '0 0 14px' }}>
+              You've moved through the full introduction — all seven practices
+              are open to you now. A short weekly reflection is a quiet way to
+              notice what your practice is shaping.
+            </p>
+            <Link
+              to="/me/journal?style=reflective&prompt=weekly-review"
+              className="mok-btn mok-btn--lg"
+              style={{ background: 'rgba(255,255,255,0.92)', color: 'var(--accent-strong)' }}
+            >
+              Open this week's review →
+            </Link>
+          </article>
+        </section>
+      )}
+
       {recentJournal && (
         <section className="mok-today-section">
           <article className="mok-reflection">

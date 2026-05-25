@@ -23,6 +23,7 @@ import EmployerLogin from './pages/EmployerLogin';
 import EmployerOnboarding from './pages/EmployerOnboarding';
 import EmployerOrientation from './pages/EmployerOrientation';
 import EmployerSignup from './pages/EmployerSignup';
+import EmployerTeam from './pages/EmployerTeam';
 import Onboarding from './pages/Onboarding';
 import Orientation from './pages/Orientation';
 import PracticeDetail from './pages/PracticeDetail';
@@ -104,6 +105,7 @@ export default function App() {
               }
             >
               <Route path="employer" element={<EmployerDashboard />} />
+              <Route path="employer/team" element={<EmployerTeam />} />
               <Route path="employer/orientation" element={<EmployerOrientation />} />
             </Route>
 

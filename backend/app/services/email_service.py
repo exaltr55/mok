@@ -226,6 +226,56 @@ async def send_employer_invite(
     return await send_email(to=to, subject=subject, body_html=html, body_text=text)
 
 
+async def send_employee_invite(
+    *,
+    to: str,
+    name: str | None,
+    organisation_name: str,
+    inviter_name: str | None,
+    invite_token: str,
+) -> bool:
+    """Send a new practitioner an invitation from their HR team."""
+    base_url = _frontend_base()
+    accept_url = f"{base_url}/accept-invite?token={invite_token}"
+    greeting = f"Hi {name}," if name else "Hi there,"
+    inviter_line = (
+        f"{inviter_name} from {organisation_name} has invited you to begin a "
+        f"daily practice with {settings.app_name}."
+        if inviter_name
+        else f"Your team at {organisation_name} has invited you to begin a "
+             f"daily practice with {settings.app_name}."
+    )
+    subject = f"You're invited to {settings.app_name}"
+    html = _wrap(f"""
+        <h2 style="margin: 0 0 8px; font-size: 20px;">Welcome aboard.</h2>
+        <p>{greeting}</p>
+        <p>{inviter_line} Click below to set up your account — it takes a
+        minute, and your practice begins immediately after.</p>
+        <p>
+          <a href="{accept_url}"
+             style="display: inline-block; padding: 12px 26px; background: #6366F1;
+                    color: white; text-decoration: none; border-radius: 999px;
+                    font-weight: 600;">Accept invitation</a>
+        </p>
+        <p style="color: #475569; margin-top: 18px;">
+          You'll walk through nine short questions to personalise your
+          experience, a brief orientation to the program, and land in your
+          first practice. Your journal, reflections, and consistency score
+          stay with you alone.
+        </p>
+        <p style="color: #94a3b8; font-size: 13px; margin-top: 22px;">
+          This invitation link expires in 30 days. If you weren't expecting
+          this, you can safely ignore the email.
+        </p>
+    """)
+    text = (
+        f"{greeting}\n\n{inviter_line}\n\n"
+        f"Accept your invitation: {accept_url}\n\n"
+        f"(Link expires in 30 days.)"
+    )
+    return await send_email(to=to, subject=subject, body_html=html, body_text=text)
+
+
 async def send_contact_message(
     *,
     to: str,

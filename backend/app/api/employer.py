@@ -20,6 +20,8 @@ from pydantic import EmailStr, Field
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession  # noqa: TC002
 
+from datetime import UTC, datetime, timedelta
+
 import jwt
 
 from app.api.auth import (
@@ -30,6 +32,7 @@ from app.api.auth import (
     validate_password_strength,
 )
 from app.config import settings
+from app.services.email_service import send_employee_invite
 from app.database import get_db
 from app.models.membership import Membership
 from app.models.tenant import Tenant
@@ -312,13 +315,48 @@ class AcceptInvite(PydanticModel):
     password: str = Field(..., min_length=8, max_length=200)
 
 
+class InviteEmployee(PydanticModel):
+    email: EmailStr
+    name: str | None = Field(default=None, max_length=200)
+
+
+class EmployeeOut(PydanticModel):
+    id: str
+    name: str
+    email: str
+    is_active: bool
+    onboarded: bool
+    created_at: datetime
+    membership_role: str
+
+    model_config = {"from_attributes": True}
+
+
+_EMPLOYEE_INVITE_PURPOSE = "employee_invite"
+_EMPLOYEE_INVITE_DAYS = 30
+
+
+def _create_employee_invite_token(user_id: str, email: str) -> str:
+    payload = {
+        "sub": user_id,
+        "email": email,
+        "purpose": _EMPLOYEE_INVITE_PURPOSE,
+        "exp": datetime.now(UTC) + timedelta(days=_EMPLOYEE_INVITE_DAYS),
+    }
+    return jwt.encode(payload, settings.jwt_secret_key, algorithm=settings.jwt_algorithm)
+
+
+_ACCEPTABLE_PURPOSES = {"employer_invite", _EMPLOYEE_INVITE_PURPOSE}
+
+
 @router.get("/invite/preview")
 async def invite_preview(
     token: str,
     db: AsyncSession = Depends(get_db),
 ) -> dict[str, str | None]:
     """Decode an invite token without consuming it — used by the accept page
-    to greet the HR contact by name and show their organisation."""
+    to greet the invitee by name and show their organisation.
+    Handles both HR-admin invites and employee invites."""
     try:
         claims = jwt.decode(
             token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm],
@@ -327,17 +365,17 @@ async def invite_preview(
         raise HTTPException(status_code=400, detail="This invitation has expired.") from e
     except jwt.InvalidTokenError as e:
         raise HTTPException(status_code=400, detail="This invitation link is invalid.") from e
-    if claims.get("purpose") != "employer_invite":
-        raise HTTPException(status_code=400, detail="This link is not an employer invite.")
+    if claims.get("purpose") not in _ACCEPTABLE_PURPOSES:
+        raise HTTPException(status_code=400, detail="This link is not a valid invite.")
 
     user = await db.get(User, claims["sub"])
     if not user:
         raise HTTPException(status_code=404, detail="Invitation no longer valid.")
 
+    # Any active membership tells us the org.
     membership_q = await db.execute(
         select(Membership).where(
             Membership.user_id == user.id,
-            Membership.tenant_role == "hr_admin",
             Membership.is_active.is_(True),
         ),
     )
@@ -348,6 +386,7 @@ async def invite_preview(
         "contact_name": user.name,
         "contact_email": user.email,
         "organisation_name": tenant.display_name if tenant else None,
+        "user_type": user.user_type,
     }
 
 
@@ -356,7 +395,8 @@ async def accept_invite(
     payload: AcceptInvite,
     db: AsyncSession = Depends(get_db),
 ) -> AuthResponse:
-    """Set the HR contact's password, activate the user, and sign them in."""
+    """Set the invitee's password, activate the user, and sign them in.
+    Works for both HR-admin invites and employee invites."""
     validate_password_strength(payload.password)
 
     try:
@@ -367,8 +407,8 @@ async def accept_invite(
         raise HTTPException(status_code=400, detail="This invitation has expired.") from e
     except jwt.InvalidTokenError as e:
         raise HTTPException(status_code=400, detail="This invitation link is invalid.") from e
-    if claims.get("purpose") != "employer_invite":
-        raise HTTPException(status_code=400, detail="This link is not an employer invite.")
+    if claims.get("purpose") not in _ACCEPTABLE_PURPOSES:
+        raise HTTPException(status_code=400, detail="This link is not a valid invite.")
 
     user = await db.get(User, claims["sub"])
     if not user:
@@ -381,6 +421,105 @@ async def accept_invite(
 
     token = _create_access_token(user)
     return AuthResponse(access_token=token, user=UserInfo.model_validate(user))
+
+
+# ── Employee invite (HR-admin invites a teammate) ──────────────
+
+
+@router.post("/employees/invite", response_model=EmployeeOut, status_code=201)
+async def invite_employee(
+    payload: InviteEmployee,
+    db: AsyncSession = Depends(get_db),
+    ctx: tuple[User, Tenant] = Depends(_require_employer_admin),
+) -> EmployeeOut:
+    """Invite a teammate to YouSourceful. Creates an inactive employee user
+    + membership in the HR admin's tenant, then emails an accept-invite link."""
+    inviter, tenant = ctx
+
+    # Reject if a user already exists with this email.
+    existing = await db.execute(select(User).where(User.email == str(payload.email)))
+    if existing.scalar_one_or_none():
+        raise HTTPException(
+            status_code=409,
+            detail="An account already exists for this email.",
+        )
+
+    display_name = (payload.name or str(payload.email).split("@")[0]).strip()
+
+    # Inactive user with no usable password — the invite-accept flow sets it.
+    employee = User(
+        email=str(payload.email),
+        name=display_name,
+        password_hash="!",
+        role="user",
+        user_type="employee",
+        is_active=False,
+        onboarded=False,
+        cohort_enabled=tenant.cohort_enabled,
+    )
+    db.add(employee)
+    await db.flush()
+
+    membership = Membership(
+        user_id=employee.id,
+        tenant_id=tenant.id,
+        is_primary=True,
+        tenant_role="member",
+        is_active=True,
+    )
+    db.add(membership)
+    await db.commit()
+    await db.refresh(employee)
+
+    token = _create_employee_invite_token(employee.id, employee.email)
+    await send_employee_invite(
+        to=employee.email,
+        name=display_name,
+        organisation_name=tenant.display_name,
+        inviter_name=inviter.name,
+        invite_token=token,
+    )
+
+    return EmployeeOut(
+        id=employee.id,
+        name=employee.name,
+        email=employee.email,
+        is_active=employee.is_active,
+        onboarded=employee.onboarded,
+        created_at=employee.created_at,
+        membership_role=membership.tenant_role,
+    )
+
+
+@router.get("/employees", response_model=list[EmployeeOut])
+async def list_employees(
+    db: AsyncSession = Depends(get_db),
+    ctx: tuple[User, Tenant] = Depends(_require_employer_admin),
+) -> list[EmployeeOut]:
+    """List every member of the HR admin's tenant, newest first."""
+    _admin, tenant = ctx
+    rows = await db.execute(
+        select(User, Membership)
+        .join(Membership, Membership.user_id == User.id)
+        .where(
+            Membership.tenant_id == tenant.id,
+            Membership.is_active.is_(True),
+            Membership.tenant_role == "member",
+        )
+        .order_by(User.created_at.desc()),
+    )
+    return [
+        EmployeeOut(
+            id=u.id,
+            name=u.name,
+            email=u.email,
+            is_active=u.is_active,
+            onboarded=u.onboarded,
+            created_at=u.created_at,
+            membership_role=m.tenant_role,
+        )
+        for u, m in rows.all()
+    ]
 
 
 @router.post("/complete-onboarding", response_model=EmployerMe)

@@ -64,6 +64,7 @@ export default function EmployerDashboard() {
           <span className="mok-chip">Employer</span>
         </div>
         <div className="mok-row" style={{ gap: 8 }}>
+          <Link to="/employer/team" className="mok-btn mok-btn--ghost">Team</Link>
           <Link to="/employer/orientation" className="mok-btn mok-btn--ghost">Orientation</Link>
           <button type="button" className="mok-btn mok-btn--ghost" onClick={signOut}>Sign out</button>
         </div>
@@ -372,6 +373,13 @@ function NextSteps({ me }: { me: EmployerMe }) {
       onClick: () => document.getElementById('welcome-notes')?.scrollIntoView({ behavior: 'smooth' }),
     });
   }
+  steps.push({
+    key: 'invite-team',
+    label: 'Invite your first practitioners',
+    hint: 'Send a small pilot group an invitation by email — five to fifteen people is a great place to start. They sign up, walk through onboarding, and begin practicing the same day.',
+    cta: 'Open team page →',
+    href: '/employer/team',
+  });
   if (!steps.length) {
     return (
       <section

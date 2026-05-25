@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   createJournal,
   getTodaysJournal,
@@ -13,13 +14,30 @@ const STYLE_DESCRIPTIONS: Record<JournalStyle, string> = {
   gratitude: 'Notice what is working. Small things. Ordinary things.',
 };
 
+const WEEKLY_REVIEW_PROMPT = [
+  'A short weekly review — gentle questions for the week behind you.',
+  '',
+  '· What did you most notice about your practice this week?',
+  '· Where did you feel most yourself?',
+  '· What is one thing you would like to bring into next week?',
+  '',
+].join('\n');
+
 export default function Journal() {
+  const [params] = useSearchParams();
+  const queryStyle = params.get('style') as JournalStyle | null;
+  const isWeeklyReview = params.get('prompt') === 'weekly-review';
+
   const [today, setToday] = useState<JournalEntry | null>(null);
   const [recent, setRecent] = useState<JournalEntry[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const [style, setStyle] = useState<JournalStyle>('reflective');
-  const [body, setBody] = useState('');
+  const [style, setStyle] = useState<JournalStyle>(
+    queryStyle && ['expressive', 'reflective', 'gratitude'].includes(queryStyle)
+      ? queryStyle
+      : 'reflective',
+  );
+  const [body, setBody] = useState(isWeeklyReview ? WEEKLY_REVIEW_PROMPT : '');
   const [status, setStatus] = useState<'idle' | 'submitting' | 'saved'>('idle');
   const [error, setError] = useState('');
 

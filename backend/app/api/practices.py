@@ -25,6 +25,7 @@ from app.services.practices import (
     PRACTICE_BY_KEY,
     PRACTICES,
     Practice,
+    derive_phase,
     load_practice_content,
     recommend_for_user,
 )
@@ -204,6 +205,16 @@ async def today_summary(
         (today - user.created_at.date()).days // 7,
     )
     rec = recommend_for_user(week_index)
+
+    # Auto-advance the practitioner phase as weeks pass. We only step
+    # forward — manual edits in Preferences are respected if they jumped
+    # ahead.
+    PHASE_ORDER = ("arriving", "steadying", "integrating", "living")
+    derived = derive_phase(week_index)
+    if PHASE_ORDER.index(derived) > PHASE_ORDER.index(user.phase):
+        user.phase = derived
+        await db.commit()
+        await db.refresh(user)
 
     # What did they already practice today?
     rows = await db.execute(

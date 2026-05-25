@@ -496,6 +496,7 @@ export interface InvitePreview {
   contact_name: string | null;
   contact_email: string | null;
   organisation_name: string | null;
+  user_type: 'employee' | 'employer_admin' | 'platform_admin';
 }
 
 export const previewInvite = (token: string) =>
@@ -506,6 +507,26 @@ export const acceptInvite = (token: string, password: string) =>
     method: 'POST',
     body: JSON.stringify({ token, password }),
   });
+
+// ── Employee invite (HR-admin invites teammates) ────────────────
+
+export interface Employee {
+  id: string;
+  name: string;
+  email: string;
+  is_active: boolean;
+  onboarded: boolean;
+  created_at: string;
+  membership_role: string;
+}
+
+export const inviteEmployee = (email: string, name?: string) =>
+  request<Employee>('/employer/employees/invite', {
+    method: 'POST',
+    body: JSON.stringify({ email, name: name || undefined }),
+  });
+
+export const listEmployees = () => request<Employee[]>('/employer/employees');
 
 export const employerSignup = (payload: EmployerSignupPayload) =>
   request<AuthResponse>('/employer/signup', {

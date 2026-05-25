@@ -57,7 +57,11 @@ export default function AcceptInvite() {
       const res = await acceptInvite(token, password);
       setToken(res.access_token);
       await refresh();
-      navigate('/employer/onboarding', { replace: true });
+      // Route to the right onboarding based on who was invited.
+      const dest = res.user.user_type === 'employer_admin'
+        ? '/employer/onboarding'
+        : '/onboarding';
+      navigate(dest, { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not accept the invitation');
     } finally {
