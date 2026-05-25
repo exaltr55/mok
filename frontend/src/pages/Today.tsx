@@ -171,10 +171,9 @@ export default function Today() {
         </p>
       </section>
 
-      {/* Weekly review prompt — appears once a practitioner has settled
-          past the seven-week introduction and the phase has rolled to
-          Integrating or beyond. */}
-      {(data.phase === 'integrating' || data.phase === 'living') && (
+      {/* Weekly review prompt — appears once the practitioner has moved
+          past the seven-week introduction (phase is no longer Arriving). */}
+      {data.phase !== 'arriving' && (
         <section className="mok-today-section">
           <article className="mok-card mok-card--brand" style={{ padding: '22px 24px' }}>
             <p className="mok-eyebrow">Weekly review</p>

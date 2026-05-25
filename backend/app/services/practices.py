@@ -132,44 +132,55 @@ def load_practice_content(key: str) -> str:
     return path.read_text(encoding="utf-8")
 
 
-CURRICULUM_ORDER = (
-    "breathing",  # week 1
-    "thinking",   # week 2
-    "talking",    # week 3
-    "writing",    # week 4
-    "moving",     # week 5
-    "resetting",  # week 6
-    "aligning",   # week 7
-)
+# The four core practices the practitioner moves through together during
+# their first four weeks — Breathing, Thinking, Talking, Writing — as the
+# foundation of the practice.
+CORE_FOUR = ("breathing", "thinking", "talking", "writing")
+# The full seven once Moving, Resetting and Aligning have been added.
+ALL_SEVEN = (*CORE_FOUR, "moving", "resetting", "aligning")
 
 
 def recommend_for_user(week_index: int) -> Practice:
-    """Stage-appropriate sequencing across the seven-week introduction.
+    """Stage-appropriate Today-screen recommendation.
 
-    Weeks 1-7: one practice introduced per week, in canonical order
-    (Breathing → Thinking → Talking → Writing → Moving → Resetting →
-    Aligning). After week 7 the practitioner has met all seven; the
-    Today recommendation rotates by day of the week so each practice
-    gets a quiet turn in the spotlight.
+    Weeks 1–4 (week_index 0–3): the practitioner holds the four core
+       practices — Breathing, Thinking, Talking, Writing — as a single
+       foundational block. The Today screen rotates among the four by
+       day of the week so each gets a quiet turn.
+    Week 5 (week_index 4): Moving comes in as the week's spotlight.
+    Week 6 (week_index 5): Resetting as the week's spotlight.
+    Week 7 (week_index 6): Aligning as the week's spotlight.
+    Week 8+ (week_index 7+): the practitioner has met all seven; the
+       Today recommendation rotates among the seven by day of the week.
     """
-    if week_index < len(CURRICULUM_ORDER):
-        key = CURRICULUM_ORDER[max(week_index, 0)]
-    else:
-        # Past week 7 — rotate among the seven by day of week so each
-        # practice quietly gets the spotlight in turn.
-        from datetime import UTC, datetime
+    from datetime import UTC, datetime
 
-        key = CURRICULUM_ORDER[datetime.now(UTC).weekday() % len(CURRICULUM_ORDER)]
+    weekday = datetime.now(UTC).weekday()
+
+    if week_index < 4:
+        key = CORE_FOUR[weekday % len(CORE_FOUR)]
+    elif week_index == 4:
+        key = "moving"
+    elif week_index == 5:
+        key = "resetting"
+    elif week_index == 6:
+        key = "aligning"
+    else:
+        key = ALL_SEVEN[weekday % len(ALL_SEVEN)]
     return PRACTICE_BY_KEY[key]
 
 
-# Practitioner phase derived from the week index. Mirrors the journey
-# in docs/01-product/practitioner-journey.md: Arriving (weeks 1-4) →
-# Steadying (weeks 5-8) → Integrating (weeks 9-12) → Living (week 13+).
+# Practitioner phase derived from the week index.
+#   Arriving    — weeks 1–7    (week_index  0–6)  — the introduction
+#   Steadying   — weeks 8–10   (week_index  7–9)  — first three weeks of the
+#                                                   full seven-practice rhythm
+#   Integrating — weeks 11–12  (week_index 10–11) — practice begins to land
+#   Living      — week 13+     (week_index 12+)   — the practice is part of
+#                                                   the day
 def derive_phase(week_index: int) -> str:
-    if week_index < 4:
+    if week_index < 7:
         return "arriving"
-    if week_index < 8:
+    if week_index < 10:
         return "steadying"
     if week_index < 12:
         return "integrating"
