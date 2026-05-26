@@ -132,39 +132,52 @@ def load_practice_content(key: str) -> str:
     return path.read_text(encoding="utf-8")
 
 
-# The four core practices the practitioner moves through together during
-# their first four weeks — Breathing, Thinking, Talking, Writing — as the
-# foundation of the practice.
+# The four core practices the practitioner is introduced to over their
+# first four days — Breathing, Thinking, Talking, Writing — and then
+# practices together as the foundation of the seven-practice system.
 CORE_FOUR = ("breathing", "thinking", "talking", "writing")
 # The full seven once Moving, Resetting and Aligning have been added.
 ALL_SEVEN = (*CORE_FOUR, "moving", "resetting", "aligning")
 
 
-def recommend_for_user(week_index: int) -> Practice:
-    """Stage-appropriate Today-screen recommendation.
+def recommend_for_user(day_index: int) -> Practice:
+    """Stage-appropriate Today-screen recommendation. ``day_index`` is the
+    0-based number of days since the practitioner's account was created.
 
-    Weeks 1–4 (week_index 0–3): the practitioner holds the four core
-       practices — Breathing, Thinking, Talking, Writing — as a single
-       foundational block. The Today screen rotates among the four by
-       day of the week so each gets a quiet turn.
-    Week 5 (week_index 4): Moving comes in as the week's spotlight.
-    Week 6 (week_index 5): Resetting as the week's spotlight.
-    Week 7 (week_index 6): Aligning as the week's spotlight.
-    Week 8+ (week_index 7+): the practitioner has met all seven; the
-       Today recommendation rotates among the seven by day of the week.
+    Day 1 (day_index 0): Breathing is introduced.
+    Day 2: Thinking.
+    Day 3: Talking.
+    Day 4: Writing.
+    Days 5–14 (~ first two weeks): the four core practices are all
+       available; the Today spotlight rotates among them by day of week.
+    Days 15–21 (week 3): Moving comes in as the week's spotlight.
+    Days 22–28 (week 4): Resetting as the week's spotlight.
+    Days 29–35 (week 5): Aligning as the week's spotlight — by the end
+       of week 5 all seven are available.
+    Day 36+ (week 6 onwards): all seven are available; Today rotates the
+       spotlight among the seven by day of week.
     """
     from datetime import UTC, datetime
 
     weekday = datetime.now(UTC).weekday()
+    d = max(day_index, 0)
 
-    if week_index < 4:
+    # Days 1–4: introduce one practice per day, in order.
+    if d < len(CORE_FOUR):
+        key = CORE_FOUR[d]
+    # Days 5–14: the four core practices rotate by day of week.
+    elif d < 14:
         key = CORE_FOUR[weekday % len(CORE_FOUR)]
-    elif week_index == 4:
+    # Days 15–21: Moving week.
+    elif d < 21:
         key = "moving"
-    elif week_index == 5:
+    # Days 22–28: Resetting week.
+    elif d < 28:
         key = "resetting"
-    elif week_index == 6:
+    # Days 29–35: Aligning week — all seven introduced by end of week 5.
+    elif d < 35:
         key = "aligning"
+    # Day 36+: all seven rotate by day of week.
     else:
         key = ALL_SEVEN[weekday % len(ALL_SEVEN)]
     return PRACTICE_BY_KEY[key]

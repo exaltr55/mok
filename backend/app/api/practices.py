@@ -200,11 +200,9 @@ async def today_summary(
     today = datetime.now(UTC).date()
 
     # Determine the practice to recommend.
-    week_index = max(
-        0,
-        (today - user.created_at.date()).days // 7,
-    )
-    rec = recommend_for_user(week_index)
+    day_index = max(0, (today - user.created_at.date()).days)
+    week_index = day_index // 7
+    rec = recommend_for_user(day_index)
 
     # Auto-advance the practitioner phase as weeks pass. We only step
     # forward — manual edits in Preferences are respected if they jumped
