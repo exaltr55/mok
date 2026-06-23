@@ -142,7 +142,7 @@ export default function EmployerOnboarding() {
             <p className="mok-eyebrow" style={{ margin: 0 }}>The cohort feature</p>
             <h1 className="mok-section-title">Connect — activated by Mokshly.</h1>
             <p className="mok-section-lede">
-              Connect is a weekly fifteen-minute circle of five practitioners,
+              Connect is a small weekly circle of five practitioners,
               drawn from outside your company by default. It needs a critical
               mass of practitioners across companies to form well — so{' '}
               <strong>the Mokshly team activates it for each employer at the

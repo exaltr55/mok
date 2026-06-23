@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import AskCompanionLink from '../components/AskCompanionLink';
 import {
   createJournal,
   getTodaysJournal,
   listJournal,
+  updateTodaysJournal,
   type JournalEntry,
   type JournalStyle,
 } from '../api/client';
@@ -31,6 +33,7 @@ export default function Journal() {
   const [today, setToday] = useState<JournalEntry | null>(null);
   const [recent, setRecent] = useState<JournalEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState(false);
 
   const [style, setStyle] = useState<JournalStyle>(
     queryStyle && ['expressive', 'reflective', 'gratitude'].includes(queryStyle)
@@ -56,15 +59,38 @@ export default function Journal() {
     setStatus('submitting');
     setError('');
     try {
-      const entry = await createJournal(style, body.trim());
+      const entry = editing
+        ? await updateTodaysJournal(style, body.trim())
+        : await createJournal(style, body.trim());
       setToday(entry);
-      setRecent([entry, ...recent]);
+      // Update the recent list — replace existing today, or prepend new.
+      setRecent((prev) => {
+        const without = prev.filter((e) => e.id !== entry.id);
+        return [entry, ...without];
+      });
       setStatus('saved');
-      setBody('');
+      if (!editing) setBody('');
+      setEditing(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not save journal');
       setStatus('idle');
     }
+  }
+
+  function startEdit() {
+    if (!today) return;
+    setStyle(today.style);
+    setBody(today.body);
+    setEditing(true);
+    setError('');
+    setStatus('idle');
+  }
+
+  function cancelEdit() {
+    setEditing(false);
+    setBody('');
+    setError('');
+    setStatus('idle');
   }
 
   if (loading) return <div className="mok-loading">Opening your journal…</div>;
@@ -81,7 +107,7 @@ export default function Journal() {
         </p>
       </header>
 
-      {today ? (
+      {today && !editing ? (
         <article className="mok-card mok-card--padded">
           <div className="mok-row" style={{ marginBottom: 10 }}>
             <span className="mok-chip mok-chip--accent">{today.style}</span>
@@ -91,15 +117,30 @@ export default function Journal() {
           <p style={{ whiteSpace: 'pre-wrap', fontFamily: 'var(--font-editorial)', fontSize: 17, lineHeight: 1.7 }}>
             {today.body}
           </p>
-          <p className="mok-muted" style={{ fontSize: 13, marginTop: 18, fontStyle: 'italic' }}>
-            One entry per day. Return tomorrow.
-          </p>
+          <div className="mok-row" style={{ marginTop: 18, alignItems: 'center', gap: 12 }}>
+            <button type="button" className="mok-btn" onClick={startEdit}>
+              Edit today's entry
+            </button>
+            <span className="mok-muted" style={{ fontSize: 13, fontStyle: 'italic' }}>
+              One entry per day — revise as often as you like before midnight.
+            </span>
+          </div>
+          <div style={{ marginTop: 14 }}>
+            <AskCompanionLink
+              topic="I'd like to talk through what came up in today's journal."
+              label="Want to reflect on this? Ask your Buddy"
+            />
+          </div>
         </article>
       ) : (
         <article className="mok-card mok-card--padded">
-          <p className="mok-section-h3">Write today's entry</p>
+          <p className="mok-section-h3">
+            {editing ? "Edit today's entry" : "Write today's entry"}
+          </p>
           <p className="mok-muted" style={{ fontSize: 13, margin: '6px 0 18px', fontStyle: 'italic' }}>
-            Choose a style and let the page hold what you share.
+            {editing
+              ? 'Update the style or text — your edits replace today\'s entry.'
+              : 'Choose a style and let the page hold what you share.'}
           </p>
 
           {error && <div className="mok-banner mok-banner--error">{error}</div>}
@@ -134,14 +175,30 @@ export default function Journal() {
             <span className="mok-field-hint">{body.length} characters</span>
           </div>
 
-          <button
-            type="button"
-            className="mok-btn mok-btn--gradient"
-            onClick={save}
-            disabled={status === 'submitting' || !body.trim()}
-          >
-            {status === 'submitting' ? 'Saving…' : 'Save entry'}
-          </button>
+          <div className="mok-row" style={{ gap: 10 }}>
+            <button
+              type="button"
+              className="mok-btn mok-btn--gradient"
+              onClick={save}
+              disabled={status === 'submitting' || !body.trim()}
+            >
+              {status === 'submitting'
+                ? 'Saving…'
+                : editing
+                  ? 'Save changes'
+                  : 'Save entry'}
+            </button>
+            {editing && (
+              <button
+                type="button"
+                className="mok-btn"
+                onClick={cancelEdit}
+                disabled={status === 'submitting'}
+              >
+                Cancel
+              </button>
+            )}
+          </div>
         </article>
       )}
 

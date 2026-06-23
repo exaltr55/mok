@@ -4,7 +4,9 @@ import MeLayout from './components/MeLayout';
 import PrivateRoute from './components/PrivateRoute';
 import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import About from './pages/About';
+import Companion from './pages/Companion';
 import Connect from './pages/Connect';
 import Contact from './pages/Contact';
 import Dashboard from './pages/Dashboard';
@@ -30,6 +32,10 @@ import PracticeDetail from './pages/PracticeDetail';
 import PracticeReading from './pages/PracticeReading';
 import PracticeSession from './pages/PracticeSession';
 import Practices from './pages/Practices';
+import Rhythm from './pages/Rhythm';
+import ThinkingAnchorSettings from './pages/ThinkingAnchorSettings';
+import TalkingAffirmationsSettings from './pages/TalkingAffirmationsSettings';
+import VisualsPreview from './pages/VisualsPreview';
 import ResetPassword from './pages/ResetPassword';
 import Settings from './pages/Settings';
 import Signup from './pages/Signup';
@@ -52,6 +58,7 @@ export default function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
+        <ErrorBoundary>
         <Routes>
           <Route element={<AppShell />}>
             {/* Public */}
@@ -69,6 +76,10 @@ export default function App() {
                 otherwise redirects them to the practitioner side. */}
             <Route path="employer/login" element={<EmployerLogin />} />
             <Route path="employer/signup" element={<EmployerSignup />} />
+            {/* Accept-invite is shared by employees and HR admins — the
+                AcceptInvite page reads the invite preview and routes to
+                the right onboarding based on user_type. */}
+            <Route path="accept-invite" element={<AcceptInvite />} />
             <Route path="employer/accept-invite" element={<AcceptInvite />} />
 
             {/* Platform admin (Mokshly team) */}
@@ -130,17 +141,24 @@ export default function App() {
               <Route path="practices/:key/learn" element={<PracticeReading part="learn" />} />
               <Route path="practices/:key/daily" element={<PracticeReading part="daily" />} />
               <Route path="practices/:key/session" element={<PracticeSession />} />
+              <Route path="practices/thinking/anchor" element={<ThinkingAnchorSettings />} />
+              <Route path="practices/talking/affirmations" element={<TalkingAffirmationsSettings />} />
+
+              {/* Companion */}
+              <Route path="companion" element={<Companion />} />
 
               {/* Connect */}
               <Route path="connect" element={<Connect />} />
 
               {/* Learn */}
               <Route path="learn" element={<Learn />} />
+              <Route path="learn/visuals-preview" element={<VisualsPreview />} />
               <Route path="learn/:slug" element={<LearnModule />} />
 
               {/* Me — tabbed shell wrapping the four private surfaces */}
               <Route path="me" element={<MeLayout />}>
                 <Route index element={<Dashboard />} />
+                <Route path="rhythm" element={<Rhythm />} />
                 <Route path="journal" element={<Journal />} />
                 <Route path="history" element={<History />} />
                 <Route path="settings" element={<Settings />} />
@@ -156,6 +174,7 @@ export default function App() {
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
+        </ErrorBoundary>
       </AuthProvider>
     </ThemeProvider>
   );

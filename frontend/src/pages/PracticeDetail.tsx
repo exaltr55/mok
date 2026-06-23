@@ -7,6 +7,7 @@ import {
   type PracticeDetail as PracticeDetailT,
 } from '../api/client';
 import { PracticeArt, PRACTICE_COLORS, type PracticeKey } from '../components/PracticeArt';
+import { getReadPracticeLearn } from '../utils/learnProgress';
 // note: route children (Reading) live in App.tsx; this page is the TOC.
 
 /**
@@ -73,6 +74,9 @@ export default function PracticeDetail() {
   const Art = PracticeArt[k];
   const color = PRACTICE_COLORS[k];
   const isNewToPractice = everPracticed === false;
+  // Part B stays locked until Part A has been read at least once.
+  // After that, both parts are freely navigable.
+  const partARead = getReadPracticeLearn().includes(data.key);
 
   return (
     <section className="mok-practice-toc mok-rise">
@@ -93,16 +97,16 @@ export default function PracticeDetail() {
       {/* Guidance lede for first-time readers */}
       {isNewToPractice && (
         <p className="mok-muted" style={{ fontStyle: 'italic', textAlign: 'center', maxWidth: 520, margin: '0 auto' }}>
-          Two short readings before the guided session — first the teaching,
-          then the daily practice. The session opens after.
+          Two short readings before the guided session — first the what,
+          then the how. The session opens after.
         </p>
       )}
 
       {/* The two parts as separate cards */}
       <div className="mok-practice-toc-grid">
         <PartCard
-          eyebrow="Part 1"
-          title="Learning the practice"
+          eyebrow="Part A"
+          title="Learning the practice (what)"
           lede="The teaching behind it — what it is, and why it works."
           to={`/practices/${data.key}/learn`}
           primary={isNewToPractice}
@@ -110,13 +114,18 @@ export default function PracticeDetail() {
           step={1}
         />
         <PartCard
-          eyebrow="Part 2"
-          title="The daily practice"
-          lede="What to do, breath by breath — the rhythm the session walks you through."
+          eyebrow="Part B"
+          title="Doing the practice (how)"
+          lede={
+            partARead
+              ? 'How to do it, breath by breath — the rhythm the session walks you through.'
+              : 'Read Part A first — Part B opens once you have.'
+          }
           to={`/practices/${data.key}/daily`}
-          primary={!isNewToPractice}
+          primary={!isNewToPractice && partARead}
           accent={color}
           step={2}
+          locked={!partARead}
         />
       </div>
 
@@ -169,6 +178,7 @@ function PartCard({
   primary,
   accent,
   step,
+  locked = false,
 }: {
   eyebrow: string;
   title: string;
@@ -177,16 +187,25 @@ function PartCard({
   primary: boolean;
   accent: string;
   step: number;
+  locked?: boolean;
 }) {
   return (
-    <article className={`mok-toc-card ${primary ? 'mok-toc-card--primary' : ''}`}>
+    <article
+      className={`mok-toc-card ${primary ? 'mok-toc-card--primary' : ''} ${locked ? 'mok-toc-card--locked' : ''}`}
+    >
       <span className="mok-toc-card-step" style={{ color: accent }}>{step}</span>
       <p className="mok-eyebrow" style={{ margin: 0 }}>{eyebrow}</p>
       <h3 className="mok-toc-card-title">{title}</h3>
       <p className="mok-toc-card-lede">{lede}</p>
-      <Link to={to} className={`mok-btn ${primary ? 'mok-btn--primary' : ''}`}>
-        Read →
-      </Link>
+      {locked ? (
+        <button type="button" className="mok-btn" disabled aria-disabled="true">
+          Locked
+        </button>
+      ) : (
+        <Link to={to} className={`mok-btn ${primary ? 'mok-btn--primary' : ''}`}>
+          Read →
+        </Link>
+      )}
     </article>
   );
 }

@@ -19,7 +19,11 @@ export default function Signup() {
     setError('');
     setLoading(true);
     try {
-      await register(email, password, name);
+      // Capture the user's IANA timezone from the browser so the
+      // server can show "today" correctly without waiting for onboarding.
+      const timezone =
+        Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+      await register(email, password, name, timezone);
       navigate('/onboarding', { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Sign up failed');
@@ -35,9 +39,6 @@ export default function Signup() {
           <Logo size="md" />
         </div>
         <h1 className="mok-section-title" style={{ textAlign: 'center', fontSize: 24 }}>Begin your practice</h1>
-        <p className="mok-section-lede" style={{ textAlign: 'center', marginBottom: 28 }}>
-          A 30-day trial. No card required.
-        </p>
 
         {error && <div className="mok-banner mok-banner--error" role="alert">{error}</div>}
 
@@ -61,6 +62,24 @@ export default function Signup() {
 
         <div style={{ marginTop: 20, textAlign: 'center', fontSize: 14, color: 'var(--text-muted)' }}>
           Already a member? <Link to="/login" style={{ color: 'var(--accent)' }}>Sign in</Link>
+
+          <hr style={{ margin: '20px 0', border: 0, borderTop: '1px solid var(--border)' }} />
+
+          <p style={{ fontSize: 13, color: 'var(--text-subtle)', marginBottom: 8 }}>
+            Bringing YouSourceful to your team?
+          </p>
+          <p style={{ marginTop: 4 }}>
+            <Link to="/employer/signup" style={{ color: 'var(--accent)' }}>For employers →</Link>
+          </p>
+          <p style={{ marginTop: 16, fontSize: 13, color: 'var(--text-subtle)' }}>
+            Just exploring?{' '}
+            <a
+              href={import.meta.env.VITE_MOKSHLY_URL ?? 'http://localhost:5173'}
+              style={{ color: 'var(--accent)' }}
+            >
+              Learn about Mokshly →
+            </a>
+          </p>
         </div>
       </form>
     </div>

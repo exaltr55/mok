@@ -74,7 +74,7 @@ const PRINCIPLES: Principle[] = [
     surface: 'magenta',
     title: 'Intimate cohorts',
     body:
-      'Five practitioners, fifteen minutes a week. Small enough to be real, ' +
+      'Five practitioners, meeting once a week. Small enough to be real, ' +
       'large enough to hold each other well.',
   },
   {

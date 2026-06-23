@@ -118,21 +118,10 @@ export default function Settings() {
       <article className="mok-card">
         <p className="mok-section-h3">Phase</p>
         <p className="mok-muted" style={{ fontSize: 14, margin: '6px 0 14px' }}>
-          The app adapts gently to your phase. You can shift it here at any time.
+          Your phase advances on its own as the weeks of practice unfold —
+          Arriving, Steadying, Integrating, Living. It isn't something to choose;
+          it's something you grow into. Your current phase is shown on your Me page.
         </p>
-        <div className="mok-row" style={{ gap: 8, flexWrap: 'wrap' }}>
-          {(['arriving', 'steadying', 'integrating', 'living'] as const).map((p) => (
-            <button
-              key={p}
-              type="button"
-              className={`mok-btn ${profile.phase === p ? 'mok-btn--primary' : ''}`}
-              onClick={() => save({ phase: p })}
-              disabled={saving}
-            >
-              {p.charAt(0).toUpperCase() + p.slice(1)}
-            </button>
-          ))}
-        </div>
       </article>
 
       <article className="mok-card">

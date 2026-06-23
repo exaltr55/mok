@@ -58,12 +58,26 @@ export default function Login() {
 
         <div style={{ marginTop: 20, textAlign: 'center', fontSize: 14, color: 'var(--text-muted)' }}>
           <Link to="/forgot-password" style={{ color: 'var(--accent)' }}>Forgot your password?</Link>
-          <p style={{ marginTop: 10 }}>
-            New here? <Link to="/signup" style={{ color: 'var(--accent)' }}>Begin here</Link>
+
+          <hr style={{ margin: '20px 0', border: 0, borderTop: '1px solid var(--border)' }} />
+
+          <p style={{ fontSize: 13, color: 'var(--text-subtle)', marginBottom: 10 }}>
+            Don't have an account yet?
           </p>
-          <p style={{ marginTop: 8, fontSize: 13, color: 'var(--text-subtle)' }}>
-            Bringing YouSourceful to your team?{' '}
-            <Link to="/employer/signup" style={{ color: 'var(--accent)' }}>For employers</Link>
+          <p style={{ marginTop: 4 }}>
+            <Link to="/signup" style={{ color: 'var(--accent)' }}>Sign up as an individual</Link>
+          </p>
+          <p style={{ marginTop: 6 }}>
+            <Link to="/employer/signup" style={{ color: 'var(--accent)' }}>Bring YouSourceful to your team →</Link>
+          </p>
+          <p style={{ marginTop: 18, fontSize: 13, color: 'var(--text-subtle)' }}>
+            Just exploring?{' '}
+            <a
+              href={import.meta.env.VITE_MOKSHLY_URL ?? 'http://localhost:5173'}
+              style={{ color: 'var(--accent)' }}
+            >
+              Learn about Mokshly →
+            </a>
           </p>
         </div>
       </form>

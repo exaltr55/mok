@@ -5,8 +5,10 @@ import {
   getProfile,
   getTodaySummary,
   getTodaysJournal,
+  listPractices,
   type HistoryDay,
   type JournalEntry,
+  type PracticeSummary,
   type Profile,
   type TodayScreen,
 } from '../api/client';
@@ -45,35 +47,58 @@ export default function Today() {
   const [history, setHistory] = useState<HistoryDay[]>([]);
   const [recentJournal, setRecentJournal] = useState<JournalEntry | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [practices, setPractices] = useState<PracticeSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
     let cancelled = false;
-    Promise.all([getTodaySummary(), getHistory(7), getTodaysJournal(), getProfile()])
-      .then(([t, h, j, p]) => {
+    Promise.all([
+      getTodaySummary(),
+      getHistory(7),
+      getTodaysJournal(),
+      getProfile(),
+      listPractices(),
+    ])
+      .then(([t, h, j, p, list]) => {
         if (cancelled) return;
         setData(t);
         setHistory(h.days);
         setRecentJournal(j);
         setProfile(p);
+        setPractices(list);
       })
       .catch((e) => { if (!cancelled) setError(e instanceof Error ? e.message : 'Could not load today'); })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
   }, []);
 
-  const recommended = data?.recommended_practice;
-  const recommendedKey = recommended?.key as PracticeKey | undefined;
-  const Art = recommendedKey ? PracticeArt[recommendedKey] : null;
-  const accent = recommendedKey ? PRACTICE_COLORS[recommendedKey] : 'var(--accent)';
+  // Daily set — every practice the user has unlocked today, with its
+  // done/not-done status. The first undone one becomes the spotlight.
+  const dailySet = useMemo(() => {
+    if (!data) return [];
+    const byKey = new Map(practices.map((p) => [p.key, p]));
+    return data.available_today
+      .map((k) => byKey.get(k))
+      .filter((p): p is PracticeSummary => !!p)
+      .map((p) => ({
+        practice: p,
+        done: data.practiced_today.includes(p.key),
+      }));
+  }, [data, practices]);
+
+  const nextPractice = dailySet.find((d) => !d.done)?.practice ?? null;
+  const doneCount = dailySet.filter((d) => d.done).length;
+  const allDone = dailySet.length > 0 && doneCount === dailySet.length;
+
+  const spotlightKey = nextPractice?.key as PracticeKey | undefined;
+  const Art = spotlightKey ? PracticeArt[spotlightKey] : null;
+  const accent = spotlightKey ? PRACTICE_COLORS[spotlightKey] : 'var(--accent)';
 
   const podStyle = useMemo(
     () => ({ ['--practice-color' as string]: accent } as React.CSSProperties),
     [accent],
   );
-
-  const recPracticed = !!data && recommendedKey ? data.practiced_today.includes(recommendedKey) : false;
 
   if (loading) return <div className="mok-loading">Drawing a breath…</div>;
   if (error) return <div className="mok-banner mok-banner--error">{error}</div>;
@@ -99,7 +124,21 @@ export default function Today() {
         )}
       </section>
 
-      {recommended && (
+      {allDone ? (
+        <section className="mok-today-section" style={{ paddingBottom: 28 }}>
+          <article className="mok-pod">
+            <div className="mok-pod-body">
+              <p className="mok-eyebrow" style={{ margin: '0 0 4px' }}>
+                All for today
+              </p>
+              <h2 className="mok-pod-name">All {dailySet.length} done. Beautiful.</h2>
+              <p className="mok-pod-meta" style={{ fontStyle: 'italic' }}>
+                Rest is part of the rhythm.
+              </p>
+            </div>
+          </article>
+        </section>
+      ) : nextPractice && (
         <section className="mok-today-section" style={{ paddingBottom: 28 }}>
           <article className="mok-pod" style={podStyle}>
             {Art && (
@@ -109,25 +148,21 @@ export default function Today() {
             )}
             <div className="mok-pod-body">
               <p className="mok-eyebrow" style={{ margin: '0 0 4px' }}>
-                {data.phase === 'arriving' ? "Today's practice" : 'For today'}
+                Next · {doneCount} of {dailySet.length} done
               </p>
-              <h2 className="mok-pod-name">{recommended.name}</h2>
+              <h2 className="mok-pod-name">{nextPractice.name}</h2>
               <p className="mok-pod-meta">
-                {recommended.format} · {recommended.session_min}–{recommended.session_max} min
+                {nextPractice.format} · {nextPractice.session_min}–{nextPractice.session_max} min
               </p>
 
               <div className="mok-pod-actions">
-                {recPracticed ? (
-                  <span className="mok-muted" style={{ fontSize: 13, fontFamily: 'var(--font-sans)' }}>
-                    ✓ Practiced today.
-                  </span>
-                ) : data.mci.practice_days === 0 ? (
+                {data.mci.practice_days === 0 ? (
                   /* First-time practitioner — guide them to read first.
                      The "Begin guided session" CTA lives inside the slideshow's
                      final card, so the read-then-practice order is preserved. */
                   <>
                     <Link
-                      to={`/practices/${recommended.key}`}
+                      to={`/practices/${nextPractice.key}`}
                       className="mok-btn mok-btn--primary mok-btn--lg"
                     >
                       Read the practice →
@@ -142,12 +177,12 @@ export default function Today() {
                 ) : (
                   <>
                     <Link
-                      to={recommendedKey === 'writing' ? '/journal' : `/practices/${recommended.key}/session`}
+                      to={nextPractice.key === 'writing' ? '/journal' : `/practices/${nextPractice.key}/session`}
                       className="mok-btn mok-btn--primary mok-btn--lg"
                     >
                       Begin →
                     </Link>
-                    <Link to={`/practices/${recommended.key}`} className="mok-btn">
+                    <Link to={`/practices/${nextPractice.key}`} className="mok-btn">
                       Read first
                     </Link>
                   </>
@@ -158,14 +193,94 @@ export default function Today() {
         </section>
       )}
 
+      {/* Daily set — always shown, lets the user see all of today's
+          practices at a glance and tap straight into any of them. */}
+      {dailySet.length > 1 && (
+        <section className="mok-today-section" style={{ paddingBottom: 24 }}>
+          <p className="mok-section-h3" style={{ marginBottom: 12 }}>
+            Today's set
+            <span className="mok-muted" style={{ marginLeft: 10, fontSize: 13, fontStyle: 'italic', fontWeight: 400 }}>
+              {doneCount} of {dailySet.length} done
+            </span>
+          </p>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+              gap: 10,
+            }}
+          >
+            {dailySet.map(({ practice, done }) => {
+              const k = practice.key as PracticeKey;
+              const Icon = PracticeArt[k];
+              const c = PRACTICE_COLORS[k];
+              const href = practice.key === 'writing'
+                ? '/journal'
+                : `/practices/${practice.key}`;
+              return (
+                <Link
+                  key={practice.key}
+                  to={href}
+                  className="mok-card"
+                  style={{
+                    textDecoration: 'none',
+                    color: 'inherit',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 10,
+                    padding: '12px 14px',
+                    opacity: done ? 0.65 : 1,
+                    borderLeft: `3px solid ${done ? 'var(--border)' : c}`,
+                  }}
+                >
+                  <span
+                    style={{
+                      width: 20,
+                      display: 'inline-flex',
+                      justifyContent: 'center',
+                      color: done ? 'var(--accent)' : 'var(--text-subtle)',
+                    }}
+                  >
+                    {done ? '✓' : '○'}
+                  </span>
+                  <Icon color={c} size={20} />
+                  <span style={{ fontSize: 14, fontFamily: 'var(--font-display)' }}>
+                    {practice.short_name}
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+          {data.day_index < 7 && !allDone && (
+            <p
+              className="mok-muted"
+              style={{ fontSize: 13, fontStyle: 'italic', marginTop: 14, maxWidth: 540 }}
+            >
+              {data.day_index === 0
+                ? 'The first day. Begin with what feels easiest. One short practice is enough to start.'
+                : `Day ${data.day_index + 1}. Just one at a time — the four are companions, not a checklist to rush.`}
+            </p>
+          )}
+        </section>
+      )}
+
       <section className="mok-today-section">
         <p className="mok-section-h3">The week, so far</p>
         <WeekTrail history={history} />
-        <Link to="/me/history" className="mok-mci-inline" style={{ textDecoration: 'none' }}>
-          <span className="mok-mci-inline-number">{data.mci.mci}</span>
-          <span className="mok-subtle">· {data.mci.milestone.toLowerCase()}</span>
-          <span className="mok-subtle">›</span>
-        </Link>
+        {data.mci.activated ? (
+          <Link to="/me/history" className="mok-mci-inline" style={{ textDecoration: 'none' }}>
+            <span className="mok-mci-inline-number">{data.mci.mci}</span>
+            <span className="mok-subtle">· {data.mci.milestone.toLowerCase()}</span>
+            <span className="mok-subtle">›</span>
+          </Link>
+        ) : (
+          <p
+            className="mok-muted"
+            style={{ fontSize: 13, fontStyle: 'italic', marginTop: 12, maxWidth: 580 }}
+          >
+            Your steady rhythm begins once you've practiced all seven.
+          </p>
+        )}
         <p className="mok-muted" style={{ fontSize: 13, fontStyle: 'italic', marginTop: 12, maxWidth: 580 }}>
           A dot for each day you returned. The week takes shape as you do.
         </p>

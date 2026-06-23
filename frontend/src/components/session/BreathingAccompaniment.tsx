@@ -8,22 +8,27 @@ interface Props {
 
 /**
  * The 4-4-4 breathing ring. A pulsing ring/fill ticks through inhale → hold →
- * exhale → … in a 12-second loop. The phase label updates each beat.
+ * exhale → … in a 12-second loop. The phase label updates each beat, and a
+ * 1 → 2 → 3 → 4 count ticks beneath it so the user can follow each phase
+ * to the breath.
  */
 export default function BreathingAccompaniment({ running, colorVar }: Props) {
-  const [phase, setPhase] = useState<'Inhale' | 'Hold' | 'Exhale'>('Inhale');
+  // Single 1-second tick drives both phase and count.
+  // tick 0..3 = Inhale, 4..7 = Hold, 8..11 = Exhale.
+  const [tick, setTick] = useState(0);
 
   useEffect(() => {
     if (!running) return;
-    const order: Array<'Inhale' | 'Hold' | 'Exhale'> = ['Inhale', 'Hold', 'Exhale'];
-    let idx = 0;
-    setPhase(order[idx]);
+    setTick(0);
     const id = setInterval(() => {
-      idx = (idx + 1) % 3;
-      setPhase(order[idx]);
-    }, 4000);
+      setTick((t) => (t + 1) % 12);
+    }, 1000);
     return () => clearInterval(id);
   }, [running]);
+
+  const phase: 'Inhale' | 'Hold' | 'Exhale' =
+    tick < 4 ? 'Inhale' : tick < 8 ? 'Hold' : 'Exhale';
+  const count = (tick % 4) + 1;
 
   const cssVar = colorVar ? { ['--practice-color' as string]: colorVar } : undefined;
 
@@ -33,7 +38,19 @@ export default function BreathingAccompaniment({ running, colorVar }: Props) {
         <div className={`mok-breath-glow ${running ? 'mok-breath-anim' : ''}`} aria-hidden="true" />
         <div className={`mok-breath-ring ${running ? 'mok-breath-anim' : ''}`} />
         <div className={`mok-breath-fill ${running ? 'mok-breath-anim' : ''}`} />
-        <div className="mok-breath-label">{running ? phase : 'paused'}</div>
+        <div className="mok-breath-label">
+          {running ? (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+              {/* `key={phase}` remounts the span on every phase change so
+                  the CSS animation re-runs — giving the word a soft
+                  "arising" feel instead of an instant swap. */}
+              <span key={phase} className="mok-breath-phase">{phase}</span>
+              <span key={`${phase}-${count}`} className="mok-breath-count">{count}</span>
+            </div>
+          ) : (
+            'paused'
+          )}
+        </div>
       </div>
     </div>
   );

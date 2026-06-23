@@ -7,6 +7,7 @@ interface Tab {
 
 const TABS: Tab[] = [
   { to: '/me',          label: 'Overview' },
+  { to: '/me/rhythm',   label: 'Rhythm' },
   { to: '/me/journal',  label: 'Journal' },
   { to: '/me/history',  label: 'History' },
   { to: '/me/settings', label: 'Preferences' },

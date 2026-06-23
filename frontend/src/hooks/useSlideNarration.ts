@@ -61,7 +61,17 @@ export function useSlideNarration(
     if (!enabled) return;
 
     const text = (texts[idx] || '').trim();
-    if (!text) return;
+    if (!text) {
+      // No text to speak (e.g. a visual-only slide). Hold for a calm
+      // beat, then advance so the slideshow keeps moving.
+      if (idx < texts.length - 1) {
+        const t = setTimeout(() => {
+          setIdx((i) => (i === idx ? i + 1 : i));
+        }, 3500);
+        return () => clearTimeout(t);
+      }
+      return;
+    }
 
     const voice = pickSoothingVoice(window.speechSynthesis.getVoices());
     const chunks = chunkForSpeech(text);

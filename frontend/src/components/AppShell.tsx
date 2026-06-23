@@ -1,6 +1,7 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import BottomNav from './BottomNav';
+import ReminderBanner from './ReminderBanner';
 import Wordmark from './Wordmark';
 
 const PUBLIC_PATHS = ['/', '/about', '/contact', '/login', '/signup', '/forgot-password', '/reset-password'];
@@ -17,6 +18,7 @@ const APP_TABS: NavTab[] = [
   { to: '/practices', label: 'Practice', alsoActive: ['/practices'] },
   { to: '/connect',   label: 'Connect' },
   { to: '/learn',     label: 'Learn' },
+  { to: '/companion', label: 'Buddy' },
   { to: '/me',        label: 'Me', alsoActive: ['/me', '/dashboard', '/journal', '/history', '/settings'] },
 ];
 
@@ -92,6 +94,8 @@ export default function AppShell() {
           </div>
         </div>
       </nav>
+
+      {showAppNav && <ReminderBanner />}
 
       <main className="mok-shell-main">
         <Outlet />

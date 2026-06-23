@@ -10,14 +10,13 @@ interface Props {
 }
 
 /**
- * The Mokshly wordmark — a three-line stacked composition:
+ * The Mokshly + YouSourceful wordmark — a two-line stacked composition:
  *
- *     be
+ *     Mokshly
  *     YouSourceful
- *     by Mokshly
  *
- * "be" hugs the left edge; YouSourceful and "by Mokshly" are centered beneath.
- * The block sizes itself to the width of YouSourceful (the widest line).
+ * "Mokshly" is the corporate parent (small, subtle, on top); "YouSourceful"
+ * is the product (prominent). Mirrors the Google → Gmail logo relationship.
  */
 export default function Wordmark({
   size = 'md',
@@ -32,9 +31,8 @@ export default function Wordmark({
       className={`mok-wordmark mok-wordmark--${size} ${className}`.trim()}
       style={style}
     >
-      <span className="mok-wordmark-be">be</span>
+      <span className="mok-wordmark-parent">Mokshly</span>
       <span className="mok-wordmark-main">YouSourceful</span>
-      <span className="mok-wordmark-by">by Mokshly</span>
     </span>
   );
 }

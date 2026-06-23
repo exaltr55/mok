@@ -1,8 +1,14 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getMyTenantWelcome, type TenantWelcome } from '../api/client';
+import { getCurrentUserId, getMyTenantWelcome, type TenantWelcome } from '../api/client';
 import { useAuth } from '../contexts/AuthContext';
 import Wordmark from '../components/Wordmark';
+
+/** localStorage key for resume-orientation position, scoped per user. */
+function orientationPositionKey(): string {
+  const uid = getCurrentUserId();
+  return uid ? `mok.orientation.position.${uid}` : 'mok.orientation.position.anon';
+}
 
 /**
  * Post-onboarding orientation. Lays out the YouSourceful program:
@@ -15,8 +21,11 @@ import Wordmark from '../components/Wordmark';
  *   6. The Consistency Index (MCI)
  *   7. Your private tools (Journal, History, Me)
  *   8. Your cohort (Connect)
- *   9. The five sections at a glance
- *   10. Ready → Learn
+ *   9. Companion (your always-close support)
+ *  10. How to be here (gentle agreements)
+ *  11. Privacy and support
+ *  12. The six sections at a glance
+ *  13. Ready → Learn
  *
  * Reachable manually from Preferences too. The final card lands the
  * practitioner in /learn.
@@ -25,9 +34,9 @@ import Wordmark from '../components/Wordmark';
 interface Card {
   eyebrow: string;
   title: string;
-  body: string;
-  detail?: string;
-  bullets?: string[];
+  body: string | ReactNode;
+  detail?: string | ReactNode;
+  bullets?: ReactNode[];
   /** Optional signature block — used for "From your HR head" / "From your CEO". */
   signature?: { name: string; title: string | null };
   kind?: 'standard' | 'letter';
@@ -35,137 +44,188 @@ interface Card {
 
 const CARDS: Card[] = [
   {
-    eyebrow: 'The approach',
-    title: 'YouSourceful develops Awareness.',
+    eyebrow: 'Hello, from Mokshly',
+    title: 'Why we built this.',
     body:
-      'Awareness is the steady inner space within which thoughts, emotions, and ' +
-      'reactions arise. The practices are doorways through which Awareness ' +
-      'becomes available — in how you breathe, think, move, and respond.',
+      "You're here because life moves fast — and somewhere in that pace, the " +
+      "steadier you is easy to lose. YouSourceful is about getting that you back. " +
+      "Not through more striving. Through quiet, daily Awareness — the steady " +
+      "ground that doesn't move when everything else does.",
     detail:
-      'We honor consistency and intention. Some days you walk through one ' +
-      'practice. Some days three. Each is enough.',
+      "Think of us as a calm friend who's walked this before. We bring the " +
+      "tools. You bring the showing up.",
   },
   {
-    eyebrow: 'What may emerge',
-    title: 'What you might find here.',
+    eyebrow: 'What changes (slowly)',
+    title: 'Small shifts that add up.',
     body:
-      'Over time, practitioners often notice their reactions softening before ' +
-      'they form. A steadier baseline returning on hard days. Small habits ' +
-      'compounding into a clearer way of meeting the work, the people, and the ' +
-      'moments that ask the most of you.',
+      "Most people notice it sideways at first. A reaction that softens before " +
+      "it lands. A clearer head on a Monday morning. A pause where there used " +
+      "to be a snap. Nothing dramatic — just the kind of inner shift that " +
+      "quietly makes the work, the people, and the day easier to meet.",
     detail:
-      'These are not promises — they are what others have described noticing ' +
-      'as practice settles in. Your version will be your own.',
+      "These aren't promises. They're patterns others have noticed. Your " +
+      "version will be yours.",
   },
   {
-    eyebrow: 'How it works',
-    title: 'Two pillars hold the program.',
+    eyebrow: "How it's built",
+    title: 'Two parts, working together.',
     body:
-      'The 5S Framework is the conceptual ground — five lenses for seeing how ' +
-      'experience arises and unfolds. The 7 Practices translate the framework ' +
-      'into daily living — small, repeatable acts that meet you where you are.',
-    detail:
-      'Read the framework first, then the practices. Walk through them at your ' +
-      'own rhythm — Breathing is a beautiful place to begin, and the rest unfold ' +
-      'as they call to you.',
+      "First, you'll learn about the practices — what they are, why they " +
+      "matter, and how they work. Then you'll do them, a little each day.",
+    detail: 'Breathing is where everyone begins. The rest follows from there.',
   },
   {
-    eyebrow: 'Pillar 1',
+    eyebrow: 'First, the framework',
     title: 'The 5S Framework.',
     body:
-      'Five lenses for seeing how experience arises and unfolds — from the ' +
-      'steady ground beneath you, to the cycles that move through your days. ' +
-      'The full teaching waits for you in Learn.',
-    detail: 'A short read. Begin when you arrive there.',
+      "Five short modules. Five lenses for understanding how your experience " +
+      "takes shape — from the steady ground beneath you, all the way to the " +
+      "cycles that move through your days. Nothing here is heavy reading. " +
+      "Promise.",
+    detail: <>You'll meet it slide by slide in <span className="mok-ui-label">Learn</span>.</>,
   },
   {
-    eyebrow: 'Pillar 2',
+    eyebrow: 'Then, the practices',
     title: 'The 7 Practices.',
     body:
-      'Seven small, daily practices — calm ways to meet your breath, your ' +
-      'thinking, your body, your day. Each has a teaching, a daily practice, ' +
-      'and a short guided session.',
-    detail: 'You will discover them one at a time, in your own rhythm.',
+      "Seven small daily things — meeting your breath, your mind, your voice, " +
+      "your body, your day. Each has a short reading (the what), a short reading " +
+      "(the how), and a guided session. None of it is long. All of it adds up.",
+    detail: "You'll meet them one at a time. No rush.",
   },
   {
-    eyebrow: 'The daily rhythm',
-    title: 'How to manage your practice.',
-    body:
-      'Your Today screen is the daily landing. Each day, one practice is gently ' +
-      'suggested based on your phase and rhythm. Begin it, log a practice you ' +
-      'did outside the app, or simply notice the day.',
+    eyebrow: 'The daily landing',
+    title: 'Your Today screen, your way.',
+    body: (
+      <>
+        <span className="mok-ui-label">Today</span> is the page you'll
+        open most. It shows what's gently suggested, what you've already
+        done, and what's quietly waiting. Begin a practice, log one you
+        did off-screen, or just notice the day and close the tab. All
+        of it counts.
+      </>
+    ),
     detail:
-      'Aim for five of seven days. Rest is part of practice — and consistency ' +
-      'beats intensity, every time.',
+      "Six days a week is the sweet spot. Rest is part of practice — and " +
+      "consistency wins over intensity, every single time.",
   },
   {
-    eyebrow: 'Your steady rhythm',
-    title: 'A kind mirror, not a score.',
+    eyebrow: 'Your rhythm at a glance',
+    title: 'A quiet way to see your progress.',
     body:
-      "You'll see a small number we call your Consistency Index — simply the " +
-      'share of days in the last month that you returned to practice. Think of ' +
-      'it as a kind mirror that gently reflects your rhythm back to you, here ' +
-      'to encourage your steady return.',
+      "You'll see a small number — your Consistency Index. It quietly " +
+      "tracks your progress over time and helps you stay aligned with " +
+      "the practice, celebrating each return and supporting your rhythm.",
     detail:
-      'Any day you practiced counts — whether you used the app or simply did it ' +
-      'on your own. Only you can see this number.',
+      "Days off the app still count, if you practiced. And only you can see " +
+      "this number — it isn't on display anywhere.",
   },
   {
-    eyebrow: 'Your private tools',
+    eyebrow: 'Your private corner',
     title: 'Journal, History, and Me.',
-    body:
-      'A daily Journal — expressive, reflective, or gratitude. A History view that ' +
-      'shows your trail of returning. A Me sanctuary that holds your dashboard, ' +
-      'patterns, and preferences. Everything inside Me stays with you.',
-    detail: 'Privacy is built into the product itself.',
+    body: (
+      <>
+        <span className="mok-ui-label">Journal</span> is where you write —
+        expressively, reflectively, or in gratitude.{' '}
+        <span className="mok-ui-label">History</span> is your trail of
+        returning. <span className="mok-ui-label">Me</span> is your
+        private sanctuary — dashboard, patterns, preferences. Everything
+        inside <span className="mok-ui-label">Me</span> stays inside{' '}
+        <span className="mok-ui-label">Me</span>.
+      </>
+    ),
+    detail: "Privacy isn't a setting here. It's built in.",
   },
   {
-    eyebrow: 'Your cohort',
-    title: 'Connect — a circle that holds you.',
+    eyebrow: 'Your circle',
+    title: 'Connect — a small weekly circle.',
     body:
-      'Five fellow practitioners, meeting for fifteen minutes a week. A space ' +
-      'where each person speaks from their own experience, listens with full ' +
-      'attention, and holds room for one another — gently, openly, and with ' +
-      'shared respect.',
+      "When cohorts are open in your space, you'll meet a small group of " +
+      "fellow practitioners once a week. Everyone speaks from their own " +
+      "experience. Everyone listens. Nothing more, nothing less.",
+    detail: (
+      <>
+        If <em>Connect</em> isn't open yet, your practice is whole on its
+        own. You'll see it here when it opens.
+      </>
+    ),
+  },
+  {
+    eyebrow: 'Your sounding board',
+    title: 'Meet Buddy — your quiet helper.',
+    body: (
+      <>
+        Stuck? Curious? Need to talk something through?{' '}
+        <span className="mok-ui-label">Buddy</span> is a small, supportive
+        presence inside the app. Ask about a practice, talk through
+        what's coming up, or just check in.{' '}
+        <span className="mok-ui-label">Buddy</span> stays close, day to day.
+      </>
+    ),
+    detail: (
+      <>
+        <span className="mok-ui-label">Buddy</span> is yours alone. Your
+        journal is never shared with it — that part stays just yours.
+      </>
+    ),
+  },
+  {
+    eyebrow: 'How we walk together',
+    title: 'A few quiet promises.',
+    body:
+      "Your pace is the right pace. Showing up matters more than intensity. " +
+      "Rest belongs in the rhythm, not outside it. Be honest when you write — " +
+      "these pages are only yours. And when your cohort gathers, listen the " +
+      "way you'd want to be heard.",
+    detail: 'Every step counts. Even the small ones.',
+  },
+  {
+    eyebrow: 'Privacy, in one breath',
+    title: 'Yours, full stop.',
+    body:
+      "Anything you share or record here is yours alone. Always. " +
+      "Nothing leaves this space unless you choose to share it.",
+    detail: (
+      <>
+        Anything hard? <span className="mok-ui-label">Buddy</span>,
+        your cohort, and your journal are all here. Any choice is
+        changeable — anytime, in Preferences.
+      </>
+    ),
+  },
+  {
+    eyebrow: 'A little map for the road',
+    title: 'Six places that will start to feel like home.',
+    body: "Along the bottom of the screen you'll find six tabs — the six places you'll come back to most.",
+    bullets: [
+      <>
+        <span className="mok-ui-label">Today</span> — what's suggested for
+        the day, and what you've already done.
+      </>,
+      <>
+        <span className="mok-ui-label">Practice</span> — pick one of the
+        seven and begin.
+      </>,
+      <>
+        <em>Connect</em> — your small weekly circle, when it opens.
+      </>,
+      <>
+        <span className="mok-ui-label">Learn</span> — the framework and
+        short readings behind the practice.
+      </>,
+      <>
+        <span className="mok-ui-label">Buddy</span> — a quiet companion
+        you can ask anything.
+      </>,
+      <>
+        <span className="mok-ui-label">Me</span> — your private corner:
+        journal, history, your own rhythm.
+      </>,
+    ],
     detail:
-      'Connect is offered by your employer. If it is already on, you will see ' +
-      'it ready in the Connect section. If not, your team will turn it on when ' +
-      'they are ready — your practice is whole on its own in the meantime.',
-  },
-  {
-    eyebrow: 'How to be here',
-    title: 'A few gentle agreements.',
-    body:
-      'Practice is yours alone — your own measure, your own pace. Consistency ' +
-      'over intensity. A rest day is part of the path. Bring honesty to your ' +
-      'journal and to your cohort, and meet others the way you would want to ' +
-      'be met — with kindness and full presence.',
-    detail:
-      'Every step counts here. The path is yours to walk, at your own pace.',
-  },
-  {
-    eyebrow: 'Privacy and support',
-    title: 'Your practice is yours alone.',
-    body:
-      'Your journal, your reflections, and your private numbers belong to you — ' +
-      'always. They live with you, and only you. If you ever choose to share ' +
-      'patterns to help your company better support its people, that sharing ' +
-      'is anonymous — and it only appears when ten or more colleagues have ' +
-      'shared the same way, keeping each person fully unrecognisable.',
-    detail:
-      'If something is hard, you are not alone. Reach out any time through ' +
-      'Contact in the menu — we read every message. Your cohort and your ' +
-      'journal are also here to hold what arises. You can change any of your ' +
-      'choices, any time, in Preferences.',
-  },
-  {
-    eyebrow: 'At a glance',
-    title: 'Five sections, one rhythm.',
-    body:
-      'Today is your daily landing. Practice holds the seven. Connect is your ' +
-      'cohort. Learn is the framework and teachings. Me is your private ' +
-      'sanctuary.',
-    detail: 'You can return to this orientation any time from Preferences.',
+      "You can come back to this walk anytime from Preferences. " +
+      "We'll be right here.",
   },
 ];
 
@@ -174,10 +234,34 @@ export default function Orientation() {
   const navigate = useNavigate();
   const [idx, setIdx] = useState(0);
   const [welcome, setWelcome] = useState<TenantWelcome | null>(null);
+  const [resumeAvailable, setResumeAvailable] = useState(false);
+  const [resumeIdx, setResumeIdx] = useState(0);
 
   useEffect(() => {
     getMyTenantWelcome().then(setWelcome).catch(() => setWelcome(null));
+    // Offer "resume where you left off" if the user dropped out earlier.
+    try {
+      const raw = localStorage.getItem(orientationPositionKey());
+      if (raw) {
+        const saved = parseInt(raw, 10);
+        if (Number.isFinite(saved) && saved > 0) {
+          setResumeIdx(saved);
+          setResumeAvailable(true);
+        }
+      }
+    } catch {
+      // ignore
+    }
   }, []);
+
+  // Persist progress so a returning user can pick up where they were.
+  useEffect(() => {
+    try {
+      localStorage.setItem(orientationPositionKey(), String(idx));
+    } catch {
+      // ignore
+    }
+  }, [idx]);
 
   // Inject HR + CEO letters right after the "Welcome / approach" card if
   // the employer has written them.
@@ -221,24 +305,86 @@ export default function Orientation() {
 
   const onLast = idx === cards.length - 1;
   const card = cards[idx];
+  // After the last card we land on a warm celebration screen before
+  // handing the user into Learn — so the transition feels held, not
+  // abrupt.
+  const [celebrating, setCelebrating] = useState(false);
 
   function next() {
     if (onLast) {
-      navigate('/learn', { replace: true });
+      setCelebrating(true);
       return;
     }
     setIdx(idx + 1);
+  }
+
+  function beginLearning() {
+    try { localStorage.removeItem(orientationPositionKey()); } catch { /* ignore */ }
+    navigate('/learn', { replace: true });
   }
 
   function back() {
     if (idx > 0) setIdx(idx - 1);
   }
 
-  function skip() {
-    navigate('/learn', { replace: true });
-  }
-
   const firstName = user?.name?.split(' ')[0];
+
+  if (celebrating) {
+    return (
+      <div style={{ maxWidth: 640, margin: '0 auto' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 28 }}>
+          <Wordmark size="md" />
+        </div>
+        <article
+          className="mok-card mok-card--padded mok-fade-in"
+          style={{ textAlign: 'center', display: 'grid', gap: 18, padding: '36px 24px' }}
+        >
+          <div
+            aria-hidden="true"
+            style={{
+              width: 64, height: 64, borderRadius: '50%', margin: '0 auto',
+              background: 'color-mix(in srgb, var(--accent) 18%, transparent)',
+              color: 'var(--accent)',
+              display: 'grid', placeItems: 'center', fontSize: 32, lineHeight: 1,
+            }}
+          >
+            ✓
+          </div>
+          <p className="mok-eyebrow" style={{ margin: 0 }}>Orientation complete</p>
+          <h1
+            className="mok-section-title"
+            style={{ fontSize: 32, lineHeight: 1.2, margin: 0 }}
+          >
+            {firstName ?? 'You'} — you're in. Welcome aboard.
+          </h1>
+          <p
+            className="mok-section-lede"
+            style={{ margin: 0, maxWidth: 460, marginLeft: 'auto', marginRight: 'auto' }}
+          >
+            You've got the map. Now the actual fun begins. Next stop: Learn —
+            where the ideas land, and the practices start to make sense in your
+            body, not just your head.
+          </p>
+          <p
+            className="mok-muted"
+            style={{ margin: 0, fontStyle: 'italic', fontSize: 14, maxWidth: 420, marginLeft: 'auto', marginRight: 'auto' }}
+          >
+            We'll open with a short welcome chapter. Easy on, easy off. You'll
+            feel the rhythm in a few minutes.
+          </p>
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: 6 }}>
+            <button
+              type="button"
+              className="mok-btn mok-btn--primary mok-btn--lg"
+              onClick={beginLearning}
+            >
+              Open Learn →
+            </button>
+          </div>
+        </article>
+      </div>
+    );
+  }
 
   return (
     <div style={{ maxWidth: 680, margin: '0 auto' }}>
@@ -246,18 +392,34 @@ export default function Orientation() {
         <Wordmark size="md" />
       </div>
 
+      {resumeAvailable && (
+        <div
+          className="mok-card mok-card--padded"
+          style={{ marginBottom: 16, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 12, justifyContent: 'space-between' }}
+        >
+          <div style={{ flex: 1, minWidth: 220 }}>
+            <p className="mok-eyebrow" style={{ margin: 0 }}>Welcome back</p>
+            <p className="mok-muted" style={{ margin: '4px 0 0', fontSize: 14, fontStyle: 'italic' }}>
+              You left off at Step {resumeIdx + 1} of {cards.length}. Pick up where you were?
+            </p>
+          </div>
+          <div className="mok-row" style={{ gap: 8 }}>
+            <button type="button" className="mok-btn" onClick={() => { setResumeAvailable(false); setIdx(0); }}>
+              Start over
+            </button>
+            <button type="button" className="mok-btn mok-btn--primary" onClick={() => { setIdx(resumeIdx); setResumeAvailable(false); }}>
+              Resume →
+            </button>
+          </div>
+        </div>
+      )}
+
       <article className={`mok-card mok-card--padded mok-fade-in ${card.kind === 'letter' ? 'mok-letter' : ''}`} key={idx}>
+        {/* Single, clear surface label — no broader-journey breadcrumb
+            and no skip option, since orientation isn't optional in the
+            first-time flow. */}
         <div className="mok-row" style={{ marginBottom: 18, fontSize: 12, color: 'var(--text-subtle)' }}>
-          <span className="mok-chip">{idx + 1} of {cards.length}</span>
-          <span className="mok-spacer" />
-          <button
-            type="button"
-            className="mok-btn mok-btn--ghost"
-            style={{ padding: '4px 10px', minHeight: 0, fontSize: 12 }}
-            onClick={skip}
-          >
-            Skip orientation
-          </button>
+          <span className="mok-chip">Orientation · Step {idx + 1} of {cards.length}</span>
         </div>
 
         <p className="mok-eyebrow" style={{ margin: '0 0 12px' }}>{card.eyebrow}</p>
@@ -275,7 +437,7 @@ export default function Orientation() {
           {card.title}
         </h1>
         {card.kind === 'letter' ? (
-          <LetterBody body={card.body} />
+          <LetterBody body={card.body as string} />
         ) : (
           <p style={{ fontSize: 17, lineHeight: 1.6, color: 'var(--text-muted)', margin: '0 0 16px' }}>
             {card.body}

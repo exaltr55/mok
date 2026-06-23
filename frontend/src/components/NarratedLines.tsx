@@ -5,11 +5,35 @@
  * lower in the visual hierarchy. Blank lines in the source become small
  * vertical breaks so stanza spacing is preserved.
  */
+import type { ReactNode } from 'react';
+
 interface Props {
   body: string;
   progress: number;
   narrating: boolean;
   className?: string;
+}
+
+/** Parse a line for inline markdown bold (`**word**`) and italic
+ *  (`*word*`) and return it as a JSX fragment. Bold is matched first
+ *  (longer marker), then italic on the remaining text. Anything else
+ *  renders as plain text so the existing tone is preserved. */
+function renderInline(line: string): ReactNode {
+  if (!line.includes('*')) return line;
+  const boldParts = line.split(/(\*\*[^*]+\*\*)/g);
+  return boldParts.flatMap((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return [<strong key={`b${i}`}>{part.slice(2, -2)}</strong>];
+    }
+    if (!part.includes('*')) return [<span key={`p${i}`}>{part}</span>];
+    const italicParts = part.split(/(\*[^*]+\*)/g);
+    return italicParts.map((sub, j) => {
+      if (sub.startsWith('*') && sub.endsWith('*') && sub.length > 2) {
+        return <em key={`i${i}-${j}`}>{sub.slice(1, -1)}</em>;
+      }
+      return <span key={`s${i}-${j}`}>{sub}</span>;
+    });
+  });
 }
 
 export default function NarratedLines({ body, progress, narrating, className = '' }: Props) {
@@ -52,7 +76,7 @@ export default function NarratedLines({ body, progress, narrating, className = '
         }
         return (
           <span key={i} className={`mok-narrated-line mok-narrated-line--${state}`}>
-            {trimmed}
+            {renderInline(trimmed)}
           </span>
         );
       })}

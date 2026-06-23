@@ -8,6 +8,7 @@
 
 const BASE = '/api/v1';
 const TOKEN_KEY = 'mok_token';
+const USER_ID_KEY = 'mok_user_id';
 
 // ── Auth token helpers ──────────────────────────────────────────
 
@@ -19,6 +20,19 @@ export function setToken(t: string): void {
 }
 export function clearToken(): void {
   localStorage.removeItem(TOKEN_KEY);
+}
+
+/** The id of the currently signed-in user — used by progress utilities
+ *  to namespace localStorage so two users on the same browser don't
+ *  see each other's read-state. */
+export function getCurrentUserId(): string | null {
+  return localStorage.getItem(USER_ID_KEY);
+}
+export function setCurrentUserId(id: string): void {
+  localStorage.setItem(USER_ID_KEY, id);
+}
+export function clearCurrentUserId(): void {
+  localStorage.removeItem(USER_ID_KEY);
 }
 
 function authHeaders(): Record<string, string> {
@@ -98,10 +112,15 @@ export const loginApi = (email: string, password: string) =>
     body: JSON.stringify({ email, password }),
   });
 
-export const registerApi = (email: string, password: string, name: string) =>
+export const registerApi = (
+  email: string,
+  password: string,
+  name: string,
+  timezone?: string,
+) =>
   request<AuthResponse>('/auth/register', {
     method: 'POST',
-    body: JSON.stringify({ email, password, name }),
+    body: JSON.stringify({ email, password, name, timezone }),
   });
 
 export const getMe = () => request<AuthUser>('/auth/me');
@@ -139,6 +158,17 @@ export interface Profile {
   career_stage: string | null;
   preferred_time_of_day: string;
   preferred_days_per_week: number;
+  /** HH:MM, 24-hour. Null when user hasn't set a specific clock time. */
+  preferred_practice_time: string | null;
+  /** Per-practice scheduled times (HH:MM). Writing is always last (bedtime). */
+  breathing_time: string | null;
+  thinking_time: string | null;
+  talking_time: string | null;
+  writing_time: string | null;
+  /** Up to 3 extra Breathing times, comma-separated. Empty string or null = none. */
+  breathing_extra_times: string | null;
+  /** Opt-in toggle for in-app banners and (when granted) browser notifications. */
+  reminders_on: boolean;
   cohort_preference: string;
   cohort_meeting_day: string | null;
   cohort_meeting_window: string | null;
@@ -210,12 +240,18 @@ export interface MciOut {
   milestone: string;
   practice_days: number;
   window_days: number;
+  /** MCI is hidden in the UI until the user has practiced all 7 practices. */
+  activated: boolean;
 }
 
 export interface TodayScreen {
   user_name: string;
   phase: string;
   today: string;
+  day_index: number;
+  week_index: number;
+  /** All practice keys the user has unlocked today, in canonical order. */
+  available_today: string[];
   recommended_practice: {
     key: string;
     name: string;
@@ -267,6 +303,40 @@ export const listJournal = (limit = 30) =>
 export const getTodaysJournal = () =>
   request<JournalEntry | null>('/me/journal/today');
 
+// ── Companion ───────────────────────────────────────────────────
+
+export interface CompanionMessageOut {
+  answer: string;
+  source: 'library' | 'claude' | 'openai';
+  remaining_today: number | null;
+}
+
+export interface CompanionHistoryItem {
+  id: string;
+  question: string;
+  answer: string;
+  source: 'library' | 'claude' | 'openai';
+  created_at: string;
+}
+export interface CompanionHistory {
+  items: CompanionHistoryItem[];
+  total: number;
+}
+export const getCompanionHistory = (limit = 5) =>
+  request<CompanionHistory>(`/me/companion/messages?limit=${limit}`);
+
+export const askCompanion = (question: string) =>
+  request<CompanionMessageOut>('/me/companion/message', {
+    method: 'POST',
+    body: JSON.stringify({ question }),
+  });
+
+export const updateTodaysJournal = (style: JournalStyle, body: string) =>
+  request<JournalEntry>('/me/journal/today', {
+    method: 'PATCH',
+    body: JSON.stringify({ style, body }),
+  });
+
 // ── Learn (5S) ──────────────────────────────────────────────────
 
 export interface LearnModuleSummary {
@@ -282,6 +352,21 @@ export interface LearnModule extends LearnModuleSummary {
 
 export const listLearnModules = () => request<LearnModuleSummary[]>('/learn');
 export const getLearnModule = (slug: string) => request<LearnModule>(`/learn/${slug}`);
+
+// ── Quizzes (one per practice) ──────────────────────────────────
+
+export interface QuizQuestion {
+  question: string;
+  answer: string;
+}
+
+export interface QuizDetail {
+  key: string;
+  title: string;
+  questions: QuizQuestion[];
+}
+
+export const getPracticeQuiz = (key: string) => request<QuizDetail>(`/quizzes/${key}`);
 
 // ── Contact ─────────────────────────────────────────────────────
 
@@ -315,6 +400,14 @@ export interface DashboardDay {
   count: number;
 }
 
+export interface PracticeUnlock {
+  key: string;
+  name: string;
+  short_name: string;
+  unlock_day: number;
+  unlocked: boolean;
+}
+
 export interface DashboardData {
   total_sessions: number;
   days_practiced_30d: number;
@@ -323,6 +416,11 @@ export interface DashboardData {
   last_30_days: DashboardDay[];
   last_practice_key: string | null;
   last_practice_day: string | null;
+  // Program journey.
+  day_index: number;
+  week_index: number;
+  phase: 'arriving' | 'steadying' | 'integrating' | 'living';
+  unlocks: PracticeUnlock[];
 }
 
 export const getDashboard = () => request<DashboardData>('/me/dashboard');

@@ -1,7 +1,7 @@
 /**
  * Connect — cohort + community.
  *
- * Cohort matching, the weekly 15-minute Connect, and the daily 3-minute view
+ * Cohort matching, the weekly Connect circle, and the daily 3-minute view
  * are detailed in `docs/02-pillars/connect.md`. They depend on cohort matching
  * batches and a Live Audio room provider, which are scoped after this build.
  *
@@ -53,13 +53,12 @@ export default function Connect() {
   if (user && !user.cohort_enabled) {
     return (
       <div className="mok-rise" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-        <header style={{ padding: '24px 0 8px' }}>
+        <header style={{ padding: '32px 0 8px' }}>
           <p className="mok-eyebrow">Connect</p>
-          <h1 className="mok-section-title">Coming when your team is ready.</h1>
+          <h1 className="mok-section-title">Coming when it's ready for you.</h1>
           <p className="mok-section-lede">
-            Connect is a small weekly circle — five fellow practitioners meeting
-            for fifteen minutes a week. Your employer decides when to turn it on
-            for their team.
+            Connect is a small weekly circle — a few fellow practitioners
+            meeting once a week. You'll see it here when it opens.
           </p>
         </header>
 
@@ -78,8 +77,8 @@ export default function Connect() {
           <p className="mok-muted" style={{ fontSize: 15, lineHeight: 1.55, margin: 0 }}>
             When your team turns Connect on, you'll be placed in a cohort with
             four other practitioners, drawn from outside your company by default.
-            You'll meet for fifteen minutes a week. You speak from your own
-            experience. You listen. You leave a little lighter.
+            You'll meet once a week. You speak from your own experience.
+            You listen. You leave a little lighter.
           </p>
         </section>
 
@@ -92,12 +91,12 @@ export default function Connect() {
 
   return (
     <div className="mok-rise" style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
-      <header style={{ padding: '24px 0 16px' }}>
+      <header style={{ padding: '32px 0 16px' }}>
         <p className="mok-eyebrow">Connect</p>
         <h1 className="mok-section-title">Four others, walking the same path.</h1>
         <p className="mok-section-lede">
           A cohort is a small group of practitioners — five of you, drawn from outside your
-          company by default. You meet for fifteen minutes a week. You speak from your own
+          company by default. You meet once a week. You speak from your own
           experience. You listen. You leave a little lighter.
         </p>
       </header>
@@ -187,9 +186,9 @@ export default function Connect() {
           </ul>
 
           <p className="mok-muted" style={{ fontSize: 13, marginTop: 16, lineHeight: 1.55 }}>
-            Fifteen minutes. Five practitioners. The app keeps time so you can stay fully
-            present. Everything said in cohort stays in the circle — held in confidence,
-            and lives only in the moment it is spoken.
+            Five practitioners. The app keeps time so you can stay fully
+            present. Everything said in cohort stays in the circle — held in
+            confidence, and lives only in the moment it is spoken.
           </p>
         </section>
       </div>

@@ -78,7 +78,7 @@ const CARDS: Card[] = [
     eyebrow: 'A circle that holds them',
     title: 'Connect — your call to turn on.',
     body:
-      'Connect is a weekly fifteen-minute circle: five practitioners meeting to ' +
+      'Connect is a small weekly circle: five practitioners meeting to ' +
       'share honestly and listen with full attention — speaking from their own ' +
       'experience, holding space for one another. By default, members come from ' +
       'outside the same company.',

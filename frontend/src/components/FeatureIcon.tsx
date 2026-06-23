@@ -99,6 +99,28 @@ export const IconPrivacy: FC<Props> = ({ size = 56, from, to, id }) => (
   </svg>
 );
 
+/** Two soft circles joined by a quiet arc — you and your Buddy, an
+ *  always-present companion alongside the practice. */
+export const IconBuddy: FC<Props> = ({ size = 56, from, to, id }) => (
+  <svg width={size} height={size} viewBox="0 0 64 64" fill="none">
+    <defs>{makeGradient(from, to, id)}</defs>
+    {/* Connecting arc — quiet, steady presence between the two. */}
+    <path
+      d="M 20 38 Q 32 28, 44 38"
+      stroke={`url(#${id})`}
+      strokeWidth="2"
+      strokeLinecap="round"
+      opacity="0.5"
+    />
+    {/* The larger anchor (you). */}
+    <circle cx="20" cy="38" r="8" fill={`url(#${id})`} opacity="0.85" />
+    {/* The smaller companion (Buddy). */}
+    <circle cx="44" cy="38" r="6" fill={`url(#${id})`} />
+    {/* Soft halo above Buddy — its attentive, listening quality. */}
+    <circle cx="44" cy="22" r="2.2" fill={`url(#${id})`} opacity="0.7" />
+  </svg>
+);
+
 /** Sapling rising from a soft ground line — patient growth, return over
  *  time. The leaves curl outward like opening hands. */
 export const IconLoop: FC<Props> = ({ size = 56, from, to, id }) => (

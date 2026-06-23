@@ -397,13 +397,13 @@
   user-select: none;
 }
 
-.mok-wordmark-be {
+.mok-wordmark-parent {
   font-family: var(--font-sans);
-  font-weight: 300;
-  letter-spacing: 0.32em;
+  font-weight: 500;
+  letter-spacing: 0.18em;
   color: var(--text-subtle);
   text-align: left;
-  text-transform: lowercase;
+  text-transform: uppercase;
 }
 
 .mok-wordmark-main {
@@ -417,53 +417,37 @@
 
 [data-theme='twilight'] .mok-wordmark-main { color: var(--text); }
 
-.mok-wordmark-by {
-  font-family: var(--font-sans);
-  font-weight: 400;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--text-subtle);
-  text-align: center;
-}
+.mok-wordmark--xs .mok-wordmark-parent { font-size: 9px;  margin-bottom: 1px; }
+.mok-wordmark--xs .mok-wordmark-main   { font-size: 16px; }
 
-.mok-wordmark--xs .mok-wordmark-be   { font-size: 8px; margin-bottom: 1px; }
-.mok-wordmark--xs .mok-wordmark-main { font-size: 16px; }
-.mok-wordmark--xs .mok-wordmark-by   { font-size: 7px; margin-top: 2px; }
-
-.mok-wordmark--sm .mok-wordmark-be   { font-size: 9px; margin-bottom: 1px; }
-.mok-wordmark--sm .mok-wordmark-main { font-size: 17px; }
-.mok-wordmark--sm .mok-wordmark-by   { font-size: 8px; margin-top: 3px; }
+.mok-wordmark--sm .mok-wordmark-parent { font-size: 10px; margin-bottom: 2px; }
+.mok-wordmark--sm .mok-wordmark-main   { font-size: 17px; }
 
 @media (min-width: 720px) {
   .mok-wordmark--sm .mok-wordmark-main { font-size: 18px; }
 }
 
-.mok-wordmark--md .mok-wordmark-be   { font-size: 11px; margin-bottom: 2px; }
-.mok-wordmark--md .mok-wordmark-main { font-size: 22px; }
-.mok-wordmark--md .mok-wordmark-by   { font-size: 9px; margin-top: 4px; }
+.mok-wordmark--md .mok-wordmark-parent { font-size: 11px; margin-bottom: 3px; }
+.mok-wordmark--md .mok-wordmark-main   { font-size: 22px; }
 
 @media (min-width: 720px) {
   .mok-wordmark--md .mok-wordmark-main { font-size: 24px; }
 }
 
-.mok-wordmark--lg .mok-wordmark-be   { font-size: 13px; margin-bottom: 4px; }
-.mok-wordmark--lg .mok-wordmark-main { font-size: 30px; }
-.mok-wordmark--lg .mok-wordmark-by   { font-size: 10px; margin-top: 5px; }
+.mok-wordmark--lg .mok-wordmark-parent { font-size: 13px; margin-bottom: 4px; }
+.mok-wordmark--lg .mok-wordmark-main   { font-size: 30px; }
 
 @media (min-width: 720px) {
-  .mok-wordmark--lg .mok-wordmark-be   { font-size: 14px; }
-  .mok-wordmark--lg .mok-wordmark-main { font-size: 36px; }
-  .mok-wordmark--lg .mok-wordmark-by   { font-size: 11px; margin-top: 6px; }
+  .mok-wordmark--lg .mok-wordmark-parent { font-size: 14px; }
+  .mok-wordmark--lg .mok-wordmark-main   { font-size: 36px; }
 }
 
-.mok-wordmark--xl .mok-wordmark-be   { font-size: 16px; margin-bottom: 5px; }
-.mok-wordmark--xl .mok-wordmark-main { font-size: 44px; }
-.mok-wordmark--xl .mok-wordmark-by   { font-size: 12px; margin-top: 7px; }
+.mok-wordmark--xl .mok-wordmark-parent { font-size: 16px; margin-bottom: 5px; }
+.mok-wordmark--xl .mok-wordmark-main   { font-size: 44px; }
 
 @media (min-width: 720px) {
-  .mok-wordmark--xl .mok-wordmark-be   { font-size: 18px; }
-  .mok-wordmark--xl .mok-wordmark-main { font-size: 56px; }
-  .mok-wordmark--xl .mok-wordmark-by   { font-size: 13px; margin-top: 8px; }
+  .mok-wordmark--xl .mok-wordmark-parent { font-size: 18px; }
+  .mok-wordmark--xl .mok-wordmark-main   { font-size: 56px; }
 }
 
 /* ── Hero ────────────────────────────────────────────────────── */
@@ -544,18 +528,24 @@
 
 .mok-feature {
   position: relative;
-  padding: 28px 26px 26px;
+  padding: 20px 22px;
   border-radius: var(--radius-lg);
   background: var(--surface);
   border: 1px solid transparent;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   box-shadow: var(--shadow-soft);
   transition:
     transform var(--motion-base) var(--easing),
     box-shadow var(--motion-base) var(--easing);
   overflow: hidden;
+}
+
+.mok-feature-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .mok-feature::before {
@@ -576,17 +566,17 @@
 .mok-feature:hover::before { opacity: 0.85; }
 
 .mok-feature-badge {
+  flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 64px;
-  height: 64px;
-  border-radius: 18px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   background: var(--paper);
   box-shadow:
     0 1px 0 rgba(0, 0, 0, 0.04),
-    0 8px 22px var(--mok-feature-glow, color-mix(in srgb, var(--accent) 22%, transparent));
-  margin-bottom: 6px;
+    0 6px 16px var(--mok-feature-glow, color-mix(in srgb, var(--accent) 22%, transparent));
 }
 
 .mok-feature-badge--cyan      { --mok-feature-glow: color-mix(in srgb, var(--cyan)      28%, transparent); }
@@ -599,10 +589,10 @@
 
 .mok-feature-title {
   font-family: var(--font-display);
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
   letter-spacing: -0.005em;
-  margin: 0 0 4px;
+  margin: 0;
   line-height: 1.25;
 }
 
@@ -618,10 +608,10 @@
    padding, wordmark centred, primary CTA below. */
 
 .mok-home-cta {
-  margin-top: 72px;
-  padding: 56px 28px;
+  margin-top: 32px;
+  padding: 22px 22px;
   text-align: center;
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-lg);
   background:
     radial-gradient(
       ellipse at 0% 0%,
@@ -642,12 +632,12 @@
   border: 1px solid var(--border);
   box-shadow: var(--shadow-soft);
   display: grid;
-  gap: 24px;
+  gap: 12px;
   justify-items: center;
 }
 
 @media (min-width: 720px) {
-  .mok-home-cta { padding: 80px 48px; margin-top: 88px; }
+  .mok-home-cta { padding: 26px 28px; margin-top: 40px; }
 }
 
 .mok-home-cta-wordmark { display: flex; justify-content: center; }
@@ -657,13 +647,13 @@
   margin: 0 auto;
   font-family: var(--font-editorial);
   font-style: italic;
-  font-size: 19px;
-  line-height: 1.65;
+  font-size: 15px;
+  line-height: 1.5;
   color: var(--text);
 }
 
 @media (min-width: 720px) {
-  .mok-home-cta-quote { font-size: 22px; }
+  .mok-home-cta-quote { font-size: 16px; }
 }
 
 /* ── Today screen ────────────────────────────────────────────── */
@@ -1079,11 +1069,11 @@
       var(--bg-raised) 70%
     );
   border-radius: var(--radius-lg);
-  padding: 24px;
+  padding: 14px 24px 22px;
   text-align: left;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   min-height: 260px;
   position: relative;
   text-decoration: none;
@@ -1101,10 +1091,19 @@
 
 @media (min-width: 720px) { .mok-practice-tile { padding: 28px; gap: 14px; min-height: 280px; } }
 
-.mok-practice-tile-art {
+/* Tile header — icon + practice name on one row. */
+.mok-practice-tile-head {
   display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mok-practice-tile-art {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
   justify-content: center;
-  padding: 12px 0 8px;
+  padding: 0;
 }
 
 .mok-practice-tile-name {
@@ -1112,8 +1111,23 @@
   font-size: 20px;
   font-weight: 400;
   letter-spacing: -0.005em;
-  margin: 0 0 4px;
-  text-align: center;
+  margin: 0;
+  text-align: left;
+  line-height: 1.2;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Small "P1" / "P2" accent above the practice name. Echoes the
+   "S1" / "S2" style used on Learn module covers so the framework and
+   the practices share a consistent visual signal. */
+.mok-practice-tile-num {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--practice-color, var(--accent));
+  margin-bottom: 2px;
 }
 
 @media (min-width: 720px) { .mok-practice-tile-name { font-size: 22px; } }
@@ -1124,7 +1138,7 @@
   font-style: italic;
   line-height: 1.5;
   margin: 0;
-  text-align: center;
+  text-align: left;
   flex: 1;
 }
 
@@ -1136,7 +1150,7 @@
   font-family: var(--font-sans);
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  text-align: center;
+  text-align: left;
 }
 
 .mok-practice-tile-badge {
@@ -1151,6 +1165,14 @@
   display: flex;
   align-items: center;
   gap: 4px;
+}
+
+/* Reading-state badge — a quieter accent so the "✓ today" practice
+ * badge remains the strongest visual cue while "✓ read" / "Part A
+ * read" sits as a softer progress marker. */
+.mok-practice-tile-badge--read {
+  color: var(--accent);
+  opacity: 0.85;
 }
 
 .mok-practice-tile-actions {
@@ -1687,11 +1709,57 @@
   .mok-breath-label { font-size: 22px; letter-spacing: 0.26em; }
 }
 
+/* 1-2-3-4 count beneath the phase label inside the ring. */
+.mok-breath-count {
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 300;
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 1;
+}
+
+@media (min-width: 720px) {
+  .mok-breath-count { font-size: 48px; }
+}
+
+/* Phase label (Inhale / Hold / Exhale) — softly arises into view
+ * each time the phase changes instead of swapping abruptly. A subtle
+ * blur-to-clear paired with a small fade gives a "materializing"
+ * feel that matches the breath itself. The previous label is
+ * unmounted by React (key prop) so it dissolves visually with the
+ * end of its phase. */
+.mok-breath-phase {
+  display: inline-block;
+  animation: mok-breath-phase-arise 900ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+@keyframes mok-breath-phase-arise {
+  from { opacity: 0; filter: blur(6px); transform: translateY(4px) scale(0.97); }
+  to   { opacity: 1; filter: blur(0);    transform: translateY(0) scale(1); }
+}
+
+/* Count number — a much quieter fade-in per second so the digits
+ * don't pop in. Subtle enough that the eye barely registers it. */
+.mok-breath-count {
+  animation: mok-breath-count-arise 350ms ease-out both;
+}
+@keyframes mok-breath-count-arise {
+  from { opacity: 0.4; transform: translateY(2px); }
+  to   { opacity: 1;   transform: translateY(0); }
+}
+
 /* Reduced motion: skip the scale animation but keep the rings visible. */
 @media (prefers-reduced-motion: reduce) {
   .mok-breath-anim {
     animation: none;
     transform: scale(1);
+  }
+  .mok-breath-phase,
+  .mok-breath-count {
+    animation: none;
+    filter: none;
+    transform: none;
+    opacity: 1;
   }
 }
 
@@ -1701,8 +1769,29 @@
   font-family: var(--font-display);
   color: var(--text-inverse);
   text-align: center;
+  opacity: 0.25;
   transition: opacity 1.4s ease-out;
   will-change: opacity;
+}
+
+/* When running, the CSS animation drives opacity instead of React
+   state — smoother (the browser composits it), no per-frame React
+   re-renders, no double-loops in StrictMode dev. cycleMs is passed
+   in via the inline --cycle-ms custom property. The cubic-bezier
+   approximates the cosine ease-in-out we used previously. */
+.mok-crossfade--anim {
+  animation: mok-crossfade-cycle var(--cycle-ms, 5000ms) infinite cubic-bezier(0.42, 0, 0.58, 1);
+}
+
+@keyframes mok-crossfade-cycle {
+  0%   { opacity: 0; }
+  40%  { opacity: 0.95; }
+  60%  { opacity: 0.95; }
+  100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mok-crossfade--anim { animation: none; opacity: 0.95; }
 }
 
 .mok-crossfade--mantra {
@@ -1716,18 +1805,47 @@
   .mok-crossfade--mantra { font-size: 48px; min-height: 56px; }
 }
 
-.mok-crossfade--affirmation {
-  font-size: 18px;
+/* Long-form anchor (a full phrase / sentence) — smaller font and
+ * tighter line-height so the whole phrase fits comfortably on
+ * screen without competing visually with the breath dial. */
+.mok-crossfade--mantra-long {
+  font-size: 22px;
   line-height: 1.45;
-  font-style: italic;
-  max-width: 480px;
-  margin: 0 auto;
-  min-height: 96px;
+  letter-spacing: -0.005em;
+  max-width: 32em;
+  min-height: 80px;
   padding: 0 8px;
+}
+@media (min-width: 720px) {
+  .mok-crossfade--mantra-long { font-size: 28px; min-height: 96px; }
+}
+
+.mok-crossfade--affirmation {
+  font-size: 24px;
+  line-height: 1.5;
+  font-style: italic;
+  max-width: 520px;
+  margin: 0 auto;
+  min-height: 112px;
+  padding: 0 8px;
+  /* Honor the \n in each affirmation so it renders as two lines. */
+  white-space: pre-line;
 }
 
 @media (min-width: 720px) {
-  .mok-crossfade--affirmation { font-size: 22px; }
+  .mok-crossfade--affirmation { font-size: 30px; min-height: 130px; }
+}
+
+/* Closing nudge after the affirmations — slightly less emphatic and
+ * not italic, so it reads as a quiet pointer rather than another
+ * affirmation. */
+.mok-crossfade--closing {
+  font-style: normal;
+  font-size: 20px;
+  color: var(--text-muted);
+}
+@media (min-width: 720px) {
+  .mok-crossfade--closing { font-size: 24px; }
 }
 
 .mok-crossfade--question {
@@ -2186,8 +2304,8 @@
 .mok-learn-deck {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding: 12px 0 36px;
+  gap: 6px;
+  padding: 4px 0 36px;
   touch-action: pan-y;
   max-width: 760px;
   margin: 0 auto;
@@ -2196,6 +2314,23 @@
 .mok-learn-deck-head {
   padding: 0 4px;
   text-align: center;
+  /* Keep the slide stage at a consistent vertical level across modules
+     by reserving deck-head height and bottom-anchoring the title block.
+     When content is short, the extra space sits between the back-link
+     and the title, which reads much better than a gap above the slide. */
+  display: flex;
+  flex-direction: column;
+  min-height: 150px;
+}
+@media (min-width: 720px) {
+  .mok-learn-deck-head { min-height: 170px; }
+}
+
+/* The title block (eyebrow + title + optional locator) anchors to the
+   bottom of the deck-head so the slide stage is always the same
+   distance below the title. */
+.mok-learn-deck-titleblock {
+  margin-top: auto;
 }
 
 .mok-learn-deck-head .mok-nav-link { display: inline-block; margin-bottom: 8px; }
@@ -2368,6 +2503,18 @@
   box-shadow: 0 0 0 1px var(--accent) inset;
 }
 
+/* Locked Part card — Part B is locked until Part A has been read.
+ * Dimmed and non-interactive, with the step number and lede in a
+ * quieter tone so it reads as "next, but not yet". */
+.mok-toc-card--locked {
+  opacity: 0.55;
+  background: color-mix(in srgb, var(--bg-raised) 70%, transparent);
+}
+.mok-toc-card--locked .mok-toc-card-step,
+.mok-toc-card--locked .mok-toc-card-title {
+  filter: saturate(0.4);
+}
+
 .mok-toc-card-step {
   position: absolute;
   top: 18px;
@@ -2419,12 +2566,26 @@
 
 .mok-learn-practice-head {
   display: flex;
+  flex-direction: row;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
+}
+
+.mok-learn-practice-headtext {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.mok-learn-practice-title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
 }
 
 .mok-learn-practice-name {
-  display: block;
+  display: inline-block;
   font-family: var(--font-display);
   font-size: 17px;
   font-weight: 500;
@@ -2449,17 +2610,18 @@
   gap: 2px;
   padding: 12px 14px;
   background: var(--surface);
-  border: 1px solid var(--border);
   border-radius: 8px;
   text-decoration: none;
   color: inherit;
-  transition: border-color var(--motion-quick) var(--easing),
-              background var(--motion-quick) var(--easing);
+  transition: background var(--motion-quick) var(--easing);
 }
 
 .mok-learn-practice-part:hover {
-  border-color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 6%, var(--surface));
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--accent) 14%, var(--surface)) 0%,
+    color-mix(in srgb, var(--accent)  4%, var(--surface)) 100%
+  );
 }
 
 .mok-learn-practice-part .mok-eyebrow {
@@ -2665,6 +2827,15 @@
   margin: 6px 0 0;
 }
 
+/* Thematic emblem at the top of each Learn module — Source, Seed, Soil,
+   Seasons, Sowing. Sits above the eyebrow + title so each chapter has
+   its own visual identity. */
+.mok-learn-deck-icon {
+  display: flex;
+  justify-content: center;
+  margin: 14px 0 4px;
+}
+
 .mok-learn-deck-title {
   font-family: var(--font-display);
   font-size: 26px;
@@ -2677,6 +2848,156 @@
 @media (min-width: 720px) {
   .mok-learn-deck-title { font-size: 34px; }
 }
+
+/* Chapter locator — sits below the module title. Editorial serif
+   italic to echo the H2 chapter slides themselves; small but legible. */
+.mok-learn-deck-chapter {
+  margin: 10px 0 0;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.mok-learn-deck-chapter em {
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: 13px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text);
+}
+
+/* Slide-fade — opacity-only entry for Learn / Practice slide content.
+   Used in place of mok-rise on the slide article so the content
+   doesn't translate vertically into position, which previously read
+   as "the slide moves down" when landing on a new module. */
+.mok-slide-fade-in { animation: mok-slide-fade-in 360ms ease-out both; }
+@keyframes mok-slide-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+
+/* Inline label for app surfaces (tab names, page names) referenced
+   in prose. Visually distinct from regular emphasis: accent colour,
+   slightly heavier weight, no italic. Communicates "this word names
+   a real place in the app you can navigate to." */
+.mok-ui-label {
+  font-style: normal;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+/* Path index — horizontal step row for the 5S / 7P sequence. Lives
+   between the deck header and the progress bar. Locked steps are
+   muted and unclickable; completed steps get a check; the current
+   step is accent-bordered and not a link. */
+.mok-path-index {
+  margin: 0;
+  /* Reserve vertical room for the pill row even when this slot is
+     rendered empty (non-5S Learn modules), so the slide stage doesn't
+     visibly shift up when navigating across the Learn track. */
+  min-height: 24px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.mok-path-index::-webkit-scrollbar { display: none; }
+
+.mok-path-index-list {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  min-width: max-content;
+}
+
+.mok-path-index-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  transition: background var(--motion-base) var(--easing),
+              color var(--motion-base) var(--easing),
+              border-color var(--motion-base) var(--easing);
+}
+
+.mok-path-index-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.mok-path-index-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 600;
+  background: color-mix(in srgb, var(--border) 65%, transparent);
+  color: var(--text-muted);
+}
+
+.mok-path-index-label {
+  font-weight: 500;
+}
+
+/* Locked — read-only, faded, no hover. */
+.mok-path-index-item--locked {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Available — clickable, light hover. */
+.mok-path-index-item--available .mok-path-index-link:hover {
+  color: var(--text);
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+}
+
+/* Completed — clickable, check glyph + accent number badge. */
+.mok-path-index-item--completed .mok-path-index-num {
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  color: var(--accent);
+}
+.mok-path-index-item--completed .mok-path-index-link:hover {
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+/* Current — highlighted, not a link. */
+.mok-path-index-item--current {
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+  color: var(--text);
+}
+.mok-path-index-item--current .mok-path-index-num {
+  background: var(--accent);
+  color: var(--paper);
+}
+
+@media (min-width: 720px) {
+  .mok-path-index { margin: 6px 0 0; }
+  .mok-path-index-list { gap: 6px; }
+  .mok-path-index-item { padding: 7px 12px; font-size: 13px; }
+  .mok-path-index-num { width: 18px; height: 18px; font-size: 11px; }
+}
+
 
 .mok-learn-progress {
   height: 2px;
@@ -2701,7 +3022,7 @@
   border: 1px solid var(--border);
   border-radius: var(--radius);
   min-height: 360px;
-  padding: 48px 22px;
+  padding: 18px 22px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2711,7 +3032,7 @@
 }
 
 @media (min-width: 720px) {
-  .mok-learn-stage { min-height: 460px; padding: 72px 88px; }
+  .mok-learn-stage { min-height: 460px; padding: 32px 88px; }
 }
 
 /* Decorative rule above/below the page interior. */
@@ -2724,12 +3045,12 @@
   height: 1px;
   background: color-mix(in srgb, var(--accent) 30%, transparent);
 }
-.mok-learn-stage::before { top: 22px; }
-.mok-learn-stage::after  { bottom: 22px; }
+.mok-learn-stage::before { top: 12px; }
+.mok-learn-stage::after  { bottom: 12px; }
 
 @media (min-width: 720px) {
-  .mok-learn-stage::before { top: 32px; }
-  .mok-learn-stage::after  { bottom: 32px; }
+  .mok-learn-stage::before { top: 18px; }
+  .mok-learn-stage::after  { bottom: 18px; }
 }
 
 .mok-learn-stage-zone {
@@ -2746,7 +3067,21 @@
 
 .mok-learn-stage-zone--prev { left: 0; cursor: w-resize; }
 .mok-learn-stage-zone--next { right: 0; cursor: e-resize; }
-.mok-learn-stage-zone:disabled { cursor: default; }
+.mok-learn-stage-zone:disabled {
+  cursor: default;
+  /* Don't intercept clicks once the zone is disabled — lets the
+     CTA button on the final slide receive them cleanly. */
+  pointer-events: none;
+}
+
+/* Lift any interactive control inside a slide above the tap zones,
+   so the CTA button on the last slide is clickable across its full
+   width — not just where it falls in the middle 36% of the stage. */
+.mok-learn-slide a,
+.mok-learn-slide button {
+  position: relative;
+  z-index: 2;
+}
 
 .mok-learn-slide {
   position: relative;
@@ -2759,15 +3094,121 @@
   color: var(--text);
 }
 
-/* Chapter-opener headings get serif weight + a hairline beneath. */
-.mok-learn-slide-h2 {
-  font-family: var(--font-display);
-  font-size: 28px;
+/* Affirmation prose — set in the editorial serif (Fraunces) and
+   italic so "I am…" stanzas read distinctly from surrounding
+   teaching prose. Applied automatically to any prose stanza whose
+   first non-empty line starts with "I am". */
+.mok-learn-slide-affirmation {
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: 24px;
   font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: -0.005em;
+  color: var(--text);
+  text-align: center;
+}
+
+@media (min-width: 720px) {
+  .mok-learn-slide-affirmation { font-size: 30px; }
+}
+
+/* Practice / module cover slide — the largest, most prominent title.
+   Standard format across all practices and Learn modules. */
+/* H1 — module / practice cover slide.
+   Structured into three typographic levels:
+     • prefix    — small caps, accent-coloured ("S1", "Practice 1")
+     • name      — big display sans light ("Source", "I M Breathing")
+     • descriptor — editorial serif italic, muted ("Who You Truly Are")
+   The three create clear hierarchy and font variety without any extra
+   colour weight. */
+.mok-learn-slide-h1 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin: 0;
+  text-align: center;
+  color: var(--text);
+}
+
+.mok-learn-slide-h1::before {
+  content: '';
+  display: block;
+  width: 28px;
+  height: 1px;
+  background: var(--accent);
+  margin: 0 auto;
+  opacity: 0.7;
+}
+
+.mok-learn-slide-h1::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 2px;
+  background: var(--accent);
+  margin: 0 auto;
+}
+
+.mok-learn-slide-h1-prefix {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.mok-learn-slide-h1-name {
+  font-family: var(--font-display);
+  font-size: 40px;
+  font-weight: 300;
+  letter-spacing: -0.015em;
+  line-height: 1.1;
+  color: var(--text);
+}
+
+.mok-learn-slide-h1-descriptor {
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 1.35;
+  color: var(--text-muted);
+  max-width: 24em;
+}
+
+@media (min-width: 720px) {
+  .mok-learn-slide-h1 { gap: 18px; }
+  .mok-learn-slide-h1-prefix { font-size: 14px; letter-spacing: 0.26em; }
+  .mok-learn-slide-h1-name { font-size: 56px; }
+  .mok-learn-slide-h1-descriptor { font-size: 24px; }
+}
+
+/* H2 — chapter slides. Editorial serif italic, distinct from the H1
+   sans cover. A short accent rule centred above evokes a print
+   chapter mark; nothing fussy. */
+.mok-learn-slide-h2 {
+  font-family: var(--font-editorial);
+  font-size: 30px;
+  font-weight: 400;
+  font-style: italic;
   margin: 0;
   letter-spacing: -0.005em;
   color: var(--text);
   line-height: 1.25;
+  text-align: center;
+}
+
+.mok-learn-slide-h2::before {
+  content: '';
+  display: block;
+  width: 24px;
+  height: 1px;
+  background: var(--accent);
+  margin: 0 auto 18px;
+  opacity: 0.6;
 }
 
 .mok-learn-slide-h2::after {
@@ -2777,19 +3218,63 @@
   height: 1px;
   background: var(--accent);
   margin: 18px auto 0;
+  opacity: 0.6;
 }
 
 @media (min-width: 720px) {
-  .mok-learn-slide-h2 { font-size: 38px; }
+  .mok-learn-slide-h2 { font-size: 40px; }
 }
 
+/* CTA body — transition slides ("You've read about X — now let's do it.")
+ * Sits between an h2 and prose: italic editorial like the heading, but
+ * meaningfully smaller so the slide reads as a quiet bridge rather than
+ * a section title. No decorative rules — the CTA button anchors it. */
+.mok-learn-slide-cta-body {
+  font-family: var(--font-editorial);
+  font-size: 22px;
+  font-weight: 400;
+  font-style: italic;
+  margin: 0 0 22px;
+  letter-spacing: -0.005em;
+  color: var(--text);
+  line-height: 1.4;
+  text-align: center;
+  max-width: 26em;
+  margin-left: auto;
+  margin-right: auto;
+}
+@media (min-width: 720px) {
+  .mok-learn-slide-cta-body { font-size: 26px; }
+}
+
+/* H3 — sub-headings (asana names, key beats inside a chapter).
+   Display sans bold so it reads as a section marker, with a small
+   accent dot leading it for a quiet bullet/anchor mark. */
 .mok-learn-slide-h3 {
   font-family: var(--font-display);
-  font-size: 22px;
-  font-weight: 500;
+  font-size: 24px;
+  font-weight: 700;
   margin: 0;
   color: var(--text);
-  line-height: 1.35;
+  line-height: 1.3;
+  letter-spacing: -0.005em;
+  text-align: center;
+}
+
+.mok-learn-slide-h3::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  vertical-align: middle;
+  margin-right: 12px;
+  transform: translateY(-2px);
+}
+
+@media (min-width: 720px) {
+  .mok-learn-slide-h3 { font-size: 28px; }
 }
 
 /* Pull-quote slides — italic, indented, with a soft accent rule on the left. */
@@ -2808,15 +3293,25 @@
   .mok-learn-slide-quote { font-size: 22px; padding-left: 28px; }
 }
 
-/* Prose slides — generous leading, gentle paragraph rhythm. */
+/* Prose slides — generous leading, refined paragraph rhythm,
+   centred for the meditative cadence. */
 .mok-learn-slide-prose {
+  font-family: var(--font-display);
   font-size: 19px;
-  line-height: 1.75;
-  letter-spacing: 0.005em;
+  font-weight: 400;
+  line-height: 1.7;
+  letter-spacing: -0.002em;
+  color: var(--text);
+  text-align: center;
+  max-width: 36em;
+  margin: 0 auto;
 }
 
 @media (min-width: 720px) {
-  .mok-learn-slide-prose { font-size: 22px; line-height: 1.8; }
+  .mok-learn-slide-prose {
+    font-size: 23px;
+    line-height: 1.75;
+  }
 }
 
 .mok-learn-slide-prose p { margin: 0 0 16px; }
@@ -2829,6 +3324,19 @@
   /* No drop cap by default; reserved for chapter-opener slides. Future hook. */
 }
 
+/* Visual slides — centred SVG metaphor in place of text. */
+.mok-learn-slide-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0;
+}
+
+.mok-learn-slide-visual svg {
+  max-width: 100%;
+  height: auto;
+}
+
 .mok-learn-deck-foot {
   display: flex;
   align-items: center;
@@ -2838,13 +3346,22 @@
   flex-wrap: wrap;
 }
 
-/* Page numbers, set like a book footer. */
+/* Page numbers — set like a book footer, refined with editorial
+   serif italic for warmth and small-caps "of" treatment. */
 .mok-learn-counter {
-  font-family: var(--font-display);
-  font-size: 14px;
+  font-family: var(--font-editorial);
+  font-size: 15px;
   font-style: italic;
   color: var(--text-muted);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
+  font-feature-settings: 'tnum';
+}
+.mok-learn-counter > .mok-subtle {
+  font-style: normal;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin: 0 4px;
 }
 
 .mok-learn-controls {

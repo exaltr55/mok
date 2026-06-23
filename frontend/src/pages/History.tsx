@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getHistory, getMci, type HistoryDay, type MciOut } from '../api/client';
+import MciExplainer from '../components/MciExplainer';
 
 export default function History() {
   const [days, setDays] = useState<HistoryDay[]>([]);
@@ -36,7 +37,7 @@ export default function History() {
       <section>
         <p className="mok-section-h3" style={{ marginBottom: 12 }}>At a glance</p>
         <div className="mok-row mok-row-gap-lg">
-          {mci && (
+          {mci && mci.activated && (
             <div className="mok-mci-card">
               <span className="mok-mci-label">Your steady rhythm</span>
               <span className="mok-mci-number">{mci.mci}</span>
@@ -49,6 +50,20 @@ export default function History() {
             <span className="mok-muted" style={{ fontSize: 12 }}>of the last {days.length}</span>
           </div>
         </div>
+        {mci && mci.activated && (
+          <div style={{ marginTop: 14 }}>
+            <MciExplainer />
+          </div>
+        )}
+        {mci && !mci.activated && (
+          <p
+            className="mok-muted"
+            style={{ fontSize: 13, fontStyle: 'italic', marginTop: 12, maxWidth: 520 }}
+          >
+            Your steady rhythm number begins once you've practiced all seven —
+            the index becomes meaningful when the full cycle is in motion.
+          </p>
+        )}
       </section>
 
       {/* ── Dot trail ────────────────────────────────────── */}
@@ -72,8 +87,8 @@ export default function History() {
           })}
         </div>
         <p className="mok-muted" style={{ fontSize: 13, marginTop: 16, fontStyle: 'italic' }}>
-          A steady five of seven days a week is the sweet spot — rest is part
-          of the practice, not a gap in it.
+          A steady six days a week is the sweet spot — rest is part of the
+          practice, not a gap in it.
         </p>
       </section>
     </section>

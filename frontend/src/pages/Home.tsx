@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import Wordmark from '../components/Wordmark';
 import {
+  IconBuddy,
   IconFramework,
   IconLoop,
   IconPractices,
@@ -27,10 +28,9 @@ const FEATURES: Feature[] = [
     to: 'indigo',
     accent: 'cyan',
     surface: 'ocean',
-    title: 'A framework for Awareness',
+    title: 'The 5S Framework',
     body:
-      'Source, Seed, Soil, Seasons, Sowing — five lenses for seeing how ' +
-      'experience arises, takes form, and unfolds.',
+      'Five lenses on the patterns shaping your day — and how to shift them.',
   },
   {
     Icon: IconPractices,
@@ -38,10 +38,31 @@ const FEATURES: Feature[] = [
     to: 'magenta',
     accent: 'magenta',
     surface: 'magenta',
-    title: 'Seven gentle practices',
+    title: 'The 7 Practices',
     body:
-      'Breathing, Thinking, Talking, Writing, Moving, Resetting, Aligning — ' +
-      'small daily acts that compound over time.',
+      'Daily reps that compound into awareness, steadiness, and capability.',
+  },
+  {
+    Icon: IconLoop,
+    from: 'amber',
+    to: 'coral',
+    accent: 'amber',
+    surface: 'butter',
+    title: 'The Fivesome Peer Structure',
+    body:
+      'Practice with four peers. A shared rhythm carries you through ' +
+      'the days motivation doesn\'t.',
+  },
+  {
+    Icon: IconBuddy,
+    from: 'indigo',
+    to: 'cyan',
+    accent: 'indigo',
+    surface: 'sky',
+    title: 'Your Buddy',
+    body:
+      'An always-on companion to ask, reflect with, and lean on — ' +
+      'quietly, on your terms.',
   },
   {
     Icon: IconPrivacy,
@@ -51,19 +72,7 @@ const FEATURES: Feature[] = [
     surface: 'fresh',
     title: 'Yours, alone',
     body:
-      'Your journal, your reflections, and your Consistency Index belong to ' +
-      'you. Privacy is the foundation we hold to.',
-  },
-  {
-    Icon: IconLoop,
-    from: 'amber',
-    to: 'coral',
-    accent: 'amber',
-    surface: 'butter',
-    title: 'Sustainable by design',
-    body:
-      'A short return, repeated over time, develops capacities that endure. ' +
-      'The app succeeds when you spend less time in it.',
+      'Your journal, reflections, and Consistency Index belong to you. Always.',
   },
 ];
 
@@ -72,15 +81,15 @@ export default function Home() {
   return (
     <div className="mok-rise">
       <section className="mok-hero">
-        <p className="mok-eyebrow">Human Sustainability for the AI era</p>
+        <p className="mok-eyebrow">AI is rewriting humanity's relationship with work.</p>
         <h1 className="mok-hero-title">
-          Stay grounded, clear, and{' '}
+          Stay strong, clear, and{' '}
           <span className="mok-gradient-text">fully human</span>{' '}
-          through change.
+          through it.
         </h1>
         <p className="mok-hero-lede">
-          YouSourceful is Mokshly's foundational system for human sustainability. Two pillars —
-          the 5S Framework and the 7 Practices — refined for the modern knowledge worker.
+          YouSourceful is a system for developing the human capabilities
+          AI can't replace — delivered through daily practice.
         </p>
         <div className="mok-hero-actions">
           {isAuthenticated ? (
@@ -101,40 +110,37 @@ export default function Home() {
             className={`mok-feature mok-surface-${f.surface} mok-card-rise`}
             style={{ ['--d' as string]: `${120 + i * 90}ms` }}
           >
-            <span className={`mok-feature-badge mok-feature-badge--${f.accent}`}>
-              <f.Icon
-                size={48}
-                from={f.from}
-                to={f.to}
-                id={`feat-${i}`}
-              />
-            </span>
-            <h3 className={`mok-feature-title mok-text--${f.accent}`}>{f.title}</h3>
+            <header className="mok-feature-head">
+              <span className={`mok-feature-badge mok-feature-badge--${f.accent}`}>
+                <f.Icon
+                  size={32}
+                  from={f.from}
+                  to={f.to}
+                  id={`feat-${i}`}
+                />
+              </span>
+              <h3 className={`mok-feature-title mok-text--${f.accent}`}>{f.title}</h3>
+            </header>
             <p className="mok-feature-body">{f.body}</p>
           </article>
         ))}
       </section>
 
-      <section className="mok-home-cta mok-card-rise" style={{ ['--d' as string]: '600ms' }}>
-        <div className="mok-home-cta-wordmark">
-          <Wordmark size="lg" />
-        </div>
-        <p className="mok-home-cta-quote">
-          "The practice is a <span className="mok-gradient-text">doorway</span>.
-          Some days you walk through one. Some days three.
-          Some days you simply notice the day — and still the Awareness is with you."
-        </p>
-        {!isAuthenticated && (
+      {!isAuthenticated && (
+        <section className="mok-home-cta mok-card-rise" style={{ ['--d' as string]: '600ms' }}>
+          <div className="mok-home-cta-wordmark">
+            <Wordmark size="lg" />
+          </div>
+          <p className="mok-home-cta-quote">
+            Begin where you are. A few minutes a day, done consistently, is enough.
+          </p>
           <div className="mok-row" style={{ gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
             <Link to="/signup" className="mok-btn mok-btn--primary mok-btn--lg">
-              Start a 30-day trial
-            </Link>
-            <Link to="/about" className="mok-btn mok-btn--lg">
-              Learn more
+              Start Now
             </Link>
           </div>
-        )}
-      </section>
+        </section>
+      )}
     </div>
   );
 }

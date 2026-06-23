@@ -1,9 +1,16 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { updateProfile, type ProfileUpdate } from '../api/client';
+import { getCurrentUserId, updateProfile, type ProfileUpdate } from '../api/client';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme, type Theme } from '../contexts/ThemeContext';
 import Wordmark from '../components/Wordmark';
+
+/** localStorage key used to remember how far the user got in onboarding,
+ *  scoped per user so two accounts on the same browser don't share state. */
+function onboardingPositionKey(): string {
+  const uid = getCurrentUserId();
+  return uid ? `mok.onboarding.position.${uid}` : 'mok.onboarding.position.anon';
+}
 
 /**
  * First-login onboarding — nine focused preference questions, each on its
@@ -24,6 +31,7 @@ import Wordmark from '../components/Wordmark';
 
 const ALL_STEPS = [
   'welcome',
+  'roadmap',
   'intention',
   'here',
   'stretched',
@@ -92,11 +100,22 @@ const TIME_OF_DAY: Array<{ id: TimeOfDay; label: string; hint: string }> = [
   { id: 'flexible', label: 'Flexible', hint: 'Whenever the moment opens.' },
 ];
 
-type CohortPref = 'outside' | 'within' | 'none';
+// "outside" / "within" preferences kept in the type for backward
+// compatibility with existing saved profiles — but we no longer
+// present a composition choice during onboarding. The language stays
+// neutral about who joins the circle.
+type CohortPref = 'outside' | 'within' | 'none' | 'open';
 const COHORT: Array<{ id: CohortPref; label: string; hint: string }> = [
-  { id: 'outside', label: 'People outside my company', hint: 'Fresh perspective, away from your day-to-day.' },
-  { id: 'within',  label: 'People from my company',    hint: 'Shared context, same trenches.' },
-  { id: 'none',    label: 'Practice solo for now',     hint: 'Walking alone is its own path. You can join a cohort whenever you’re ready.' },
+  {
+    id: 'open',
+    label: "Yes, I'd like a cohort",
+    hint: 'A small group walking alongside you, gathering once a week.',
+  },
+  {
+    id: 'none',
+    label: 'Practice solo for now',
+    hint: "Walking alone is its own path. You can join a cohort whenever you're ready.",
+  },
 ];
 
 const PALETTE: Array<{ id: Theme; label: string; hint: string; swatch: string }> = [
@@ -114,6 +133,33 @@ export default function Onboarding() {
   const [stepIdx, setStepIdx] = useState(0);
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
+  // Offer "resume where you left off" if the user dropped out earlier.
+  const [resumeAvailable, setResumeAvailable] = useState(false);
+  const [resumeStepIdx, setResumeStepIdx] = useState(0);
+
+  // On first mount, check whether we have a saved position for this user.
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(onboardingPositionKey());
+      if (!raw) return;
+      const saved = parseInt(raw, 10);
+      if (Number.isFinite(saved) && saved > 0) {
+        setResumeStepIdx(saved);
+        setResumeAvailable(true);
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  // Persist the current step so returning users can resume.
+  useEffect(() => {
+    try {
+      localStorage.setItem(onboardingPositionKey(), String(stepIdx));
+    } catch {
+      // ignore
+    }
+  }, [stepIdx]);
 
   // Skip the cohort step when the employer has not turned the feature on.
   const STEPS = (user?.cohort_enabled
@@ -129,8 +175,8 @@ export default function Onboarding() {
   const [tone, setTone] = useState<Tone | ''>('');
   const [careerStage, setCareerStage] = useState<CareerStage>('');
   const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>('morning');
-  const [daysPerWeek, setDaysPerWeek] = useState(5);
-  const [cohortPref, setCohortPref] = useState<CohortPref>('outside');
+  const [daysPerWeek, setDaysPerWeek] = useState(6);
+  const [cohortPref, setCohortPref] = useState<CohortPref>('open');
   const [meetingDay, setMeetingDay] = useState('tuesday');
   const [theme, setLocalTheme] = useState<Theme>('stillwater');
   const [aggregateConsent, setAggregateConsent] = useState(false);
@@ -149,6 +195,16 @@ export default function Onboarding() {
     if (onLast) {
       setSaving(true);
       try {
+        // Seed the four core practice times based on the user's chosen
+        // band so reminders work from day 1 — they can refine in Rhythm.
+        const TIME_DEFAULTS: Record<string, { morningBlock: string; writing: string }> = {
+          morning:  { morningBlock: '07:30', writing: '22:00' },
+          midday:   { morningBlock: '12:30', writing: '22:00' },
+          evening:  { morningBlock: '17:00', writing: '22:30' },
+          flexible: { morningBlock: '08:00', writing: '22:00' },
+        };
+        const d = TIME_DEFAULTS[timeOfDay] ?? TIME_DEFAULTS.morning;
+
         const patch: ProfileUpdate = {
           intention: intention.trim() || null,
           career_stage: (careerStage || null) as ProfileUpdate['career_stage'],
@@ -161,12 +217,22 @@ export default function Onboarding() {
           preferred_days_per_week: daysPerWeek,
           cohort_preference: cohortPref,
           cohort_meeting_day: cohortPref === 'none' ? null : meetingDay,
+          // Default reminder schedule — three practices share the morning
+          // block; Writing anchors bedtime. Reminders auto-on so the
+          // first 21 days have gentle nudges without any setup.
+          breathing_time: d.morningBlock,
+          thinking_time: d.morningBlock,
+          talking_time: d.morningBlock,
+          writing_time: d.writing,
+          reminders_on: true,
           onboarded: true,
         };
         void aggregateConsent;
         void aiGuideConsent;
         await updateProfile(patch);
         await refresh();
+        // Onboarding complete — clear the resume marker.
+        try { localStorage.removeItem(onboardingPositionKey()); } catch { /* ignore */ }
         navigate('/orientation', { replace: true });
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Could not save your preferences');
@@ -184,7 +250,14 @@ export default function Onboarding() {
   }
 
   const firstName = user?.name?.split(' ')[0];
-  const questionStepIdx = stepIdx > 0 && stepIdx <= totalQuestions ? stepIdx : null;
+  // Welcome + roadmap come before the questions; questions begin once the
+  // user reaches 'intention'. We label them as questions so the counter
+  // stays meaningful when the user is actually answering.
+  const firstQuestionIdx = STEPS.indexOf('intention');
+  const questionStepIdx =
+    firstQuestionIdx > 0 && stepIdx >= firstQuestionIdx && stepIdx < firstQuestionIdx + totalQuestions
+      ? stepIdx - firstQuestionIdx + 1
+      : null;
 
   return (
     <div style={{ maxWidth: 640, margin: '0 auto' }}>
@@ -192,43 +265,158 @@ export default function Onboarding() {
         <Wordmark size="md" />
       </div>
 
-      <div className="mok-card mok-card--padded">
-        <div className="mok-row" style={{ marginBottom: 20, fontSize: 12, color: 'var(--text-subtle)' }}>
-          {questionStepIdx ? (
-            <span className="mok-chip">Question {questionStepIdx} of {totalQuestions}</span>
-          ) : (
-            <span className="mok-chip">Step {stepIdx + 1} of {STEPS.length}</span>
-          )}
-          <span className="mok-spacer" />
-          <span>About 4 minutes</span>
+      {resumeAvailable && (
+        <div
+          className="mok-card mok-card--padded"
+          style={{ marginBottom: 16, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 12, justifyContent: 'space-between' }}
+        >
+          <div style={{ flex: 1, minWidth: 220 }}>
+            <p className="mok-eyebrow" style={{ margin: 0 }}>Welcome back</p>
+            <p className="mok-muted" style={{ margin: '4px 0 0', fontSize: 14, fontStyle: 'italic' }}>
+              You left off at Step {resumeStepIdx + 1} of {STEPS.length}. Pick up where you were?
+            </p>
+          </div>
+          <div className="mok-row" style={{ gap: 8 }}>
+            <button
+              type="button"
+              className="mok-btn"
+              onClick={() => { setResumeAvailable(false); setStepIdx(0); }}
+            >
+              Start over
+            </button>
+            <button
+              type="button"
+              className="mok-btn mok-btn--primary"
+              onClick={() => { setStepIdx(resumeStepIdx); setResumeAvailable(false); }}
+            >
+              Resume →
+            </button>
+          </div>
         </div>
+      )}
+
+      <div className="mok-card mok-card--padded">
+        {/* The welcome and roadmap screens stand apart as a quiet intro
+            (no counter). Actual onboarding screens just show their own
+            position — "Question X of 8" or "Step X of 3" — without the
+            broader "Stage 1 of 4" framing, which is unnecessary here. */}
+        {step !== 'welcome' && step !== 'roadmap' && (
+          <div className="mok-row" style={{ marginBottom: 20, fontSize: 12, color: 'var(--text-subtle)' }}>
+            {questionStepIdx ? (
+              <span className="mok-chip">Onboarding · Question {questionStepIdx} of {totalQuestions}</span>
+            ) : (
+              <span className="mok-chip">
+                Onboarding · Step {stepIdx - firstQuestionIdx - totalQuestions + 1} of {STEPS.length - firstQuestionIdx - totalQuestions}
+              </span>
+            )}
+            <span className="mok-spacer" />
+            <span>About 4 minutes</span>
+          </div>
+        )}
 
         {error && <div className="mok-banner mok-banner--error" role="alert">{error}</div>}
 
         {step === 'welcome' && (
-          <>
-            <h1 className="mok-section-title">Welcome, {firstName}.</h1>
-            <p className="mok-section-lede">
-              YouSourceful is a quiet system for cultivating Awareness — the steady
-              inner space that lets you stay yourself through change. The next few
-              minutes shape the app for you, personally.
+          <div style={{ textAlign: 'center', padding: '24px 0 8px' }}>
+            <p className="mok-eyebrow" style={{ margin: 0 }}>YouSourceful · by Mokshly</p>
+            <h1
+              className="mok-section-title"
+              style={{ marginTop: 14, fontSize: 36, lineHeight: 1.15 }}
+            >
+              Welcome, {firstName}.
+            </h1>
+            <p
+              className="mok-section-lede"
+              style={{ marginTop: 18, maxWidth: 460, marginLeft: 'auto', marginRight: 'auto' }}
+            >
+              So glad you're here. YouSourceful is yours — a quiet system
+              for staying steady through whatever life brings, carried by
+              small, daily acts of Awareness.
             </p>
-            <p className="mok-muted" style={{ marginTop: 16, fontStyle: 'italic' }}>
-              {totalQuestions === 9 ? 'Nine' : 'Eight'} short questions to help
-              us know you a little, then a brief orientation to the program.
-              Your practice is yours alone — your journal, your reflections,
-              and your private numbers stay with you.
+            <p
+              className="mok-muted"
+              style={{ marginTop: 12, fontSize: 14, fontStyle: 'italic', maxWidth: 400, marginLeft: 'auto', marginRight: 'auto' }}
+            >
+              A thoughtful path, walked at your own pace.
+            </p>
+          </div>
+        )}
+
+        {step === 'roadmap' && (
+          <>
+            <p className="mok-eyebrow" style={{ margin: 0 }}>The path ahead</p>
+            <h1 className="mok-section-title">Here's where we're going.</h1>
+            <p className="mok-section-lede" style={{ marginBottom: 20 }}>
+              Four clear stages, each at its own pace. You'll always know
+              where you are.
+            </p>
+            <ol style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: 14 }}>
+              {[
+                {
+                  title: 'Onboarding',
+                  meta: 'A few minutes',
+                  desc: 'A few short questions so the app fits you. You\'re in this step now.',
+                },
+                {
+                  title: 'Orientation',
+                  meta: 'A few minutes',
+                  desc: 'A quick tour of how the program flows and where everything lives.',
+                },
+                {
+                  title: 'Learn',
+                  meta: 'Self-paced',
+                  desc: 'Where you understand how life experience takes shape, and meet the practices that put that understanding into action.',
+                },
+                {
+                  title: 'Do',
+                  meta: 'Lifelong',
+                  desc: 'Where it becomes real. Short daily practices that build into a steady rhythm — small, consistent, lasting.',
+                },
+              ].map((step_, i) => (
+                <li
+                  key={step_.title}
+                  className="mok-card"
+                  style={{ padding: '14px 16px', borderLeft: '3px solid var(--accent)' }}
+                >
+                  <div className="mok-row" style={{ alignItems: 'baseline', justifyContent: 'space-between', gap: 10 }}>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
+                      <span
+                        style={{
+                          fontFamily: 'var(--font-display)',
+                          fontSize: 14,
+                          color: 'var(--accent)',
+                          letterSpacing: '0.16em',
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        {String(i + 1).padStart(2, '0')}
+                      </span>
+                      <h3 style={{ margin: 0, fontFamily: 'var(--font-display)', fontSize: 16, fontWeight: 500 }}>
+                        {step_.title}
+                      </h3>
+                    </div>
+                    <span className="mok-subtle" style={{ fontSize: 11, letterSpacing: '0.16em', textTransform: 'uppercase' }}>
+                      {step_.meta}
+                    </span>
+                  </div>
+                  <p className="mok-muted" style={{ margin: '6px 0 0', fontSize: 13, fontStyle: 'italic' }}>
+                    {step_.desc}
+                  </p>
+                </li>
+              ))}
+            </ol>
+            <p className="mok-muted" style={{ marginTop: 18, fontStyle: 'italic', fontSize: 13, textAlign: 'center' }}>
+              You can return to this view any time from Preferences.
             </p>
           </>
         )}
 
         {step === 'intention' && (
           <>
-            <p className="mok-eyebrow" style={{ margin: 0 }}>Question 1</p>
-            <h1 className="mok-section-title">Your objective for this practice.</h1>
+            <h1 className="mok-section-title">What are you here to cultivate?</h1>
             <p className="mok-section-lede">
-              In a sentence or two — what do you hope to cultivate? You can change
-              this at any time in Preferences.
+              A sentence or two is plenty. Be honest, not poetic — this one is
+              just for you. (You can rewrite it anytime in Preferences.)
             </p>
             <div className="mok-field">
               <textarea
@@ -240,7 +428,7 @@ export default function Onboarding() {
                 autoFocus
               />
               <span className="mok-field-hint">
-                Optional. We'll surface it gently on days when it helps to remember.
+                Optional — we'll bring it back gently on days when it helps to remember.
               </span>
             </div>
           </>
@@ -248,7 +436,6 @@ export default function Onboarding() {
 
         {step === 'here' && (
           <>
-            <p className="mok-eyebrow" style={{ margin: 0 }}>Question 2</p>
             <h1 className="mok-section-title">What brings you here right now?</h1>
             <QuestionGroup options={HERE_BECAUSE} value={hereBecause} onChange={setHereBecause} />
           </>
@@ -256,10 +443,9 @@ export default function Onboarding() {
 
         {step === 'stretched' && (
           <>
-            <p className="mok-eyebrow" style={{ margin: 0 }}>Question 3</p>
-            <h1 className="mok-section-title">What feels most stretched right now?</h1>
+            <h1 className="mok-section-title">Where are you feeling the pull right now?</h1>
             <p className="mok-section-lede">
-              Where the most attention is asked of you these days.
+              The part of you that's asking for the most attention these days.
             </p>
             <QuestionGroup options={STRETCHED} value={stretched} onChange={setStretched} />
           </>
@@ -267,10 +453,10 @@ export default function Onboarding() {
 
         {step === 'restore' && (
           <>
-            <p className="mok-eyebrow" style={{ margin: 0 }}>Question 4</p>
-            <h1 className="mok-section-title">How do you best restore?</h1>
+            <h1 className="mok-section-title">What actually fills your tank?</h1>
             <p className="mok-section-lede">
-              The kind of recovery that actually refills you.
+              The kind of recovery that genuinely brings you back — not the kind
+              that just looks like it should.
             </p>
             <QuestionGroup options={RESTORE} value={restore} onChange={setRestore} />
           </>
@@ -278,10 +464,10 @@ export default function Onboarding() {
 
         {step === 'tone' && (
           <>
-            <p className="mok-eyebrow" style={{ margin: 0 }}>Question 5</p>
-            <h1 className="mok-section-title">A voice that meets you well is…</h1>
+            <h1 className="mok-section-title">How would you like us to speak to you?</h1>
             <p className="mok-section-lede">
-              The tone the app should speak in.
+              We can be quiet, encouraging, or reflective. We'll shape ourselves
+              to match.
             </p>
             <QuestionGroup options={TONE} value={tone} onChange={setTone} />
           </>
@@ -289,10 +475,10 @@ export default function Onboarding() {
 
         {step === 'career' && (
           <>
-            <p className="mok-eyebrow" style={{ margin: 0 }}>Question 6</p>
-            <h1 className="mok-section-title">Your career stage.</h1>
+            <h1 className="mok-section-title">Where are you in your career?</h1>
             <p className="mok-section-lede">
-              Used only to match you with a cohort. Stays private to you and the matcher.
+              We use this only for cohort matching. Stays between you and the
+              matcher — no further.
             </p>
             <QuestionGroup options={CAREER} value={careerStage} onChange={(v) => setCareerStage(v)} />
           </>
@@ -300,10 +486,10 @@ export default function Onboarding() {
 
         {step === 'time' && (
           <>
-            <p className="mok-eyebrow" style={{ margin: 0 }}>Question 7</p>
-            <h1 className="mok-section-title">When do you prefer to practice?</h1>
+            <h1 className="mok-section-title">When do you want to practice?</h1>
             <p className="mok-section-lede">
-              We'll shape the daily rhythm around this. You can shift it any time.
+              We'll shape the daily rhythm around your answer. Shiftable
+              anytime — no big deal.
             </p>
             <QuestionGroup options={TIME_OF_DAY} value={timeOfDay} onChange={setTimeOfDay} />
           </>
@@ -311,10 +497,10 @@ export default function Onboarding() {
 
         {step === 'days' && (
           <>
-            <p className="mok-eyebrow" style={{ margin: 0 }}>Question 8</p>
             <h1 className="mok-section-title">How often, in a week?</h1>
             <p className="mok-section-lede">
-              Rest is part of practice. Aim for five of seven — adjustable any time.
+              Six days a week is the sweet spot. Rest counts — it's part of
+              the practice. Move the dial.
             </p>
             <div className="mok-field">
               <input
@@ -337,11 +523,11 @@ export default function Onboarding() {
 
         {step === 'cohort' && (
           <>
-            <p className="mok-eyebrow" style={{ margin: 0 }}>Question 9</p>
-            <h1 className="mok-section-title">Your cohort.</h1>
+            <h1 className="mok-section-title">Want company on the walk?</h1>
             <p className="mok-section-lede">
-              Five practitioners walking alongside you. Fifteen minutes a week. When
-              you share what matters, you'd rather be with…
+              A small group of fellow practitioners, meeting once a week.
+              You're welcome to join when cohorts open in your space — or to
+              keep the practice yours alone for now.
             </p>
             <QuestionGroup options={COHORT} value={cohortPref} onChange={setCohortPref} />
             {cohortPref !== 'none' && (
@@ -350,7 +536,7 @@ export default function Onboarding() {
                 <select id="meeting-day" value={meetingDay} onChange={(e) => setMeetingDay(e.target.value)}>
                   {DAYS.map((d) => <option key={d} value={d}>{d.charAt(0).toUpperCase() + d.slice(1)}</option>)}
                 </select>
-                <span className="mok-field-hint">Same time each week. Fifteen minutes.</span>
+                <span className="mok-field-hint">Same time each week.</span>
               </div>
             )}
           </>
@@ -358,10 +544,10 @@ export default function Onboarding() {
 
         {step === 'palette' && (
           <>
-            <h1 className="mok-section-title">Choose your palette.</h1>
+            <h1 className="mok-section-title">Pick a mood.</h1>
             <p className="mok-section-lede">
-              The colour you'll see each time you sign in. Pick a mood — the change is
-              live as you choose, and you can switch any time.
+              The colour you'll see every time you sign in. Tap one — it
+              changes live, so you can try them on. Switchable anytime.
             </p>
             <div
               style={{
@@ -396,8 +582,9 @@ export default function Onboarding() {
           <>
             <h1 className="mok-section-title">A few quiet promises.</h1>
             <p className="mok-section-lede">
-              Each choice below is separate. You can change any of them, any
-              time, in Preferences.
+              We're going to be careful with you. Three things below, all
+              separate, all in your control. Change any of them anytime in
+              Preferences — we're not going to chase you.
             </p>
             <div className="mok-card mok-card--quiet" style={{ padding: 16, marginBottom: 12 }}>
               <div><strong>Running your account</strong> <span className="mok-chip">always on</span></div>
@@ -437,11 +624,11 @@ export default function Onboarding() {
 
         {step === 'ready' && (
           <>
-            <h1 className="mok-section-title">You're ready, {firstName}.</h1>
+            <h1 className="mok-section-title">All set, {firstName}.</h1>
             <p className="mok-section-lede">
-              Next, a brief orientation — a peek at the two parts of the
-              program, how a daily practice settles in, your private space, and
-              your cohort. Then we'll begin together in Learn.
+              You answered everything. The app is tuned to you now. Next: a
+              quick orientation — the shape of the program, how the daily
+              rhythm works, what's where. Then we open Learn together.
             </p>
             <div className="mok-card mok-card--quiet" style={{ padding: 20, marginTop: 12 }}>
               <p className="mok-muted" style={{ fontSize: 14, margin: 0, fontStyle: 'italic' }}>

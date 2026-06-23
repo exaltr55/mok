@@ -119,7 +119,7 @@ export default function EmployerDashboard() {
                 </span>
               </div>
               <p className="mok-muted" style={{ fontSize: 14, lineHeight: 1.55, margin: '10px 0 0', maxWidth: 520 }}>
-                A weekly fifteen-minute circle of five practitioners, drawn from
+                A small weekly circle of five practitioners, drawn from
                 outside your company by default. Cohorts need a critical mass
                 of practitioners across companies to form well, so{' '}
                 <strong>the Mokshly team activates Connect for each employer
