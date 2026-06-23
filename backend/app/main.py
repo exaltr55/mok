@@ -14,7 +14,19 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from llm_client import configure_keys
 
-from app.api import admin, auth, chat, contact, employer, health, learn, me, practices
+from app.api import (
+    admin,
+    auth,
+    chat,
+    companion,
+    contact,
+    employer,
+    health,
+    learn,
+    me,
+    practices,
+    quizzes,
+)
 from app.config import settings
 from app.database import async_session, engine
 from app.logging import setup_logging
@@ -55,12 +67,19 @@ async def _init_database() -> None:
             inspector = inspect(sync_conn)
             existing_users = {c["name"] for c in inspector.get_columns("users")}
             user_additions = [
-                ("stretched_area",   "VARCHAR(20)"),
-                ("restore_style",    "VARCHAR(20)"),
-                ("tone_preference",  "VARCHAR(20)"),
-                ("here_because",     "VARCHAR(20)"),
-                ("cohort_enabled",   "BOOLEAN NOT NULL DEFAULT 0"),
-                ("user_type",        "VARCHAR(32) NOT NULL DEFAULT 'employee'"),
+                ("stretched_area",         "VARCHAR(20)"),
+                ("restore_style",          "VARCHAR(20)"),
+                ("tone_preference",        "VARCHAR(20)"),
+                ("here_because",           "VARCHAR(20)"),
+                ("cohort_enabled",         "BOOLEAN NOT NULL DEFAULT 0"),
+                ("user_type",              "VARCHAR(32) NOT NULL DEFAULT 'employee'"),
+                ("preferred_practice_time", "VARCHAR(5)"),
+                ("breathing_time",         "VARCHAR(5)"),
+                ("thinking_time",          "VARCHAR(5)"),
+                ("talking_time",           "VARCHAR(5)"),
+                ("writing_time",           "VARCHAR(5)"),
+                ("breathing_extra_times",  "VARCHAR(30)"),
+                ("reminders_on",           "BOOLEAN NOT NULL DEFAULT 0"),
             ]
             for col, ddl in user_additions:
                 if col not in existing_users:
@@ -224,8 +243,10 @@ app.include_router(auth.router, prefix="/api/v1")
 app.include_router(me.router, prefix="/api/v1")
 app.include_router(practices.router, prefix="/api/v1")
 app.include_router(learn.router, prefix="/api/v1")
+app.include_router(quizzes.router, prefix="/api/v1")
 app.include_router(contact.router, prefix="/api/v1")
 app.include_router(chat.router, prefix="/api/v1")
+app.include_router(companion.router, prefix="/api/v1")
 app.include_router(employer.router, prefix="/api/v1")
 app.include_router(admin.router, prefix="/api/v1")
 app.include_router(health.router)

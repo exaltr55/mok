@@ -5,6 +5,7 @@ practice history, MCI, and journal.
 from __future__ import annotations
 
 from datetime import UTC, date, datetime, timedelta
+from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel as PydanticModel
@@ -17,7 +18,7 @@ from app.api.auth import get_current_user
 from app.database import get_db
 from app.models.journal_entry import JOURNAL_STYLES, JournalEntry
 from app.models.practice_session import PracticeSession
-from app.models.user import PHASES, User
+from app.models.user import User
 from app.services.mci import MciResult, compute_mci
 
 router = APIRouter(prefix="/me", tags=["me"])
@@ -39,6 +40,15 @@ class ProfileOut(PydanticModel):
     career_stage: str | None
     preferred_time_of_day: str
     preferred_days_per_week: int
+    preferred_practice_time: str | None
+    # Per-practice scheduled times (HH:MM) and reminder opt-in.
+    breathing_time: str | None
+    thinking_time: str | None
+    talking_time: str | None
+    writing_time: str | None
+    # Comma-separated extra Breathing times (e.g. "12:00,15:00"). Up to 3.
+    breathing_extra_times: str | None
+    reminders_on: bool
     cohort_preference: str
     cohort_meeting_day: str | None
     cohort_meeting_window: str | None
@@ -65,15 +75,40 @@ class ProfileUpdate(PydanticModel):
         default=None, pattern=r"^(morning|midday|evening|flexible)$",
     )
     preferred_days_per_week: int | None = Field(default=None, ge=1, le=7)
-    cohort_preference: str | None = Field(
-        default=None, pattern=r"^(outside|within|none)$",
+    # HH:MM (24-hour). Empty string clears the field.
+    preferred_practice_time: str | None = Field(
+        default=None, pattern=r"^(|[0-2]\d:[0-5]\d)$",
     )
+    # Per-practice scheduled times — same HH:MM pattern as above.
+    breathing_time: str | None = Field(
+        default=None, pattern=r"^(|[0-2]\d:[0-5]\d)$",
+    )
+    thinking_time: str | None = Field(
+        default=None, pattern=r"^(|[0-2]\d:[0-5]\d)$",
+    )
+    talking_time: str | None = Field(
+        default=None, pattern=r"^(|[0-2]\d:[0-5]\d)$",
+    )
+    writing_time: str | None = Field(
+        default=None, pattern=r"^(|[0-2]\d:[0-5]\d)$",
+    )
+    # Up to 3 extra Breathing times, comma-separated HH:MM,HH:MM,HH:MM.
+    # Empty string clears all extras.
+    breathing_extra_times: str | None = Field(
+        default=None,
+        pattern=r"^(|[0-2]\d:[0-5]\d(,[0-2]\d:[0-5]\d){0,2})$",
+        max_length=30,
+    )
+    reminders_on: bool | None = None
+    cohort_preference: Literal["open", "outside", "within", "none"] | None = None
     cohort_meeting_day: str | None = Field(
         default=None,
         pattern=r"^(monday|tuesday|wednesday|thursday|friday|saturday|sunday)$",
     )
     cohort_meeting_window: str | None = Field(default=None, max_length=30)
-    phase: str | None = Field(default=None, pattern="|".join(PHASES))
+    # phase is intentionally NOT writable — it's derived from the
+    # user's weeks of practice (see derive_phase) and surfaced via the
+    # dashboard endpoint, not chosen by the practitioner.
     theme: str | None = Field(
         default=None,
         pattern=r"^(stillwater|sunbeam|cobalt|sage|twilight)$",
@@ -171,12 +206,22 @@ class MciOut(PydanticModel):
     milestone: str
     practice_days: int
     window_days: int
+    # MCI is hidden in the UI until ACTIVATION_WEEKS have passed.
+    activated: bool
+    # v2 signals — exposed so the UI can show the breakdown.
+    return_rate: float = 0.0       # 0–1: weeks-with-any-session / N
+    breadth: int = 0               # 0–7: practices with grip ≥ R
+    practice_grip: dict[str, float] = {}  # per-practice grip (0–1)
 
 
 def _mci(r: MciResult) -> MciOut:
     return MciOut(
         mci=r.mci, milestone=r.milestone,
         practice_days=r.practice_days, window_days=r.window_days,
+        activated=r.activated,
+        return_rate=r.return_rate,
+        breadth=r.breadth,
+        practice_grip=r.practice_grip,
     )
 
 
@@ -220,6 +265,14 @@ class DashboardDay(PydanticModel):
     count: int
 
 
+class PracticeUnlock(PydanticModel):
+    key: str
+    name: str
+    short_name: str
+    unlock_day: int  # 0-based day index when this practice becomes available
+    unlocked: bool   # convenience flag derived against the user's day_index
+
+
 class DashboardOut(PydanticModel):
     total_sessions: int
     days_practiced_30d: int
@@ -230,6 +283,15 @@ class DashboardOut(PydanticModel):
     # "Continue your practice" card on the dashboard.
     last_practice_key: str | None
     last_practice_day: date | None
+    # ── Program journey ─────────────────────────────────────────
+    # 0-based day index since account creation. Day 1 = 0, etc.
+    day_index: int
+    # 0-based week index — day_index // 7. Used for phase derivation.
+    week_index: int
+    # Current phase label (arriving / steadying / integrating / living).
+    phase: str
+    # Unlock schedule for all 7 practices.
+    unlocks: list[PracticeUnlock]
 
 
 @router.get("/dashboard", response_model=DashboardOut)
@@ -316,6 +378,27 @@ async def dashboard(
             )
         )
 
+    # Program journey — compute day/week and unlock schedule.
+    from app.services.practices import derive_phase, unlock_day_for
+    day_index = max(0, (today - user.created_at.date()).days)
+    week_index = day_index // 7
+    # Phase is derived from weeks of practice, not user choice — it
+    # advances with the program timeline so it always reflects where
+    # the practitioner actually is.
+    current_phase = derive_phase(week_index)
+    unlocks: list[PracticeUnlock] = []
+    for p in PRACTICES:
+        d = unlock_day_for(p.key)
+        unlocks.append(
+            PracticeUnlock(
+                key=p.key,
+                name=p.name,
+                short_name=p.short_name,
+                unlock_day=d,
+                unlocked=(day_index >= d),
+            )
+        )
+
     return DashboardOut(
         total_sessions=total_sessions,
         days_practiced_30d=len(days_30),
@@ -324,6 +407,10 @@ async def dashboard(
         last_30_days=timeline,
         last_practice_key=last_practice_key,
         last_practice_day=last_practice_day,
+        day_index=day_index,
+        week_index=week_index,
+        phase=current_phase,
+        unlocks=unlocks,
     )
 
 
@@ -446,3 +533,25 @@ async def todays_journal(
     )
     entry = result.scalar_one_or_none()
     return JournalOut.model_validate(entry) if entry else None
+
+
+@router.patch("/journal/today", response_model=JournalOut)
+async def update_todays_journal(
+    body: JournalIn,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+) -> JournalOut:
+    today = datetime.now(UTC).date()
+    result = await db.execute(
+        select(JournalEntry).where(
+            JournalEntry.user_id == user.id,
+            JournalEntry.entry_day == today,
+        )
+    )
+    entry = result.scalar_one_or_none()
+    if entry is None:
+        raise HTTPException(status_code=404, detail="No journal entry for today yet.")
+    entry.style = body.style
+    entry.body = body.body
+    await db.flush()
+    return JournalOut.model_validate(entry)

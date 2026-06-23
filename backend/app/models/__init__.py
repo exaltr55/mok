@@ -5,6 +5,7 @@ Importing this package registers every model with ``Base.metadata`` so that
 """
 
 from app.models.base import Base, BaseModel, TimestampMixin, generate_ulid
+from app.models.companion_message import CompanionMessage
 from app.models.consent import Consent
 from app.models.journal_entry import JournalEntry
 from app.models.mci_snapshot import MciSnapshot
@@ -16,6 +17,7 @@ from app.models.user import User
 __all__ = [
     "Base",
     "BaseModel",
+    "CompanionMessage",
     "Consent",
     "JournalEntry",
     "MciSnapshot",

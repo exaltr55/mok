@@ -10,6 +10,7 @@ from __future__ import annotations
 import contextlib
 import time
 from datetime import UTC, datetime, timedelta
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 import bcrypt
 import jwt
@@ -64,6 +65,11 @@ class AuthRegister(PydanticModel):
     email: EmailStr
     password: str = Field(..., min_length=8, max_length=200)
     name: str = Field(..., min_length=1, max_length=200)
+    # IANA timezone (e.g. "America/Los_Angeles"). Captured from the browser
+    # at signup so server-side "today" / scheduling is anchored to the
+    # user's local day from day one. Optional; defaults to UTC for clients
+    # that can't determine it (e.g. server-to-server registration).
+    timezone: str | None = Field(default=None, max_length=60)
 
 
 class UserInfo(PydanticModel):
@@ -233,6 +239,15 @@ async def register(
         password_hash=_hash_password(body.password),
         role=role,
     )
+    # Store the client-supplied IANA timezone if present and parseable; the
+    # column already defaults to "UTC" so anything we can't validate falls
+    # back safely.
+    if body.timezone:
+        try:
+            ZoneInfo(body.timezone)
+            user.timezone = body.timezone
+        except ZoneInfoNotFoundError:
+            pass
     db.add(user)
     await db.flush()
 

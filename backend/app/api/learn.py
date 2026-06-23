@@ -22,18 +22,25 @@ class Module:
 
 
 MODULES: tuple[Module, ...] = (
-    Module("welcome", "Welcome to YouSourceful", "Why we begin here.", 0, "00-welcome.md"),
-    Module("source", "S1 — Source", "Who you truly are.", 1, "01-s1-source.md"),
-    Module("seed", "S2 — Seed", "Thought as pattern.", 2, "02-s2-seed.md"),
-    Module("soil", "S3 — Soil", "Patterns meeting the world.", 3, "03-s3-soil.md"),
-    Module("seasons", "S4 — Seasons", "Time, unfolding, and alignment.", 4, "04-s4-seasons.md"),
-    Module("sowing", "S5 — Sowing", "Conscious choice and living well.", 5, "05-s5-sowing.md"),
+    Module("welcome", "YouSourceful *Learn*", "An opening — what the practice is for, and what's ahead.", 0, "00-welcome.md"),
+    Module("source", "S1 — Source", "Who You Truly Are", 1, "01-s1-source.md"),
+    Module("seed", "S2 — Seed", "Thoughts Creating a Pattern", 2, "02-s2-seed.md"),
+    Module("soil", "S3 — Soil", "Patterns Meeting the World", 3, "03-s3-soil.md"),
+    Module("seasons", "S4 — Season", "Time, Unfolding, and Alignment", 4, "04-s4-seasons.md"),
+    Module("sowing", "S5 — Sowing", "Conscious Choice and Living Well", 5, "05-s5-sowing.md"),
     Module(
         "bridge",
         "From Understanding to Living",
         "Bridge into the 7 Practices.",
         6,
         "06-from-understanding-to-living.md",
+    ),
+    Module(
+        "practices-intro",
+        "The 7 Practices",
+        "What you'll meet, and how they unfold.",
+        7,
+        "07-practices-intro.md",
     ),
 )
 

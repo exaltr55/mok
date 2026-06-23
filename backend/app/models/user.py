@@ -56,6 +56,27 @@ class User(BaseModel):
         String(20), nullable=False, default="morning",
     )
     preferred_days_per_week: Mapped[int] = mapped_column(nullable=False, default=5)
+    # Specific clock time (HH:MM, 24-hour) the user has committed to.
+    # Optional — falls back to the coarse `preferred_time_of_day` band when
+    # absent. Set on the Rhythm page.
+    preferred_practice_time: Mapped[str | None] = mapped_column(String(5), nullable=True)
+
+    # Per-practice scheduled times (HH:MM, 24-hour) for the four core
+    # practices. Writing is always the last of the day — bedtime ritual.
+    # All optional; absence means "no scheduled reminder."
+    breathing_time: Mapped[str | None] = mapped_column(String(5), nullable=True)
+    thinking_time: Mapped[str | None] = mapped_column(String(5), nullable=True)
+    talking_time: Mapped[str | None] = mapped_column(String(5), nullable=True)
+    writing_time: Mapped[str | None] = mapped_column(String(5), nullable=True)
+    # Up to 3 additional Breathing times across the day, stored as a
+    # comma-separated "HH:MM,HH:MM,HH:MM" string. With breathing_time
+    # this caps at 4 Breathing sessions per day — its role as a return-
+    # anchor whenever the user needs it.
+    breathing_extra_times: Mapped[str | None] = mapped_column(String(30), nullable=True)
+
+    # Whether the user has opted in to in-app reminder banners (and,
+    # when permission is granted, browser notifications). Off by default.
+    reminders_on: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
 
     # Cohort preferences
     cohort_preference: Mapped[str] = mapped_column(String(30), nullable=False, default="outside")
