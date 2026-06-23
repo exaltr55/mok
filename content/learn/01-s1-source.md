@@ -1,4 +1,4 @@
-# S1 — Source
+# S1 — Source · Who You Truly Are
 
 Every experience you have —  
 a thought, an emotion, a reaction,  
@@ -8,20 +8,20 @@ arises within an inner space
 that is always present.
 
 This space has been called  
-many names:  
-awareness, presence, silence,  
-attention, or the observer.
+many names —  
+Awareness, presence, silence,  
+attention, the observer.
 
 In YouSourceful,  
 we refer to this space  
-as the **Source** —  
+as the Source —  
 the first S of the five Ss.
 
 The Source is not a belief  
 or a philosophy.
 
-It is the simple fact  
-that you are aware.
+It is the simple truth:  
+You are the Awareness.
 
 You can confirm this  
 right now.
@@ -37,8 +37,8 @@ Now ask yourself:
 If you can notice the breath,  
 are you the breath?
 
-If you can notice the thought,  
-are you the thought?
+And the thought you observe —  
+are you that thought?
 
 Anything you can be aware of  
 cannot be who you are.
@@ -46,12 +46,12 @@ cannot be who you are.
 So what remains?
 
 What remains  
-is awareness itself —
+is Awareness itself —
 
 the space in which the breath is felt  
 and thoughts arise and pass.
 
-We use the word **Source**  
+We use the word Source  
 not as an idea to be accepted  
 or a concept to be debated,
 
@@ -60,7 +60,7 @@ to what is already present
 in your direct experience.
 
 You are the Source —  
-the awareness  
+the Awareness  
 in which all experience arises  
 and dissolves.
 
@@ -75,7 +75,7 @@ It is present
 when the body is active  
 and when it is at rest.
 
-This awareness is not divided.
+This Awareness is not divided.
 
 At the level of Source,  
 there is no separation —  
@@ -91,11 +91,25 @@ through different bodies,
 minds, histories,  
 and conditions.
 
-But the awareness  
+But the Awareness  
 in which experience happens  
 is the same.
 
-Like waves  
+Consider the air we breathe.
+
+There is no my air  
+or your air —  
+there is one air.
+
+What it holds varies,  
+place to place —  
+heavy by the sea,  
+thin in the mountains.
+
+But the air itself  
+is one.
+
+Or consider waves  
 in a single ocean,
 
 each wave appears separate —  
@@ -109,23 +123,22 @@ and dissolve
 is one.
 
 In the same way,  
-awareness may appear  
+Awareness may appear  
 as many —
 
-but its Source  
+but the Source  
 is not divided.
 
 In daily life,  
-we tend to operate  
-in two ways:
+we tend to live  
+in one of two ways —
 
-when the Source  
-is unnoticed,  
-and when the Source  
-is recognized.
+with the Source unnoticed,  
+or with the Source recognized.
 
-When the Source is **unnoticed**,  
+When the Source is unnoticed,  
 we identify completely  
+
 with our thoughts,  
 emotions,  
 and conditions —
@@ -133,8 +146,9 @@ and conditions —
 experiencing them  
 as who we are.
 
-When the Source is **recognized**,  
+When the Source is recognized,  
 experience continues —  
+
 but is lived  
 with more space,  
 clarity,  
@@ -156,7 +170,7 @@ our thoughts and actions.
 
 What changes  
 is how we relate  
-to experience —
+to our life experience —
 
 with more acceptance,  
 less resistance,  
@@ -167,42 +181,35 @@ Pain may still arise,
 but suffering reduces —
 
 because experience  
-is no longer happening  
-*to* us,  
-but *within* us.
+is no longer happening to us,  
+experience is happening within us,  
+in the Awareness  
+that we are.
 
-Like waves  
-in the ocean,  
-they arise,  
-remain for a time,  
-and dissolve.
+An important question arises.  
 
-A natural question arises:
+If all things and thoughts  
+arise and dissolve in the Source,  
+where is the Source —  
+and how do we find it?
 
-Where do we find the Source?
-
-The Source is not something  
-to search for or attain.
-
-It is what you already are —  
-the awareness  
+The Source is what you already are —  
+the Awareness  
 in which all experience unfolds.
 
-It is not attained,  
-but recognized —  
+It is not something  
+to search for or attain.
+
+The Source is simply recognized,  
 and gradually lived from.
 
-If the Source  
-is not something to seek,  
-how do we recognize it  
-and live from it?
+How?
 
 Through practice.
 
 This is what we begin  
-to develop  
-in the second part  
-of this system.
+to develop in Part 2  
+of the YouSourceful system.
 
 You will learn  
 to notice your breath,  
@@ -210,22 +217,22 @@ to notice the space
 between thoughts —
 
 and in that noticing,  
-recognize directly  
-your nature  
-as the Source.
+recognize and access  
+your true self,  
+the Source.
 
 With this understanding —  
 that you are the Awareness,  
-and that all experience  
-arises within it —
+and that all of your life experiences  
+arise within it —
 
 we can now turn  
 to a deeper question:
 
-How does experience  
+How does life experience  
 take form within the Awareness?
 
 This is where we move  
 to the next S:
 
-the **Seed.**
+the Seed.

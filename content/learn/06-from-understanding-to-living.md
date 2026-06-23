@@ -1,8 +1,8 @@
 # From Understanding to Living
 
-These five Ss of the 5S Framework  
-help us bring clarity  
-to how experience unfolds.
+The 5S Framework  
+brings clarity  
+to how life experience unfolds.
 
 It shows how patterns are formed,  
 reinforced,  
@@ -42,9 +42,13 @@ The second pillar of YouSourceful
 begins here —
 
 seven practices designed  
-to translate understanding  
-into action,
+to translate your understanding  
+into your action,
 
-and action into lived experience.
+and your action into lived experience.
 
-Are you ready?
+This is where it becomes real.  
+A few minutes a day —  
+and understanding becomes living.
+
+Let's begin.

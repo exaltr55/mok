@@ -1,7 +1,5 @@
 # Practice 1 — I M Breathing
 
-Practice 1: I M Breathing  
-
 Part A — Learning the Practice  
 
 We all breathe.  
@@ -11,6 +9,7 @@ this rhythm stays with us.
 
 We don’t have to learn breathing.  
 We don’t have to remember it.  
+
 It happens, moment after moment,  
 quietly supporting our life.  
 
@@ -21,15 +20,14 @@ The breath is always there—
 in moments of calm,  
 and in moments of pressure.  
 
-When life feels easy,  
-the breath flows easily.  
-When life feels demanding,  
-the breath responds too.  
-
 It changes with us,  
 often before we realize it.  
 
 That’s why we begin here.  
+
+The breath does not belong to the body  
+and does not belong to the mind.  
+It simply binds the two.  
 
 The breath is not just about supplying oxygen to the body.  
 It is one of the primary ways  
@@ -51,8 +49,10 @@ when there is real danger.
 But much of modern life  
 triggers the same response  
 without real threat—  
+
 emails, meetings, traffic, deadlines,  
-social media, news, and more.  
+social media, news, and more —  
+each one nudging the body into fight-or-flight.  
 
 And the breath quietly follows along.  
 
@@ -65,275 +65,135 @@ the body begins to settle.
 The nervous system shifts.  
 The mind often follows.  
 
-This is what we are learning in this practice—  
-how to work with the breath consciously,  
-so the body and mind  
-can settle together.  
+Welcome to **I M Breathing** —  
+the first of the seven practices,  
+and the one you'll return to most.  
 
-Gently.  
-On purpose.  
+The practice is simple:  
+three or more conscious, deep breaths —  
+taken many times a day.  
 
-Think of the breath  
-as something you can return to.  
-Not to fix anything.  
-Not to change who you are.  
-Just to steady yourself  
-in the middle of a busy day.  
+Each conscious deep breath  
+creates a pause —  
+a small gap of stillness,  
+right where you are.  
 
-Even a few conscious breaths  
-can change how a moment feels—  
-a little less tension,  
-a little more space,  
-a little more clarity.  
+In that pause,  
+you access Awareness —  
+the Source, within which  
+thoughts and things arise and dissolve.  
 
-That is enough.  
+You step out of the pattern  
+you were running on,  
+and it momentarily loses its grip.  
 
-In the 5S framework,  
-we call this returning to Source.  
+What this slowly grows —  
+a calmer body,  
+a clearer mind,  
+and space between what happens and how you respond.  
 
-The Source, as we learned earlier,  
-is the quiet awareness  
-within which thoughts and reactions arise.  
+Each conscious breath  
+shifts the body out of fight-or-flight  
+and into rest and renewal —  
+where the system gets to settle.  
 
-The breath is one of the simplest ways  
-to reconnect with that space.  
+Let the breath be your quiet companion —  
+always with you,  
+never earned, never searched for.  
 
-There is nothing to get right.  
-Nothing to force.  
-You are simply learning how to return.  
+In Part B,  
+we'll walk you through the rhythm,  
+breath by breath.  
 
-This is why the breath  
-is such a powerful place to begin.  
+Part B — Doing the Practice (1–3 minutes)  
 
-It is always available.  
-It requires no time, money, tools, or preparation.  
+Let's do this together.  
 
-You can return to it  
-before a conversation,  
-between meetings,  
-in traffic,  
-or when the day feels full.  
+Find a comfortable seat,  
+or just pause wherever you are.  
 
-Each time you do,  
-you give the body and mind  
-a chance to reset.  
+(Just not while driving, operating machinery,  
+or doing anything that needs your full attention —  
+this one needs a little of yours.)  
 
-Now, let’s experience the practice together.  
+Take a moment.  
+Let your shoulders drop.  
+Let your face soften.  
 
-Take a comfortable seat,  
-or pause where you are.  
+Now, gently —  
+bring your attention to your breath.  
 
-Let your spine be upright,  
-but relaxed.  
-Let your shoulders soften.  
-
-If it feels comfortable,  
-gently close your eyes  
-or lower your gaze.  
-
-Begin to follow a simple 4–4–4 rhythm.  
-
-Inhale slowly through your nose  
-to the count of four.  
-One…  
-two…  
-three…  
-four.  
-
-Hold the breath gently  
-for four.  
-One…  
-two…  
-three…  
-four.  
-
-Exhale softly through your nose  
-for four.  
-One…  
-two…  
-three…  
-four.  
-
-Let’s do one more round together.  
-
-Inhale… two… three… four.  
-Hold… two… three… four.  
-Exhale… two… three… four.  
+Don't change it yet.  
+Just notice it as it is.  
 
 Good.  
 
-Allow the breath to flow smoothly,  
-without strain.  
+We're going to move into a simple rhythm together —  
+the 4–4–4.  
 
-There’s nothing to force.  
-Nothing to push.  
+It goes like this:  
+a slow, deep inhale —  
+a brief hold —  
+and a slow exhale.  
 
-With each round,  
-you may notice the body softening a little more,  
-the mind becoming a little quieter.  
+Each part to the count of four.  
+That's all there is.  
 
-Now pause.  
+Whenever you're ready, let's begin.  
 
-Let the breath return  
-to its natural rhythm.  
+### First round  
 
-There’s nothing to guide right now.  
-Nothing to do.  
-Just notice.  
+Breathe in slowly through your nose…  
+one… two… three… four.  
 
-Notice how the body feels.  
-Notice the quality of the mind.  
+And hold gently —  
+one… two… three… four.  
 
-Even if the change is subtle,  
-it’s there.  
+Now exhale, softly, through your nose…  
+one… two… three… four.  
 
-You might gently remind yourself:  
+Lovely.  
 
-I hold the power of calm and clarity within me.  
-With each conscious breath, I return to balance.  
-My breath is my anchor in the storm  
-and my guide to peace.  
+### Second round  
 
-Let the breath become your quiet companion.  
-It is always with you.  
-No matter where you are.  
-No matter what the moment looks like.  
+Again. Breathe in —  
+one… two… three… four.  
 
-You don’t need to search for it.  
-You don’t need to earn it.  
+Hold —  
+one… two… three… four.  
 
-The breath does not judge.  
-It responds—every time.  
+Exhale —  
+one… two… three… four.  
 
-At any point in the day,  
-you can return.  
+Beautiful.  
 
-As often as needed,  
-during your waking hours.  
+### Third round  
 
-This is I M Breathing.  
-A simple practice.  
-A steady foundation.  
+One more, together.  
 
-One you can come back to,  
-again and again.  
+Breathe in —  
+one… two… three… four.  
 
-As the breath settles,  
-you may begin to notice something else.  
+Hold —  
+one… two… three… four.  
 
-In the space that opens,  
-thoughts become easier to see.  
+Exhale —  
+one… two… three… four.  
 
-Not to judge.  
-Not to change.  
-Simply to notice.  
+There.  
 
-Breathing creates the pause.  
-The next practice helps you understand  
-what appears within that pause.  
+Now let the breath return to its natural rhythm.  
+Don't manage it. Just let it be.  
 
-When you’re ready,  
-we’ll explore that together—  
-with the same calm attention  
-you’ve just brought to the breath.  
+Take a moment to notice  
+how you feel right now.  
 
-That brings us gently  
-to the next practice.  
+A little more space, perhaps?  
+A little more steady?  
 
-Practice 1: I M Breathing  
+That's the practice.  
 
-Part B — Daily Practice (1–3 minutes)  
+Whenever you're ready,  
+come gently back to your day.  
 
-Let’s begin.  
-
-Take a comfortable seat,  
-or pause where you are.  
-
-Bring your attention  
-to the breath.  
-
-Begin to follow a gentle 4–4–4 rhythm.  
-
-First round  
-
-Inhale slowly through your nose  
-to the count of four.  
-
-One…  
-two…  
-three…  
-four.  
-
-Hold gently  
-for four.  
-
-One…  
-two…  
-three…  
-four.  
-
-Exhale softly through your nose  
-for four.  
-
-One…  
-two…  
-three…  
-four.  
-
-Pause.  
-
-Second round  
-
-Inhale…  
-One…  
-
-two…  
-three…  
-four.  
-
-Hold…  
-One  
-
-two…  
-three…  
-four.  
-
-Exhale…  
-One  
-
-two…  
-three…  
-Four.  
-
-Third round  
-
-Inhale…  
-One  
-
-two…  
-three…  
-four.  
-
-Hold…  
-One  
-
-two…  
-three…  
-four.  
-
-Exhale…  
-One..  
-
-two…  
-three…  
-four.  
-
-Pause.  
-
-Now let the breath  
-return to its natural rhythm.  
-
-Take a moment to notice.  
-
-When you’re ready,  
-gently return to your day.
+We'll meet here again.

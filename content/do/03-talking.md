@@ -1,7 +1,5 @@
 # Practice 3 — I M Talking
 
-Practice 3: I M Talking  
-
 In the previous practice,  
 we used a simple anchor thought  
 to notice the space between thoughts—  
@@ -28,6 +26,7 @@ Often without realizing it.
 
 Sometimes the inner voice is supportive.  
 Sometimes it is critical.  
+
 Often, it simply repeats old patterns—  
 shaped by past experiences,  
 conditioning, and memory.  
@@ -37,6 +36,7 @@ whether we talk to ourselves.
 
 The question is:  
 how consciously we do it—  
+
 and whether the way we speak to ourselves  
 is serving us  
 or holding us back.  
@@ -73,7 +73,7 @@ how we feel,
 what we believe,  
 and how we respond to life.  
 
-Once self-talk is brought into awareness,  
+Once self-talk is brought into Awareness,  
 a simple but powerful shift becomes possible:  
 we can guide it.  
 
@@ -108,34 +108,33 @@ Core Affirmations
 Here are the core affirmations  
 you can begin with:  
 
-I am becoming more aware of my health,  
-gently caring for my body and mind.  
+I am caring for my health,  
+in body and mind.  
 
 I am welcoming abundance,  
-
-in all the ways it flows to me.  
+as it flows to me.  
 
 I am noticing what I'm grateful for,  
+appreciating what is here.  
 
-appreciating what is already here.  
-
-I am expressing my gifts and talent,  
-
-to serve and support others.  
+I am expressing my gifts and talents,  
+in service of others.  
 
 I am staying open,  
+trusting how life unfolds.  
 
-trusting that all things unfold for the greater good.  
+I am giving my full attention,  
+to what is in front of me.  
 
 I am choosing freely,  
-
-in ways that honor myself and others.  
+in ways that honor everyone.  
 
 I am.  
 
 Adding Your Own  
 
-In addition to six core affirmations, you can also create your own affirmations  
+In addition to the seven core affirmations,  
+you can also create your own affirmations  
 based on what you need in the moment.  
 
 For example, during a difficult time:  
@@ -178,8 +177,8 @@ For example,
 while taking a shower,  
 you might gently say to yourself:  
 
-I am becoming more aware of my health,  
-gently caring for my body and mind.  
+I am caring for my health,  
+in body and mind.  
 
 In small moments like these,  
 the practice becomes part of daily life.  
@@ -193,46 +192,58 @@ to the next practice.
 
 PART B — Daily Practice  
 
-Let’s begin.  
+Here we go.  
 
-Take a comfortable seat,  
-or simply pause where you are.  
+Find a comfortable seat,  
+or just pause wherever you are.  
+
+(Just not while driving, operating machinery,  
+or doing anything that needs your full attention —  
+the inner voice gets a turn now.)  
 
 Take one or two slow breaths.  
 Let the body settle.  
+Let your shoulders drop  
+(yes, they're holding on to something — let them).  
 
-Now gently begin  
-to repeat affirmations.  
+Now we'll speak to ourselves — gently, deliberately —  
+seven simple lines.  
+Let each one land.  
+Don't rush.  
 
-I am becoming more aware of my health,  
-gently caring for my body and mind.  
+*I am caring for my health,*  
+*in body and mind.*  
 
-I am welcoming abundance,  
+*I am welcoming abundance,*  
+*as it flows to me.*  
 
-in all the ways it flows to me.  
+*I am noticing what I'm grateful for,*  
+*appreciating what is here.*  
 
-I am noticing what I'm grateful for,  
+*I am expressing my gifts and talents,*  
+*in service of others.*  
 
-appreciating what is already here.  
+*I am staying open,*  
+*trusting how life unfolds.*  
 
-I am expressing my gifts and talent,  
+*I am giving my full attention,*  
+*to what is in front of me.*  
 
-to serve and support others.  
+*I am choosing freely,*  
+*in ways that honor everyone.*  
 
-I am staying open,  
+And finally —  
 
-trusting that all things unfold for the greater good.  
-
-I am choosing freely,  
-
-in ways that honor myself and others.  
-
-I am.  
+*I am.*  
 
 Let the words soften.  
 Let them fade.  
 
 Rest there for a moment.  
+Notice what's left when the words go quiet.  
 
-Then gently return  
-to your day.
+Then ease your way back  
+into your day.  
+
+Carry the *I am* with you.  
+It'll be useful.

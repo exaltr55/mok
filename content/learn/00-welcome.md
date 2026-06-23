@@ -1,158 +1,56 @@
-# Welcome to YouSourceful
+# YouSourceful Learn
 
-## YouSourceful — The Foundational System for Human Sustainability
+The world keeps speeding up.
 
-We are living through  
-a profound shift.
+AI is reshaping how we work.  
+Information is everywhere.  
+Holding our attention  
+has become harder than ever.
 
-Artificial intelligence  
-is rapidly transforming  
-how we work,  
-how we learn,  
-how we communicate,  
-and even  
-how we think.
+In the middle of all this,  
+how do you stay clear,  
+calm, and yourself?
 
-For those of us working  
-inside organizations,  
-this shift is already here.
+YouSourceful exists for you.
 
-New tools are arriving  
-almost every month.  
-Roles are evolving.  
-The pace of change  
-is not slowing down —  
-it is accelerating.
+It helps you develop your foundational capabilities  
+to stay whole and thrive  
+through any change.
 
-Much of what used to require  
-our time,  
-our attention,  
-and our effort  
-is now being handled —  
-or augmented —  
-by machines.
+It has two parts.
 
-This is creating  
-tremendous possibility.
+**Part 1 — the 5S Framework.**  
+A simple way to understand how  
+your life experiences  
+take shape.
 
-But it is also placing  
-new demands on us —  
-demands that are not  
-about productivity,  
-or efficiency,  
-or output.
+**Part 2 — the 7 Practices.**  
+Short daily practices  
+that help you live with more  
+clarity and ease.
 
-They are about  
-how we stay grounded,  
-clear,  
-and fully human  
-in the middle of all this change.
+A few minutes a day,  
+simple to fit into your routine.
 
-How do we think clearly  
-when information  
-is coming at us  
-from every direction?
-
-How do we stay present  
-in our relationships  
-at home and at work —  
-when attention itself  
-has become scarce?
-
-How do we sustain our energy,  
-our focus,  
-and our sense of meaning —  
-not just for a quarter,  
-but across our careers  
-and our lives?
-
-In a world  
-moving this fast,  
-the ability to sustain  
-clarity,  
-energy,  
-and balance  
-is no longer optional —  
-it is essential.
-
-This is why  
-Mokshly exists.
-
-Mokshly is building  
-Human Sustainability —  
-the human capability  
-to stay grounded,  
-clear,  
-and alive  
-through change.
-
-YouSourceful  
-is Mokshly's foundational system  
-for Human Sustainability.
-
-It brings together  
-understanding and practice —  
-to help you build  
-this capability in yourself,  
-one day at a time.
-
-YouSourceful has two parts.
-
-The 5S Framework  
-helps you understand  
-how experience  
-is created and lived.
-
-The 7 Practices  
-help you develop awareness  
-and live from that understanding —  
-in how you think,  
-respond,  
-and act.
-
-Understanding without practice  
-remains theoretical.  
-Practice without understanding  
-becomes mechanical.
-
-YouSourceful brings  
-the two together —  
-so what you understand  
-can be lived,  
-and what you practice  
-becomes meaningful.
-
-Through this,  
-you begin to develop  
-the ability to sustain  
-clarity, balance, and energy  
-over time.
+Small returns,  
+made consistently,  
+add up to a steadier you.
 
 This is your journey.
 
-We begin with Part 1 —  
-the 5S Framework —  
-by understanding  
-something essential:
-
-where experience arises —  
-and who you are  
-as the one experiencing it.
+We begin with Part 1.
 
 ---
 
 ## Part 1 — The 5S Framework
 
-With this foundation,  
-let's turn to a simple way  
-of seeing how experience works —  
-from moment to moment,  
-and over time.
+Five short modules  
+that explain how  
+your experiences are created  
+and lived.
 
-This is the 5S Framework,  
-the first pillar of YouSourceful.
+Source, Seed, Soil, Season, Sowing.
 
-It is made up of five elements:  
-**Source, Seed, Soil, Seasons, and Sowing.**
-
-We begin with the first S.
+We start with Source —  
+the inner space within which  
+all your experiences arise.

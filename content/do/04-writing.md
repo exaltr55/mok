@@ -1,7 +1,5 @@
 # Practice 4 — I M Writing
 
-Practice 4: I M Writing  
-
 PART A — Learning the Practice  
 
 After reshaping how we speak to ourselves through I M Talking,  
@@ -51,6 +49,7 @@ Writing can take many forms.
 
 You might write about your day.  
 You might explore an emotion or challenge.  
+
 You might reflect on a decision.  
 You might list what you’re grateful for.  
 You might capture an insight or idea.  
@@ -58,11 +57,13 @@ You might capture an insight or idea.
 All of these are welcome.  
 
 In this practice,  
-Each day we can use one of the three simple styles of writing.  
+each day we can use one of three simple styles of writing:  
 
-They are: expressive, reflective, and gratitude  
+Expressive,  
+Reflective,  
+Gratitude.  
 
-Expressive Writing  
+**Expressive Writing**  
 
 This style is about releasing emotions  
 and clearing mental clutter.  
@@ -73,7 +74,7 @@ without editing or censoring.
 Just letting what’s inside  
 move onto the page.  
 
-Reflective Writing  
+**Reflective Writing**  
 
 This style is about learning from experience.  
 
@@ -83,9 +84,9 @@ and ask what they are teaching you.
 You begin to notice patterns,  
 choices, and growth.  
 
-Gratitude Writing  
+**Gratitude Writing**  
 
-This style is about noticing what’s working.  
+This style is about noticing what's working.  
 
 Small things.  
 Ordinary things.  
@@ -125,8 +126,10 @@ we can see our thoughts,
 reflect on them,  
 and often gain a new perspective.  
 
-That small distance  
-creates awareness.  
+This practice returns us to Awareness —  
+making us conscious  
+of what's going on  
+at the mental level.  
 
 People who practice I M Writing  
 often notice:  
@@ -166,6 +169,7 @@ there’s no friction.
 
 At the end of the day,  
 you can simply pick it up,  
+
 write a few lines,  
 and let the day settle  
 before you sleep.  
@@ -179,68 +183,56 @@ how to practice this.
 
 PART B — Daily Practice  
 
-Begin by choosing your medium.  
-A notebook.  
-A journal.  
-Or a digital writing space.  
-
-Use what feels natural  
-and easy to return to.  
+First, pick your notebook of choice —  
+a real one, a journal, or a digital space.  
+Whatever you'll actually open tomorrow.  
 
 Find a quiet moment.  
-A consistent time helps—  
-bedtime works well.  
+Bedtime works beautifully —  
+the page is good at holding what sleep doesn't need to.  
 
-Let this become  
-a gentle closing ritual.  
+Before you start, take a breath  
+and ask yourself a small question:  
 
-Before you begin,  
-set a small intention.  
+*What does today need?*  
 
-Ask yourself:  
-What does today need?  
-Release?  
-Reflection?  
-Gratitude?  
+Release? Reflection? Gratitude?  
+(One of the three is usually obvious. Pick it.)  
 
-Accordingly, choose one of the three styles:  
-
-If it is release  
-Write and express your thoughts freely.  
-Let emotions move without filtering.  
+**If it's release —**  
+write freely. Let it out.  
+No filter, no editing in your head as you go.  
+Just let it move.  
 
 For example:  
-“I felt anxious before the meeting today,  
-but once it started,  
-I realized I was more prepared than I thought.”  
+*"I felt anxious before the meeting today,*  
+*but once it started, I realized I was more prepared than I thought."*  
 
-If it is reflection  
-Look for meaning or learning.  
-
-For example:  
-“Today reminded me  
-how important clear communication is  
-in my relationships.”  
-
-If it is gratitude  
-List what you’re thankful for.  
+**If it's reflection —**  
+look for the meaning, the learning, the pattern.  
 
 For example:  
-“I’m grateful for the quiet walk this evening.  
-It helped me reset.”  
+*"Today reminded me how much clear communication matters*  
+*in my closest relationships."*  
 
-Write continuously  
-for three to five minutes or longer.  
-Don’t edit.  
-Don’t judge.  
-Just keep going.  
-
-When you’re ready to close,  
-end with one positive note—  
-something you appreciate  
-about yourself or someone in your life.  
+**If it's gratitude —**  
+list what you're thankful for. Specific is better than grand.  
 
 For example:  
-“I’m thankful for the effort I showed today.”  
+*"I'm grateful for the quiet walk this evening. It helped me reset."*  
 
-This gently completes the practice.
+Now write — continuously — for three to five minutes.  
+Longer if you want. Shorter if that's what's true.  
+
+Don't edit. Don't judge. Don't go back and fix anything.  
+Spelling has no power here.  
+
+When you're ready to close,  
+end with one positive note —  
+something you appreciate about yourself or someone in your life.  
+
+For example:  
+*"I'm thankful for the effort I showed today."*  
+
+That's it. The day is set down.  
+Sleep well.

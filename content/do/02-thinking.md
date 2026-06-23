@@ -1,7 +1,5 @@
 # Practice 2 — I M Thinking
 
-Practice 2: I M Thinking  
-
 PART A — Learning the Practice  
 
 In the previous practice,  
@@ -18,15 +16,18 @@ The activity of the mind.
 
 The mind is constantly active.  
 It produces thoughts—  
+
 about what has happened,  
 what is happening,  
 and what might happen next.  
 
 Thoughts move in many ways.  
 They revisit the past.  
+
 They anticipate what might come next.  
 They react to what is happening right now.  
-They create stories, interpretations, and possibilities.  
+They create stories,  
+interpretations, and possibilities.  
 
 This movement is continuous.  
 
@@ -62,7 +63,8 @@ It is the instrument through which thoughts take shape.
 Thoughts arise in Awareness—  
 the same Awareness you are.  
 
-Because we are so used to identifying with the mind,  
+Because we are  
+so used to identifying with the mind,  
 we often assume  
 that our thoughts are who we are.  
 
@@ -124,7 +126,8 @@ we are not controlling the breath.
 The breath continues on its own.  
 
 The soft mental sound, So Hum,  
-is introduced as a light, repeating thought in the mind.  
+is introduced as a light,  
+repeating thought in the mind.  
 
 Because it is simple and neutral—  
 it becomes an anchor.  
@@ -153,11 +156,13 @@ instead of being carried by them.
 
 You use a thought  
 to become aware of thinking—  
+
 and in that shift,  
 begin to recognize the Awareness  
 in which thoughts arise and dissolve.  
 
-This is what the practice, I M Thinking, develops.  
+This is what the practice,  
+I M Thinking, develops.  
 
 Not fewer thoughts—  
 but a different relationship with them.  
@@ -182,7 +187,8 @@ still, present, here.
 This practice is simple—  
 and its impact builds quietly over time.  
 
-You don’t need to look for results while you’re doing it.  
+You don’t need to look for results  
+while you’re doing it.  
 There is nothing to achieve in the moment.  
 
 Instead, allow the practice to work in the background.  
@@ -206,74 +212,80 @@ in your everyday life.
 
 PART B — Daily Practice  
 
-Let’s begin the practice of I m Thinking.  
+Alright — let's do this.  
 
-Take a comfortable seat,  
-or simply pause where you are.  
+Find a comfortable seat,  
+or just pause wherever you are.  
 
-Allow the body to settle.  
-Let your shoulders soften.  
-Let your face relax.  
+(Just not while driving, operating machinery,  
+or doing anything that needs your full attention —  
+the mind needs a moment of yours.)  
 
-Now begin to notice your breath.  
+Settle in.  
+Let your shoulders drop  
+(they're allowed to, even if your inbox isn't).  
+Let your face soften.  
 
-Gently guide the breath  
-into a steady rhythm.  
+Now gently —  
+notice your breath.  
 
-Inhale…1,  2… 3… 4…  
-Hold…1, 2… 3… 4…  
-Exhale…1, 2… 3… 4…  
+We'll start with a few rounds of 4–4–4,  
+the same rhythm you know.  
 
-Again.  
+Breathe in —  
+one… two… three… four.  
+Hold —  
+one… two… three… four.  
+Exhale —  
+one… two… three… four.  
 
-Inhale… 1, 2… 3… 4…  
-Hold… 1, 2… 3… 4…  
-Exhale… 1, 2… 3… 4…  
+Again. Take your time.  
 
-Continue at your own pace.  
+Breathe in — one… two… three… four.  
+Hold — one… two… three… four.  
+Exhale — one… two… three… four.  
 
-Let the breath be smooth.  
-Unforced.  
+Good. Now let the breath find its own pace —  
+smooth, unforced.  
 
-As the breath settles,  
-attention becomes a little more steady.  
+As it settles,  
+the mind starts to settle too.  
 
-Now gently introduce  
-the thought—So Hum.  
+Here's where we introduce the anchor —  
+**So Hum**.  
 
-Let it arise softly in the mind.  
+Let it arise gently in the mind,  
+the way a word does when you remember it.  
 
-There is no rhythm to follow.  
-No need to coordinate with the breath.  
+No rhythm to follow.  
+No need to match the breath.  
+It just sits there,  
+quietly.  
 
-When other thoughts appear,  
-simply notice them.  
+When other thoughts wander in — and they will —  
+just notice them.  
+You don't have to greet them, fight them, or follow them.  
+They'll move along on their own.  
 
-And when you notice  
-that attention has moved elsewhere,  
-gently return  
-to the anchor thought—So Hum.  
-
-Don’t force the thought, just repeat it when you realize that you are not thinking this thought…  
+When you realize attention has drifted,  
+that's the moment — that's the practice.  
+Come back gently to *So Hum*.  
 
 So… Hum…  
 So… Hum…  
 So… Hum…  
 
-Continue in this way.  
+Keep going at your own pace.  
 
-As you continue for a few minutes…if attention drifts,  
-return gently to So Hum.  
+If attention drifts a hundred times,  
+return a hundred and one.  
 
-If attention drifts,  
-return gently to So Hum.  
-
-If the anchor thought naturally fades  
-and the mind becomes quiet,  
-rest there.  
+If the anchor naturally fades  
+and the mind becomes still,  
+just rest there.  
 
 Nothing to do.  
-Nothing to hold on to.  
+Nothing to hold.  
 
 Continue gently  
 for the next few minutes.  
@@ -282,26 +294,22 @@ So… Hum…
 
 So… Hum…  
 
-Now, slowly,  
-let go of the anchor thought—So Hum.  
+Now slowly,  
+let go of *So Hum*.  
 
 No need to return to it.  
 
-Allow the mind  
-to be just as it is.  
+Let the mind be just as it is —  
+no effort, no controlling, no managing.  
 
-No effort.  
-Nothing to control.  
-Nothing to repeat.  
+Simply rest. Two or three minutes is plenty.  
 
-Simply rest. For 2-3 minutes.  
+When you're ready,  
+become aware of your body again.  
 
-When you’re ready,  
-gently become aware of your body.  
+Notice your breath.  
+Let it deepen a little.  
 
-Notice your breath again.  
+And ease your way back into the day.  
 
-Slowly deepen the breath.  
-
-And ease back  
-into your day.
+That was something. Well done.

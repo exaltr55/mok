@@ -9,12 +9,13 @@ how experience is created and lived.
 
 We began by recognizing  
 the Source—  
-the awareness  
+the Awareness  
 in which all experience arises.  
 
 We saw how experience  
 takes form,  
 is shaped into patterns,  
+
 and is expressed  
 through our thoughts,  
 emotions,  
@@ -33,12 +34,14 @@ the 7 Practices begin.
 
 The 7 Practices  
 are simple,  
+
 practical ways  
-to bring awareness  
+to bring Awareness  
 into everyday life—  
 
 in how you breathe,  
 move,  
+
 think,  
 speak,  
 and reflect.  
@@ -62,7 +65,7 @@ your ability
 to sustain  
 how you operate—  
 
-with awareness,  
+with Awareness,  
 with intention,  
 and with stability.  
 
@@ -76,7 +79,8 @@ they form a system—
 
 supporting your body,  
 your mind,  
-and cultivate the awareness  
+
+and cultivate the Awareness  
 in which your mind and body  
 exist and operate.  
 
